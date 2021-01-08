@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "format": "prettier --write src/**.*"
+    "format": "prettier --write **/**.ts"
   },
   "keywords": [],
   "author": "Brian Evans",
