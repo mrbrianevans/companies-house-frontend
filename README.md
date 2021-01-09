@@ -1,17 +1,40 @@
-# 🚀 Companies house frontend
+ # Companies House #
 
+This is a nextjs website, which serves API endpoints under `/api` and a Graphical UI under `/`.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+ ### Technology
+- Typescript
+- NodeJS
+- NextJS
+- PostgreSQL database
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/search](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+ ### API Endpoints
+| Endpoint | Parameters | Description |
+| --- | --- | --- |
+| `/api/` |  | API docs |
+| `/api/company` | company_number | Get details about a specific company |
+| `/api/search` | query&by | Search for companies based on a text query (by name etc) |
+| `/api/filter` | filters | Filter a list of companies where `filters` is an array of conditions |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### GUI Pages
+| URL | Description |
+| --- | --- |
+| `/`| Website docs |
+| `/company` | Get details about a specific company |
+| `/search` | Search for companies based on a text query (by name etc) |
+| `/filter` | Filter a list of companies where `filters` is an array of conditions |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+ ### Database relations
+ #### companies
+ | Column | Data type | Description |
+ | --- | --- | --- |
+ | `number` | char(8) | Company number string |
+ | `name` | varchar(160) | Name of company |
+ | `streetaddress` | varchar(300) | Company street address |
+ | `county` | varchar(50) | Company address county |
+ | `country` | varchar(50) | Company address country |
+ | `postcode` | varchar(20) | Company address postcode |
+ | `category` | varchar(100) | Company type like LLC |
+ | `origin` | varchar(50) | Country of origin |
+ | `status` | varchar(70) | If the company is active |
+ | `date` | date | The date of incorporation |
