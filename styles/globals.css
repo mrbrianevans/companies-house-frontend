@@ -15,3 +15,7 @@ a {
 * {
     box-sizing: border-box;
 }
+
+input, button, textarea, select {
+    font-size: larger;
+}

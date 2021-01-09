@@ -1,0 +1,43 @@
+button.go {
+    background-color: aliceblue;
+    color: #0070f3;
+    border-color: #0070f3;
+    border-radius: 3px;
+}
+
+button.go:hover,
+button.go:focus,
+button.go:active {
+    background-color: #0070f3;
+    color: aliceblue;
+    border-color: #0070f3;
+}
+
+
+button.jointButton {
+    background-color: aliceblue;
+    color: #0070f3;
+    border-color: #0070f3;
+    border-radius: 0 5px 5px 0;
+    border-width: 1px;
+}
+
+button.jointButton:hover,
+button.jointButton:focus,
+button.jointButton:active {
+    background-color: #0070f3;
+    color: aliceblue;
+    border-color: #0070f3;
+}
+
+input.jointTextBox {
+    border-radius: 5px 0 0 5px;
+    border-width: 1px 0 1px 1px;
+    padding: 0.2em;
+}
+
+div.jointContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
