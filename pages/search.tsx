@@ -1,9 +1,11 @@
+import { Page } from "../components/Page";
+
 const SearchPage = () => {
   return (
-    <div className={"container"}>
+    <Page>
       <h1>Search</h1>
 
-    </div>
+    </Page>
   );
 };
 

@@ -1,10 +1,12 @@
-const SearchPage = () => {
+import { Page } from "../components/Page";
+
+const Filter = () => {
   return (
-    <div className={"container"}>
+    <Page>
       <h1>Filter</h1>
 
-    </div>
+    </Page>
   );
 };
 
-export default SearchPage;
+export default Filter;
