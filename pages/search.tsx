@@ -4,8 +4,11 @@ import { TextInputWithButton } from "../components/TextInputWithButton";
 const styles = require("../styles/Home.module.css");
 
 const SearchPage = () => {
-  const searchByName = (name: string) => {
-    fetch(name);
+  const getSearchLink = (value: string) => {
+    if (value.match(/^[0-9]{6,8}$/))
+      return "company/" + value;
+    else
+      return "search/" + value;
   };
   return (
     <Page>
@@ -13,17 +16,12 @@ const SearchPage = () => {
       <div className={styles.grid}>
         <div className={styles.card} style={{ width: "100%" }}>
           <h3>
-            <label htmlFor={"companyNumberSearchBox"}>Company number</label>
+            <label htmlFor={"companyNumberSearchBox"}>Company number or name</label>
           </h3>
-          <TextInputWithButton textBoxPlaceholder={"05792439"}
-                               buttonLink={(v) => ("search/" + v)} />
-
-        </div>
-        <div className={styles.card}>
-          <h3>
-            <label htmlFor={"companyNameSearchBox"}>Company name</label>
-          </h3>
-          <TextInputWithButton textBoxPlaceholder={"Polo Rocks"} />
+          <TextInputWithButton textBoxPlaceholder={"05792439 or Tesco"}
+                               buttonLink={getSearchLink}
+                               buttonText={"Search!"}
+          />
         </div>
       </div>
     </Page>

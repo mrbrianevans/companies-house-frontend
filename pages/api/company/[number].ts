@@ -24,12 +24,13 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
         `SELECT * FROM companies WHERE number=${number}`,
         (err, result, fields) => {
           console.timeEnd("Query database");
-          if (err)
+          if (err || result.length !== 1)
             response = {
               body: `<b>Unable to get data from database ${err.message}</b>`,
               code: 501
             };
-          else response = { body: JSON.stringify(result), code: 200 };
+          //assumes there is only one result
+          else response = { body: JSON.stringify(result[0]), code: 200 };
           if (response) {
             database.end((err) => {
               if (err)

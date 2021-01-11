@@ -43,5 +43,5 @@ div.jointContainer {
 }
 
 a.jointButton {
-    line-height: unset;
+    display: flex;
 }
