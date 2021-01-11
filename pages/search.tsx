@@ -2,9 +2,11 @@ import { Page } from "../components/Page";
 import { TextInputWithButton } from "../components/TextInputWithButton";
 
 const styles = require("../styles/Home.module.css");
-const formStyles = require("../styles/form.module.css");
 
 const SearchPage = () => {
+  const searchByName = (name: string) => {
+    fetch(name);
+  };
   return (
     <Page>
       <h1>Search</h1>
@@ -13,7 +15,8 @@ const SearchPage = () => {
           <h3>
             <label htmlFor={"companyNumberSearchBox"}>Company number</label>
           </h3>
-          <TextInputWithButton textBoxPlaceholder={"05792439"} />
+          <TextInputWithButton textBoxPlaceholder={"05792439"}
+                               buttonLink={(v) => ("search/" + v)} />
 
         </div>
         <div className={styles.card}>

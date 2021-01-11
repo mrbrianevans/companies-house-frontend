@@ -41,3 +41,7 @@ div.jointContainer {
     flex-direction: row;
     flex-wrap: nowrap;
 }
+
+a.jointButton {
+    line-height: unset;
+}
