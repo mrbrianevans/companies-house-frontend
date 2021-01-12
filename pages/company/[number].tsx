@@ -41,9 +41,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // fetch company data from backend
   const apiURL = "http://" + context.req.headers.host + "/api/company/" + companyNumber;
   console.time("Fetch " + apiURL);
-  const companyData: ICompany = await fetch(apiURL).then(res => res.json());
-  console.timeEnd("Fetch " + apiURL);
+  const apiResponse = await fetch(apiURL);
+  let companyData: ICompany;
+  if (apiResponse.status === 200) {
+    companyData = await apiResponse.json();
+  } else {
+    companyData = {
+      category: "",
+      country: "",
+      county: "",
+      date: new Date().toString(),
+      number: "",
+      origin: "",
+      postCode: "",
+      status: "",
+      streetAddress: "",
+      name: "error occured"
+    };
+  }
   console.timeLog("Fetch " + apiURL, companyData);
+  console.timeEnd("Fetch " + apiURL);
   return {
     props: { companyData } // will be passed to the page component as props
   };

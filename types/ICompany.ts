@@ -8,7 +8,7 @@ export interface ICompany {
   category: string
   origin: string
   status: string
-  date: Date
+  date: Date | string
   SicCode1?: string | null
   SicCode2?: string | null
   SicCode3?: string | null

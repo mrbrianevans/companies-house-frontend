@@ -1,4 +1,4 @@
-import { Client } from "pg";
+import { Client, Pool } from "pg";
 import mysql, { Connection } from "mysql";
 // import {setDatabaseCredentials} from "./setDatabaseCredentials";
 
@@ -8,7 +8,7 @@ export const getDatabaseClient: () => Promise<Client> = async () => {
       rejectUnauthorized: false
       // require: true
     }
-  });
+  })
   // const client = new Pool({
   //   ssl: {
   //     rejectUnauthorized: false
@@ -18,7 +18,13 @@ export const getDatabaseClient: () => Promise<Client> = async () => {
   client.on("error", console.log);
   return client;
 }
-
+export const getDatabasePool: () => Pool = () => {
+  return new Pool({
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+};
 // this is for temporary use until the PostgreSQL db is up and running with data
 export const getTempDatabaseClient: () => Connection = () => {
   // setDatabaseCredentials()
