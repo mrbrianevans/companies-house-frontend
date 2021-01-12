@@ -3,8 +3,18 @@ import mysql, { Connection } from "mysql";
 // import {setDatabaseCredentials} from "./setDatabaseCredentials";
 
 export const getDatabaseClient: () => Promise<Client> = async () => {
-  const client = new Client();
-  await client.connect();
+  const client = new Client({
+    ssl: {
+      rejectUnauthorized: false
+      // require: true
+    }
+  });
+  // const client = new Pool({
+  //   ssl: {
+  //     rejectUnauthorized: false
+  //   }
+  // })
+  // await client.connect();
   client.on("error", console.log);
   return client;
 }

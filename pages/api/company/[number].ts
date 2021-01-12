@@ -1,41 +1,41 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getTempDatabaseClient } from "../../../helpers/connectToDatabase";
+import { getDatabaseClient } from "../../../helpers/connectToDatabase";
+import { ICompany } from "../../../types/ICompany";
 
-export default (req: NextApiRequest, res: NextApiResponse) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     query: { number }
   } = req;
   let response: { code: number; body: string } | undefined;
-  console.time("Get temp client object");
-  const database = getTempDatabaseClient();
-  console.timeEnd("Get temp client object");
+  console.time("Get db client object");
+  const database = await getDatabaseClient();
+  console.timeEnd("Get db client object");
 
   console.time("Connect to database");
   database.connect((err) => {
     console.timeEnd("Connect to database");
     if (err)
       response = {
-        body: `<b>Unable to connect to database ${err.message}</b>`,
+        body: `<b>Unable to connect to database: ${err.message}</b>`,
         code: 501
       };
     else {
       console.time("Query database");
       database.query(
-        `SELECT * FROM companies WHERE number=${number}`,
-        (err, result, fields) => {
+        `SELECT * FROM companies WHERE number='${number}'`,
+        (err, result) => {
           console.timeEnd("Query database");
-          if (err || result.length !== 1)
+          if (err || result.rowCount !== 1)
             response = {
-              body: `<b>Unable to get data from database ${err.message}</b>`,
+              body: `<b>Unable to get data from database: ${err.message}</b>`,
               code: 501
             };
-          //assumes there is only one result
-          else response = { body: JSON.stringify(result[0]), code: 200 };
+          else response = { body: JSON.stringify(result.rows[0] as ICompany), code: 200 };
           if (response) {
             database.end((err) => {
               if (err)
                 response = {
-                  body: `<b>Unable to end connection to database ${err.message}</b>`,
+                  body: `<b>Unable to end connection to database: ${err.message}</b>`,
                   code: 501
                 };
             });
@@ -48,11 +48,11 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       database.end((err) => {
         if (err)
           response = {
-            body: `<b>Unable to end connection to database ${err.message}</b>`,
+            body: `<b>Unable to end connection to database: ${err.message}</b>`,
             code: 501
           };
       });
-      res.status(response.code).send(response.body);
+      res.status(response.code).end(response.body);
     }
   });
 }
