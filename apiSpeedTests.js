@@ -1,3 +1,4 @@
+const fs = require("fs");
 const { ApiError } = require("next/dist/next-server/server/api-utils");
 const axios = require("axios").default;
 
@@ -36,7 +37,16 @@ const runSpeedTest = async (companyNumbers, baseUrl, config, urlSuffix) => {
     });
     average = Math.round(average / times.length);
     console.log(`${times.length} OK calls. Min: ${Math.min(...times)}ms , Max: ${Math.max(...times)}ms , Average: ${average}ms`);
+    return {
+      url: baseUrl,
+      qty: times.length,
+      min: Math.min(...times),
+      max: Math.max(...times),
+      average: average,
+      from: process.env.COMPUTERNAME
+    };
   }
+  return {};
 };
 
 const runComparisonSpeedTests = async (qty) => {
@@ -54,22 +64,30 @@ const runComparisonSpeedTests = async (qty) => {
 
   const companiesHouseAPI = "http://data.companieshouse.gov.uk/doc/company/";
   const dev = "http://localhost:8080/api/company/";
-  const production = "https://companies-house-frontend-api-rmfuc.ondigitalocean.app/api/company/";
+  const production = "http://companies-house-frontend-api-rmfuc.ondigitalocean.app/api/company/";
   const brianevans = "https://brianevans.tech/projects/companies-house/database/controller.php?action=company-api&number=";
 
   const companiesHouseApiKey = "dB7bNOkkBwiC3TB8R-QfcLzWuCzP-gPT-sXAtuP1";
   const companiesHouseApiAuthed = "https://api.company-information.service.gov.uk/company/";
 
-  await runSpeedTest(companyNumbers, companiesHouseAPI, {}, ".json");
-  await runSpeedTest(companyNumbers, companiesHouseApiAuthed, {
+  // await runSpeedTest(companyNumbers, companiesHouseAPI, {}, ".json");
+  const companiesHouseAPIResponseTimes = await runSpeedTest(companyNumbers, companiesHouseApiAuthed, {
     auth: {
       username: companiesHouseApiKey,
       password: ""
     }
   });
-  await runSpeedTest(companyNumbers, dev);
-  await runSpeedTest(companyNumbers, production);
-  await runSpeedTest(companyNumbers, brianevans);
+  const localHostResponseTimes = await runSpeedTest(companyNumbers, dev);
+  const productionResponseTimes = await runSpeedTest(companyNumbers, production);
+  const brianEvansTechResponseTimes = await runSpeedTest(companyNumbers, brianevans);
+  const results = [
+    companiesHouseAPIResponseTimes,
+    localHostResponseTimes,
+    productionResponseTimes,
+    brianEvansTechResponseTimes
+  ];
+  // fs.writeFileSync('speed-results/'+Date.now()+'.json', JSON.stringify(results, null, 2))
+  console.log(results);
 };
 
-runComparisonSpeedTests(30);
+runComparisonSpeedTests(25);

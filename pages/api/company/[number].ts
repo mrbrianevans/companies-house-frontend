@@ -7,9 +7,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } = req;
   try {
     console.time("Query database SELECT");
-    const { rows } = await getDatabasePool().query("SELECT * FROM companies WHERE number=$1;", [number]);
+    const pool = getDatabasePool();
+    const { rows } = await pool.query("SELECT * FROM companies WHERE number=$1;", [number]);
+    await pool.end();
     console.timeEnd("Query database SELECT");
-    console.assert(rows.length === 1, "Multiple rows returned for single company number");
+    console.assert(rows.length === 1, "Multiple rows returned for single company number " + number);
     res.status(200).json(rows[0]);
   } catch (e) {
     console.error("Error occured during API execution");

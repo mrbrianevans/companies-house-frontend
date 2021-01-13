@@ -39,7 +39,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     };
   // fetch company data from backend
-  const apiURL = "http://" + context.req.headers.host + "/api/company/" + companyNumber;
+  const apiURL = "http://localhost:8080/api/company/" + companyNumber;
+  // const apiURL = "http://" + context.req.headers.host + "/api/company/" + companyNumber;
   console.time("Fetch " + apiURL);
   const apiResponse = await fetch(apiURL);
   let companyData: ICompany;
