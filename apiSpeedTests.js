@@ -8,7 +8,7 @@ const runSpeedTest = async (companyNumbers, baseUrl, config, urlSuffix) => {
   if (companyNumbers) {
     const times = [];
     for (let i = 0; i < companyNumbers.length; i++) {
-      const companyNumber = companyNumbers[i].companyNumber;
+      const companyNumber = companyNumbers[i].number;
       try {
         // console.time(`Call API on ${companyNumber}`);
         const startTime = Date.now();
@@ -86,8 +86,8 @@ const runComparisonSpeedTests = async (qty) => {
     productionResponseTimes,
     brianEvansTechResponseTimes
   ];
-  // fs.writeFileSync('speed-results/'+Date.now()+'.json', JSON.stringify(results, null, 2))
-  console.log(results);
+  fs.writeFileSync("speed-results/" + Date.now() + ".json", JSON.stringify(results, null, 2));
+  // console.log(results);
 };
 
-runComparisonSpeedTests(25);
+runComparisonSpeedTests(100);

@@ -1,5 +1,6 @@
 import { CSSProperties, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const formStyles = require("../styles/form.module.css");
 
@@ -17,6 +18,8 @@ export interface TextInputWithButtonProps {
 
 export const TextInputWithButton = (props: TextInputWithButtonProps) => {
   const [value, setValue] = useState("");
+  const [buttonText, setButtonText] = useState<string | undefined>(props.buttonText);
+  const router = useRouter();
   return (
     <div className={formStyles.jointContainer}>
       <input
@@ -29,6 +32,13 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
         onChange={(c) => {
           setValue(c.target.value);
         }}
+        onKeyPress={async (k) => {
+          if (k.key === "Enter") { //pressing enter will do the same as clicking the button
+            setButtonText("Loading...");
+            if (props.buttonOnClick) props.buttonOnClick(value);
+            if (props.buttonLink) await router.push(props.buttonLink(value));
+          }
+        }}
       />
       {props.buttonLink ?
         <Link href={props.buttonLink(value)}>
@@ -38,7 +48,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
                     style={props.buttonStyle || {}}
                     onClick={() => {
                       props.buttonOnClick && props.buttonOnClick(value);
-                    }}>{props.buttonText || "Go!"}</button>
+                    }}>{buttonText || "Go!"}</button>
           </a>
         </Link>
         :
@@ -46,7 +56,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
                 style={props.buttonStyle || {}}
                 onClick={() => {
                   props.buttonOnClick && props.buttonOnClick(value);
-                }}>{props.buttonText || "Go!"}</button>
+                }}>{buttonText || "Go!"}</button>
       }
 
     </div>

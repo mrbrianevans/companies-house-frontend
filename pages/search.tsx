@@ -5,7 +5,7 @@ const styles = require("../styles/Home.module.css");
 
 const SearchPage = () => {
   const getSearchLink = (value: string) => {
-    if (value.match(/^[0-9]{6,8}$/))
+    if (value.match(/^[0-9]{6,8}$/)) //TODO: include numbers which start with 2 letters such as SC or FR for charities
       return "company/" + value;
     else
       return "search/" + value;

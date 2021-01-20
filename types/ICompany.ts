@@ -13,4 +13,5 @@ export interface ICompany {
   SicCode2?: string | null
   SicCode3?: string | null
   SicCode4?: string | null
+  sicCodes?: { company_number: string, sic_code: string }[]
 }

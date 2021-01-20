@@ -1,12 +1,9 @@
-import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
+import { GetServerSideProps } from "next";
 
-const SearchResults = () => {
-  const router = useRouter();
-  const { query }: ParsedUrlQuery = router.query;
+const SearchResults = ({ results }: { results: { query: string, companies: [] } }) => {
   return (
     <div className={"container"}>
-      <h1>Search results for {query}</h1>
+      <h1>Search results for {results.query}</h1>
       <table>
         <thead>
         <tr>
@@ -16,7 +13,7 @@ const SearchResults = () => {
         </tr>
         </thead>
         <tbody>
-
+        {/*results.companies.map(company=>(<tr></tr>)*/}
         </tbody>
       </table>
     </div>
@@ -24,3 +21,16 @@ const SearchResults = () => {
 };
 
 export default SearchResults;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const query = context.params.query.toString();
+
+  return (
+    {
+      props: {
+        query,
+        companies: []
+      }
+    }
+  );
+};
