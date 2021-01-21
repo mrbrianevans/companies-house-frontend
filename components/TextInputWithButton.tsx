@@ -47,6 +47,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
             <button className={formStyles.jointButton}
                     style={props.buttonStyle || {}}
                     onClick={() => {
+                      setButtonText("Loading...");
                       props.buttonOnClick && props.buttonOnClick(value);
                     }}>{buttonText || "Go!"}</button>
           </a>
@@ -55,6 +56,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
         <button className={formStyles.jointButton}
                 style={props.buttonStyle || {}}
                 onClick={() => {
+                  setButtonText("Loading...");
                   props.buttonOnClick && props.buttonOnClick(value);
                 }}>{buttonText || "Go!"}</button>
       }
