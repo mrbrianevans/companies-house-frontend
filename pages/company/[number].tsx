@@ -1,30 +1,34 @@
 import { GetServerSideProps } from "next";
 import { ICompany } from "../../types/ICompany";
+import { Page } from "../../components/Page";
 
+const styles = require("../../styles/Home.module.css");
 const CompanyDetails = ({
                           companyData,
                           apiResponseTime
                         }: { companyData: ICompany, apiResponseTime: number }) => {
   return (
-    <div className={"container"}>
+    <Page>
       <h1>Details for company {companyData.name}</h1>
-      <h4>{companyData.status} - {companyData.category}</h4>
-      <h3>Company number {companyData.number}</h3>
-      <div>
-        <p>{companyData.streetAddress}</p>
-        <p>{companyData.county}</p>
-        <p>{companyData.postCode}</p>
-        <p>{companyData.county}</p>
-        <p>{companyData.origin}</p>
+      <div className={styles.card + " " + styles.full}>
+        <h4>{companyData.status} - {companyData.category}</h4>
+        <h3>Company number {companyData.number}</h3>
+        <div>
+          <p>{companyData.streetAddress}</p>
+          <p>{companyData.county}</p>
+          <p>{companyData.postCode}</p>
+          <p>{companyData.county}</p>
+          <p>{companyData.origin}</p>
+        </div>
+        <div>
+          <h3>Sic Codes:</h3>
+          <ul>
+            {companyData.sicCodes?.map(sicCode => (<li>{sicCode["sic_code"]}</li>))}
+          </ul>
+        </div>
       </div>
-      <div>
-        <h3>Sic Codes:</h3>
-        <ul>
-          {companyData.sicCodes?.map(sicCode => (<li>{sicCode["sic_code"]}</li>))}
-        </ul>
-      </div>
-      <div className={"responseTime"}>API response time: {apiResponseTime}ms</div>
-    </div>
+      <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
+    </Page>
   );
 };
 
