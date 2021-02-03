@@ -1,0 +1,13 @@
+POST /api/accountants
+Host: localhost:8080
+Content-Type: application/json
+
+[
+  {
+    "category": "software",
+    "comparison": "equals",
+    "value": "CCH Software"
+  }
+]
+
+###
