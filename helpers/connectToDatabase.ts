@@ -24,7 +24,7 @@ export const getDatabasePool: () => Pool = () => {
       rejectUnauthorized: false
     }
   });
-};
+}
 // this is for temporary use until the PostgreSQL db is up and running with data
 export const getTempDatabaseClient: () => Connection = () => {
   // setDatabaseCredentials()

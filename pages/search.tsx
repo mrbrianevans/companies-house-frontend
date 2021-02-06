@@ -21,6 +21,7 @@ const SearchPage = () => {
           <TextInputWithButton textBoxPlaceholder={"05792439 or Tesco"}
                                buttonLink={getSearchLink}
                                buttonText={"Search!"}
+                               textBoxId={"companyNumberSearchBox"}
           />
         </div>
       </div>

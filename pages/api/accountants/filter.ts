@@ -4,15 +4,23 @@ import { IFilter } from "../../../types/IFilters";
 
 interface IAccountantFilter {
   category: "clients" | "software" | "location" | "financial"
-  comparison: "equals" | "less than" | "greater than" | "not equal to" | "asc" | "desc"
+  comparison:
+    | "equals"
+    | "less than"
+    | "greater than"
+    | "not equal to"
+    | "asc"
+    | "desc"
   value: string | number
 }
 
 // /api/accountants/filter
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { body: filters }: { body: IFilter[] } = req;
-  const queries: string[] = [], values: any[] = [];
-  for (const filter of filters) { //todo: each type of filter has a function that returns a sql query
+  const queries: string[] = [],
+    values: any[] = [];
+  for (const filter of filters) {
+    //todo: each type of filter has a function that returns a sql query
     if (filter.category === "software") {
       const { query, value } = filterBySoftware(filter);
       queries.push(query); //todo: need to update the $1 references for the number of values
@@ -24,12 +32,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { rows: matches } = await pool.query(queries[0], values);
   res
     .status(200)
-    .send("<b>View matching accountants here</b> <p>" + JSON.stringify(matches) + "</p>");
+    .send(
+      "<b>View matching accountants here</b> <p>" +
+      JSON.stringify(matches) +
+      "</p>"
+    );
 }
 
-const filterBySoftware: (filter: IFilter) => { query: string; value: any[] } = (filter) => {
-
-  if (filter.category !== "software") throw new Error("Wrong category function used");
+const filterBySoftware: (filter: IFilter) => { query: string; value: any[] } = (
+  filter
+) => {
+  if (filter.category !== "software")
+    throw new Error("Wrong category function used");
   // this is matching accounts who either do or who don't use the specified software
   const sqlGetPractices = `
       SELECT DISTINCT value FROM accounts WHERE label='Name of entity accountants' AND company_number
@@ -38,6 +52,9 @@ const filterBySoftware: (filter: IFilter) => { query: string; value: any[] } = (
           WHERE label='Name of production software' AND value=$1 LIMIT 1000
       ) LIMIT 10;
   `.replace("IN", filter.comparison === "exclude" ? " NOT IN " : "IN");
-  console.log("Querying:", sqlGetPractices.replace("$1", "'" + filter.value.toString() + "'"));
+  console.log(
+    "Querying:",
+    sqlGetPractices.replace("$1", "'" + filter.value.toString() + "'")
+  );
   return { query: sqlGetPractices, value: [filter.value] };
 };

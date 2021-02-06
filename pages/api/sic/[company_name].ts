@@ -9,8 +9,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(companyName);
   const pool = getDatabasePool();
 
-  const results = pool.query("SELECT description FROM companies, sic, sic_map WHERE name=$1 AND number=company_number AND code=sic_code", [companyName]);
+  const results = pool.query(
+    "SELECT description FROM companies, sic, sic_map WHERE name=$1 AND number=company_number AND code=sic_code",
+    [companyName]
+  );
 
   res.status(200).json(results);
-
 }

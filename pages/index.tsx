@@ -47,6 +47,16 @@ export default function Home() {
             <p>Filter <code>companies</code> by metrics</p>
           </div>
         </div>
+        <div className={styles.card + " " + styles.full}>
+          <a className={"card-link"}><Link href={"/accountants"}>
+            <div className={"card-header"}>
+              <h3>Accountants</h3>
+            </div>
+          </Link></a>
+          <div className={"card-body"}>
+            <p>Find accountants</p>
+          </div>
+        </div>
       </div>
     </Page>
   );

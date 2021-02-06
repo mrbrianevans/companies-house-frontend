@@ -30,14 +30,33 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     [`${searchQuery} %`],
     [`% ${searchQuery} %`],
     [`%${searchQuery}%`],
-    [queryWords.map(q => `%${q}%`)]
+    [queryWords.map((q) => `%${q}%`)]
   ];
   let combinedResults: ICompany[] = [];
-  for (let rowCount = 0, rowLimit = 20, searchLevels = 0, startTime = Date.now(), timeLimit = 5000; rowCount < rowLimit && searchLevels < sqlQueries.length && (Date.now() - startTime < timeLimit || rowCount === 0); searchLevels++) {
-    console.time(`Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`);
-    const { rows } = await client.query(sqlQueries[searchLevels] + "ORDER BY LENGTH(name) LIMIT " + (2 * rowLimit - rowCount), sqlBindings[searchLevels]);
+  for (
+    let rowCount = 0,
+      rowLimit = 20,
+      searchLevels = 0,
+      startTime = Date.now(),
+      timeLimit = 5000;
+    rowCount < rowLimit &&
+    searchLevels < sqlQueries.length &&
+    (Date.now() - startTime < timeLimit || rowCount === 0);
+    searchLevels++
+  ) {
+    console.time(
+      `Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`
+    );
+    const { rows } = await client.query(
+      sqlQueries[searchLevels] +
+      "ORDER BY LENGTH(name) LIMIT " +
+      (2 * rowLimit - rowCount),
+      sqlBindings[searchLevels]
+    );
     rowCount += rows.length;
-    console.timeEnd(`Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`);
+    console.timeEnd(
+      `Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`
+    );
     console.log("resulted in " + rows.length, "rows");
     combinedResults.push(...rows);
   }
@@ -45,16 +64,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const uniqueResults = [...new Set(combinedResults)];
   combinedResults = uniqueResults;
   console.time("Get SIC codes for all queries");
-  const { rows: sics } = await client.query(
+  const {
+    rows: sics
+  } = await client.query(
     "SELECT company_number, description AS sic_code FROM sic, sic_map WHERE company_number=ANY($1) AND sic.sic_code=sic_map.code",
-    [combinedResults.map(result => (result.number))]
+    [combinedResults.map((result) => result.number)]
   );
   console.timeEnd("Get SIC codes for all queries");
-  sics.forEach(sic => {
-    if (combinedResults[combinedResults.findIndex(result => result.number === sic.company_number)].sicCodes)
-      combinedResults[combinedResults.findIndex(result => result.number === sic.company_number)].sicCodes.push(sic.sic_code);
+  sics.forEach((sic) => {
+    if (
+      combinedResults[
+        combinedResults.findIndex(
+          (result) => result.number === sic.company_number
+        )
+        ].sicCodes
+    )
+      combinedResults[
+        combinedResults.findIndex(
+          (result) => result.number === sic.company_number
+        )
+        ].sicCodes.push(sic.sic_code);
     else
-      combinedResults[combinedResults.findIndex(result => result.number === sic.company_number)].sicCodes = [sic.sic_code];
+      combinedResults[
+        combinedResults.findIndex(
+          (result) => result.number === sic.company_number
+        )
+        ].sicCodes = [sic.sic_code];
   });
   client.release();
   await pool.end();
