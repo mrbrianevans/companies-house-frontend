@@ -158,8 +158,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     companyEvents,
     filingEvents,
     financials
-  };
+  }
   return {
     props: returnProps // will be passed to the page component as props
-  };
+  }
 }

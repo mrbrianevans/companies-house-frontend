@@ -1,13 +1,16 @@
-POST /api/accountants
-#Host: localhost:8080
-Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
+POST /api/accountants/filter
+Host: localhost:8080
+#Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
 Content-Type: application/json
 
 [
   {
-    "category": "software",
-    "comparison": "equals",
-    "value": "CCH Software"
+    "category": "production software",
+    "comparison": "begins with",
+    "values": [
+      "CCH Software"
+    ],
+    "type": "string"
   }
 ]
 

@@ -7,7 +7,7 @@ const Filter = () => {
     <Page>
       <h1>Filter</h1>
     </Page>
-  );
+  )
 }
 
 export default Filter;

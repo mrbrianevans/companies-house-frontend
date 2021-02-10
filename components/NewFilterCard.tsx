@@ -27,36 +27,40 @@ export function NewFilterCard(props: Props) {
     selectedFilterOption: IFilterOption,
     selectedFilterCriteria: IFilter["comparison"]
   ) => {
-
-    if ( // @ts-ignore i'm not so great with this kind of typescript
+    if (
+      // @ts-ignore i'm not so great with this kind of typescript
       selectedFilterOption.possibleComparisons.includes(selectedFilterCriteria)
     )
       return selectedFilterCriteria;
     else return selectedFilterOption.possibleComparisons[0];
   };
-  const addFilter = () => {
-    if (selectedFilterOption.valueType === "number")
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: "is between",
-        type: "number",
-        min,
-        max,
-        exclude
-      });
-    else if (selectedFilterOption.valueType === "string") {
-      // @ts-ignore i'm sorry, i'm checking this manually
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: comparison,
-        type: "string",
-        values,
-        exclude
-      });
-    }
-  };
   const addValue = (value: string) => {
     if (value.length) setValues((prevState) => [...prevState, value]);
+  };
+  const addFilter = () => {
+    if (typingValue.trim().length)
+      alert("Click Add value before adding this filter");
+    else {
+      if (selectedFilterOption.valueType === "number")
+        props.addFilter({
+          category: selectedFilterOption.category,
+          comparison: "is between",
+          type: "number",
+          min,
+          max,
+          exclude
+        });
+      else if (selectedFilterOption.valueType === "string") {
+        // @ts-ignore i'm sorry, i'm checking this manually
+        props.addFilter({
+          category: selectedFilterOption.category,
+          comparison: comparison,
+          type: "string",
+          values,
+          exclude
+        });
+      }
+    }
   };
   return (
     <div className={styles.card} style={{ width: "100%" }}>
@@ -130,7 +134,7 @@ export function NewFilterCard(props: Props) {
                 addValue(typingValue.trim());
                 setTypingValue("");
               }}>
-              Another one
+              Add value
             </button>
           </>
         )}
@@ -145,5 +149,5 @@ export function NewFilterCard(props: Props) {
         <button onClick={addFilter}>Add filter</button>
       </div>
     </div>
-  );
+  )
 }

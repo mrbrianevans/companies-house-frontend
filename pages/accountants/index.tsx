@@ -13,8 +13,6 @@ interface Props {
 
 const SearchPage = ({ filterOptions }: Props) => {
   //todo:
-  // - add a type (number|string) to the text box to only accept appropriate input for each option
-  // - store filters in an array, and map that array to cards below the create new card
   // - send a post request when the user submits the filters
   const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>(
     filterOptions.length > 0
@@ -29,8 +27,18 @@ const SearchPage = ({ filterOptions }: Props) => {
   };
   const applyFilter = () => {
     console.log("Requesting filter from backend: ", filters);
+    fetch("http://localhost:8080/api/accountants/filter", {
+      method: "POST",
+      body: JSON.stringify(filters),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then((r) => r.json())
+      .then((j) => setMatchingAccountants(j))
+      // .then(console.log)
+      .then(() => console.log("Request finished"))
+      .catch(console.error);
   };
-
+  const [matchingAccountants, setMatchingAccountants] = useState<{ value: string }[]>([]);
   return (
     <Page>
       <h1>Accountants</h1>
@@ -54,9 +62,14 @@ const SearchPage = ({ filterOptions }: Props) => {
         ))}
       </div>
       <button onClick={applyFilter}>Apply filter</button>
+      {matchingAccountants.map((accountant) => (
+        <div key={accountant.value}>
+          <div>{accountant.value}</div>
+        </div>
+      ))}
     </Page>
-  );
-};
+  )
+}
 
 export default SearchPage;
 
@@ -64,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const returnProps: Props = {
     // filterOptions: [{category: "an error has occurred", possibleComparisons: ["is exactly"], valueType: 'string'}]
     filterOptions: []
-  };
+  }
   const filterOptionsRequest = await fetch(
     "http://localhost:8080/api/accountants/getFilters"
   );
@@ -73,4 +86,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: returnProps
   };
-};
+}

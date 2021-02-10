@@ -26,7 +26,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       possibleComparisons: ["is exactly"],
       valueType: "string"
     }
-  ];
+  ]
 
   res.json(filterOptions);
 }

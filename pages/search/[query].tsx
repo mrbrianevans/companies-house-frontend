@@ -89,5 +89,5 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       query: queryString,
       companies: companies
     }
-  };
+  }
 }
