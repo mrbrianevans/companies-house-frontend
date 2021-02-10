@@ -7,7 +7,7 @@
 // - What is the location of the clients [region array]
 // - Who a specific client is
 // - Name of accountant [string]
-// - type of accounts filed (micro, small company etc)
+// - type of accounts filed (micro, small company etc) [string]
 
 //todo: When viewing an accountant in more detail:
 // - A distribution of when they file accounts
@@ -15,21 +15,45 @@
 // - A distribution of their clients size (based on financials, and accounts type)
 // - maybe an estimation of their fees based on their clients
 
-export interface IFilter {
+export interface IGeneralFilter {
   category: string
   comparison: string
-  value: any
+  exclude: boolean
+  type: "string" | "number"
 }
+
+export interface INumberFilter extends IGeneralFilter {
+  comparison: "is between"
+  min: number
+  max: number
+  type: "number"
+}
+
+export interface IStringFilter extends IGeneralFilter {
+  comparison: "begins with" | "is exactly" | "includes" | "ends with"
+  values: string[]
+  type: "string"
+}
+
+export type IFilter = INumberFilter | IStringFilter
 
 // searching an array of values, whether it includes or excludes the value
-export interface IArrayFilter extends IFilter {
+export interface IArrayFilter extends IGeneralFilter {
   category: "software" | "location"
   comparison: "include" | "exclude"
-  value: string | number
+  value: string[] | number
 }
 
-export interface IStringFilter extends IFilter {
-  category: "software" | "name-of-accountant" | ""
-  comparison: "include" | "exclude"
-  value: string | number
+export interface INumberFilterOption {
+  possibleComparisons: INumberFilter["comparison"][]
+  category: string
+  valueType: "number"
 }
+
+export interface IStringFilterOption {
+  possibleComparisons: IStringFilter["comparison"][]
+  category: string
+  valueType: "string"
+}
+
+export type IFilterOption = INumberFilterOption | IStringFilterOption

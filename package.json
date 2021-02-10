@@ -7,7 +7,7 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start -p 8080",
-    "format": "prettier --write **/**.ts",
+    "format": "prettier --write **/**.{ts,tsx}",
     "test": "node apiSpeedTests.js"
   },
   "keywords": [],

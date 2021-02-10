@@ -7,10 +7,10 @@ import { IFinancial } from "../../types/IFinancial";
 const styles = require("../../styles/Home.module.css");
 
 interface props {
-  companyData: ICompany,
-  apiResponseTime: number,
-  filingEvents?: IFilingEvent[],
-  companyEvents?: ICompanyEvent[],
+  companyData: ICompany
+  apiResponseTime: number
+  filingEvents?: IFilingEvent[]
+  companyEvents?: ICompanyEvent[]
   financials: IFinancial[]
 }
 
@@ -25,7 +25,9 @@ const CompanyDetails = ({
     <Page>
       <h1>Details for company {companyData.name}</h1>
       <div className={styles.card + " " + styles.full}>
-        <h4>{companyData.status} - {companyData.category}</h4>
+        <h4>
+          {companyData.status} - {companyData.category}
+        </h4>
         <h3>Company number {companyData.number}</h3>
         <div>
           <p>{companyData.streetAddress}</p>
@@ -37,45 +39,58 @@ const CompanyDetails = ({
         <div>
           <h3>Sic Codes:</h3>
           <ul>
-            {companyData.sicCodes?.map(sicCode => (<li>{sicCode["sic_code"]}</li>))}
+            {companyData.sicCodes?.map((sicCode) => (
+              <li>{sicCode["sic_code"]}</li>
+            ))}
           </ul>
         </div>
         <div>
-          {(filingEvents?.length + companyEvents?.length) ? <h3>Events</h3> : <></>}
+          {filingEvents?.length + companyEvents?.length ? (
+            <h3>Events</h3>
+          ) : (
+            <></>
+          )}
           <ul>
-            {filingEvents?.map(filingEvent => (
-              <li key={filingEvent.timepoint}
-                  dangerouslySetInnerHTML={{ __html: filingEvent.description }} />
+            {filingEvents?.map((filingEvent) => (
+              <li
+                key={filingEvent.timepoint}
+                dangerouslySetInnerHTML={{ __html: filingEvent.description }}
+              />
             ))}
-            {companyEvents?.map(companyEvent => (
+            {companyEvents?.map((companyEvent) => (
               <li key={companyEvent.timepoint}>
-                {`Company profile: ${Object.keys(companyEvent.fields_changed).length} items changed`}
+                {`Company profile: ${
+                  Object.keys(companyEvent.fields_changed).length
+                } items changed`}
               </li>
             ))}
           </ul>
-
         </div>
         <div style={{ maxWidth: 800 }}>
           {financials?.length ? <h3>Accounts</h3> : <></>}
           <ul>
-            {
-              financials?.map(financial => (
-                <li>{new Date(financial.end_date).toLocaleDateString()}: {financial.label} = {financial.value} {financial?.unit}</li>
-              ))
-            }
+            {financials?.map((financial) => (
+              <li>
+                {new Date(financial.end_date).toLocaleDateString()}:{" "}
+                {financial.label} = {financial.value} {financial?.unit}
+              </li>
+            ))}
           </ul>
         </div>
       </div>
-      <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
+      <div className={styles.apiResponseTime}>
+        API response time: {apiResponseTime}ms
+      </div>
     </Page>
-  );
-};
+  )
+}
 
 export default CompanyDetails;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const companyNumber = context.params.number.toString();
-  if (!companyNumber.match(/^[0-9]{6,8}$/)) //TODO: Needs to include letters like SC and FR for charities
+  if (!companyNumber.match(/^[0-9]{6,8}$/))
+    //TODO: Needs to include letters like SC and FR for charities
     return {
       redirect: {
         destination: "/search/" + companyNumber,
@@ -147,4 +162,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: returnProps // will be passed to the page component as props
   };
-};
+}

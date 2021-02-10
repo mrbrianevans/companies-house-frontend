@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getDatabasePool } from "../../../helpers/connectToDatabase";
-import { IFilter } from "../../../types/IFilters";
+import { IGeneralFilter } from "../../../types/IFilters";
 
 interface IAccountantFilter {
   category: "clients" | "software" | "location" | "financial"
@@ -16,7 +16,7 @@ interface IAccountantFilter {
 
 // /api/accountants/filter
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body: filters }: { body: IFilter[] } = req;
+  const { body: filters }: { body: IGeneralFilter[] } = req;
   const queries: string[] = [],
     values: any[] = [];
   for (const filter of filters) {
@@ -36,12 +36,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       "<b>View matching accountants here</b> <p>" +
       JSON.stringify(matches) +
       "</p>"
-    );
+    )
 }
 
-const filterBySoftware: (filter: IFilter) => { query: string; value: any[] } = (
-  filter
-) => {
+const filterBySoftware: (
+  filter: IGeneralFilter
+) => { query: string; value: any[] } = (filter) => {
   if (filter.category !== "software")
     throw new Error("Wrong category function used");
   // this is matching accounts who either do or who don't use the specified software

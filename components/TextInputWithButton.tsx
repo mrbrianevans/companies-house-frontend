@@ -18,7 +18,9 @@ export interface TextInputWithButtonProps {
 
 export const TextInputWithButton = (props: TextInputWithButtonProps) => {
   const [value, setValue] = useState("");
-  const [buttonText, setButtonText] = useState<string | undefined>(props.buttonText);
+  const [buttonText, setButtonText] = useState<string | undefined>(
+    props.buttonText
+  );
   const router = useRouter();
   return (
     <div className={formStyles.jointContainer}>
@@ -33,34 +35,40 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
           setValue(c.target.value);
         }}
         onKeyPress={async (k) => {
-          if (k.key === "Enter") { //pressing enter will do the same as clicking the button
+          if (k.key === "Enter") {
+            //pressing enter will do the same as clicking the button
             setButtonText("Loading...");
             if (props.buttonOnClick) props.buttonOnClick(value);
             if (props.buttonLink) await router.push(props.buttonLink(value));
           }
         }}
       />
-      {props.buttonLink ?
+      {props.buttonLink ? (
         <Link href={props.buttonLink(value)}>
           <a className={formStyles.jointButton}>
             {/*{This a tag is shrinking the button for some reason}*/}
-            <button className={formStyles.jointButton}
-                    style={props.buttonStyle || {}}
-                    onClick={() => {
-                      setButtonText("Loading...");
-                      props.buttonOnClick && props.buttonOnClick(value);
-                    }}>{buttonText || "Go!"}</button>
+            <button
+              className={formStyles.jointButton}
+              style={props.buttonStyle || {}}
+              onClick={() => {
+                setButtonText("Loading...");
+                props.buttonOnClick && props.buttonOnClick(value);
+              }}>
+              {buttonText || "Go!"}
+            </button>
           </a>
         </Link>
-        :
-        <button className={formStyles.jointButton}
-                style={props.buttonStyle || {}}
-                onClick={() => {
-                  setButtonText("Loading...");
-                  props.buttonOnClick && props.buttonOnClick(value);
-                }}>{buttonText || "Go!"}</button>
-      }
-
+      ) : (
+        <button
+          className={formStyles.jointButton}
+          style={props.buttonStyle || {}}
+          onClick={() => {
+            setButtonText("Loading...");
+            props.buttonOnClick && props.buttonOnClick(value);
+          }}>
+          {buttonText || "Go!"}
+        </button>
+      )}
     </div>
-  );
-};
+  )
+}

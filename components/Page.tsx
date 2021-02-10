@@ -11,10 +11,9 @@ export const Page = (props: PropsWithChildren<any>) => {
           <Link href={"/"}>
             <a>Companies house</a>
           </Link>
-
         </h1>
         {props.children}
       </div>
     </main>
-  );
-};
+  )
+}

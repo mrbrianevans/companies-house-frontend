@@ -6,26 +6,36 @@ import Link from "next/link";
 const styles = require("../../styles/Home.module.css");
 const formStyles = require("../../styles/form.module.css");
 
-const SearchResults = ({ query, companies }: { query: string, companies: ICompany[] }) => {
+const SearchResults = ({
+                         query,
+                         companies
+                       }: {
+  query: string
+  companies: ICompany[]
+}) => {
   console.log("Results: for ", query);
   return (
     <Page>
       <h1>Search results for {query}</h1>
       <div className={styles.grid}>
-        {companies.map(company => (
-            <div className={styles.card + " " + styles.triple} style={{ width: "100%" }}>
-              <h4>{company.name}</h4>
-              <p>{company.number}</p>
-              <ul>
-                {company.sicCodes?.map(s => <li>{s}</li>)}
-              </ul>
-              <a><Link href={"/company/" + company.number}>
+        {companies.map((company) => (
+          <div
+            className={styles.card + " " + styles.triple}
+            style={{ width: "100%" }}>
+            <h4>{company.name}</h4>
+            <p>{company.number}</p>
+            <ul>
+              {company.sicCodes?.map((s) => (
+                <li>{s}</li>
+              ))}
+            </ul>
+            <a>
+              <Link href={"/company/" + company.number}>
                 <button className={formStyles.go}>View</button>
-              </Link></a>
-            </div>
-          )
-        )
-        }
+              </Link>
+            </a>
+          </div>
+        ))}
       </div>
       <hr />
       <div>
@@ -39,20 +49,23 @@ const SearchResults = ({ query, companies }: { query: string, companies: ICompan
           </tr>
           </thead>
           <tbody>
-          {companies.map(company => (
+          {companies.map((company) => (
             <tr key={company.number}>
               <td>{company.number}</td>
               <td>{company.name}</td>
-              <td>{company.sicCodes?.map(s => <li>{s}</li>)}</td>
-            </tr>)
-          )
-          }
+              <td>
+                {company.sicCodes?.map((s) => (
+                  <li>{s}</li>
+                ))}
+              </td>
+            </tr>
+          ))}
           </tbody>
         </table>
       </div>
     </Page>
-  );
-};
+  )
+}
 
 export default SearchResults;
 
@@ -71,12 +84,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   } else {
     companies = [];
   }
-  return (
-    {
-      props: {
-        query: queryString,
-        companies: companies
-      }
+  return {
+    props: {
+      query: queryString,
+      companies: companies
     }
-  );
-};
+  };
+}
