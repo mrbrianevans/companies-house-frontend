@@ -38,12 +38,27 @@ const filterBySoftware: (
       SELECT DISTINCT value FROM accounts WHERE label='Name of entity accountants' AND company_number
       IN (
           SELECT DISTINCT company_number FROM accounts 
-          WHERE label='Name of production software' AND value ILIKE ANY($1) LIMIT 100
+          WHERE label='Name of production software' AND lower(value) LIKE ANY($1) LIMIT 100
       ) LIMIT 100;
   `.replace("IN", filter.exclude ? " NOT IN " : "IN");
+  const value = [
+    filter.values.map(value => {
+      switch (filter.comparison) {
+        case "begins with":
+          return value.toLowerCase() + "%";
+        case "ends with":
+          return "%" + value.toLowerCase();
+        case "includes":
+          return "%" + value.toLowerCase() + "%";
+        case "is exactly":
+          return value.toLowerCase();
+      }
+    })
+  ];
+  console.log(value, "value");
   console.log(
     "Querying:",
-    sqlGetPractices.replace("$1", "'" + filter.values.join("%','") + "%'")
+    sqlGetPractices.replace("$1", "'" + value[0].join("','") + "'")
   );
-  return { query: sqlGetPractices, value: [filter.values.map(value => value + "%")] };
+  return { query: sqlGetPractices, value };
 }

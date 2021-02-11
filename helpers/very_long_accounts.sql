@@ -45,3 +45,5 @@ ALTER TABLE accounts
 -- if insertion fails, you should try insert into very_long_accounts (same schema as accounts)
 
 -- this is the index:
+CREATE INDEX ON accounts (value);
+CREATE INDEX ON accounts (label);

@@ -12,8 +12,6 @@ interface Props {
 }
 
 const SearchPage = ({ filterOptions }: Props) => {
-  //todo:
-  // - send a post request when the user submits the filters
   const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>(
     filterOptions.length > 0
   );
@@ -60,6 +58,9 @@ const SearchPage = ({ filterOptions }: Props) => {
               {filter.type === "number"
                 ? filter.min + " and " + filter.max
                 : filter.values.join(" or ")}
+            <button
+              onClick={() => setFilters(prevState => prevState.filter((value, index) => index !== i))}>Remove
+            </button>
             </p>
           </div>
         ))}
@@ -70,8 +71,9 @@ const SearchPage = ({ filterOptions }: Props) => {
           filterMatchesLoading && <div className={styles.card}><h2>Loading...</h2></div>
         }
         {
-          matchingAccountants &&
-          <div style={{ width: "100%" }}>
+          matchingAccountants && !filterMatchesLoading &&
+          <div style={{ width: "100%" }} className={styles.card}>
+            <h2>Filter results</h2>
             <table style={{ width: "100%" }}>
               <thead>
               <tr>

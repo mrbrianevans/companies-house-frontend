@@ -95,7 +95,8 @@ export function NewFilterCard(props: Props) {
             if (
               "begins with" == v.target.value ||
               v.target.value === "includes" ||
-              v.target.value === "is exactly"
+              v.target.value === "is exactly" ||
+              v.target.value === "ends with"
             )
               setComparison(v.target.value);
           }}>

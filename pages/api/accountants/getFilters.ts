@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const filterOptions: IFilterOption[] = [
     {
       category: "production software",
-      possibleComparisons: ["begins with", "is exactly", "includes"],
+      possibleComparisons: ["begins with", "is exactly", "includes", "ends with"],
       valueType: "string"
     },
     {
