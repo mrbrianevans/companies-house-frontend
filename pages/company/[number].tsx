@@ -89,8 +89,7 @@ export default CompanyDetails;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const companyNumber = context.params.number.toString();
-  if (!companyNumber.match(/^[0-9]{6,8}$/))
-    //TODO: Needs to include letters like SC and FR for charities
+  if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {
       redirect: {
         destination: "/search/" + companyNumber,

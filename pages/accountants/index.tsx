@@ -25,8 +25,10 @@ const SearchPage = ({ filterOptions }: Props) => {
       setShowNewFilterForm(true);
     }, 1000);
   };
+  const [filterMatchesLoading, setFilterMatchesLoading] = useState(false);
   const applyFilter = () => {
     console.log("Requesting filter from backend: ", filters);
+    setFilterMatchesLoading(true);
     fetch("http://localhost:8080/api/accountants/filter", {
       method: "POST",
       body: JSON.stringify(filters),
@@ -36,9 +38,10 @@ const SearchPage = ({ filterOptions }: Props) => {
       .then((j) => setMatchingAccountants(j))
       // .then(console.log)
       .then(() => console.log("Request finished"))
+      .then(() => setFilterMatchesLoading(false))
       .catch(console.error);
   };
-  const [matchingAccountants, setMatchingAccountants] = useState<{ value: string }[]>([]);
+  const [matchingAccountants, setMatchingAccountants] = useState<{ value: string }[]>();
   return (
     <Page>
       <h1>Accountants</h1>
@@ -60,13 +63,39 @@ const SearchPage = ({ filterOptions }: Props) => {
             </p>
           </div>
         ))}
-      </div>
-      <button onClick={applyFilter}>Apply filter</button>
-      {matchingAccountants.map((accountant) => (
-        <div key={accountant.value}>
-          <div>{accountant.value}</div>
+        <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <button onClick={applyFilter}>Apply filter</button>
         </div>
-      ))}
+        {
+          filterMatchesLoading && <div className={styles.card}><h2>Loading...</h2></div>
+        }
+        {
+          matchingAccountants &&
+          <div style={{ width: "100%" }}>
+            <table style={{ width: "100%" }}>
+              <thead>
+              <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Number of clients</th>
+              </tr>
+              </thead>
+              <tbody>
+              {matchingAccountants?.map((accountant) => (
+                <tr key={accountant.value}>
+                  <td><a href={"/search/" + accountant.value}
+                         target={"_blank"}>{accountant.value}</a></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              ))}
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+
     </Page>
   )
 }
