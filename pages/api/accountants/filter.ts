@@ -9,18 +9,19 @@ import filterMap from "../../../helpers/filters";
 // in the main function with INTERSECT and EXCEPT statements. Only one query is issued (AND RETURNED!)
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  let { body: filters }: { body: IFilter[] } = req;
-  // console.log("REQUEST FILTERS: ", filters);
-  const queries: string[] = [],
-    values: any[] = [];
-  let valueCounter = 1;
-  for (const filter of filters) {
-    //each type of filter has a function that returns a sql query
-    const { query, value } = filterMap.get(filter.category)(filter);
-    // updates the $1 references for the number of values
-    queries.push(
-      query.replace(/\?/gm, () => {
-        return "$" + valueCounter++;
+  try {
+    let { body: filters }: { body: IFilter[] } = req;
+    console.log("REQUEST FILTERS: ", filters);
+    const queries: string[] = [],
+      values: any[] = [];
+    let valueCounter = 1;
+    for (const filter of filters) {
+      //each type of filter has a function that returns a sql query
+      const { query, value } = filterMap.get(filter.category)(filter);
+      // updates the $1 references for the number of values
+      queries.push(
+        query.replace(/\?/gm, () => {
+          return "$" + valueCounter++;
       })
     );
     values.push(value);
@@ -59,12 +60,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       else if (typeof value === "object") return "'" + value.join("'||'") + "'";
       else return value;
     });
-  console.log(prettyPrintQuery);
-  if (queries.length) {
-    console.time("Filtering accountants");
-    const pool = await getDatabasePool();
-    const { rows: matches } = await pool.query(bigQuery, bigValue);
-    console.timeEnd("Filtering accountants");
-    res.status(200).json(matches);
-  } else res.json({ sql: bigQuery, values: bigValue });
+    console.log(prettyPrintQuery);
+    if (queries.length) {
+      try {
+        console.time("Filtering accountants");
+        const pool = await getDatabasePool();
+        const { rows: matches } = await pool.query(bigQuery, bigValue);
+        res.status(200).json(matches);
+      } catch (e) {
+        res.status(501).json({ sql: prettyPrintQuery, error: e.message });
+      } finally {
+        console.timeEnd("Filtering accountants");
+      }
+    } else res.json({ sql: prettyPrintQuery });
+  } catch (e) {
+    res.status(501).json({ error: e.message });
+  }
 }

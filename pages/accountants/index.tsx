@@ -39,16 +39,14 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
       body: JSON.stringify(filters),
       headers: { "Content-Type": "application/json" }
     })
+      .then(r => {
+        if (r.status === 200) return r; else throw new Error(JSON.stringify(r.json()));
+      })
       .then((r) => r.json())
       .then((j: IAccountant[]) => setMatchingAccountants(j))
-      // .then(console.log)
-      .then(() => console.log("Request finished"))
-      .then(() => setFilterMatchesLoading(false))
-      .then(() => {
-        setRequestResponseTime(Date.now() - requestFilterTime);
-        // clearRequestResponseTimer = setTimeout(()=>setRequestResponseTime(undefined), 5000)
-      })
-      .catch(console.error);
+      .then(() => setRequestResponseTime(Date.now() - requestFilterTime))
+      .catch(console.error)
+      .finally(() => setFilterMatchesLoading(false));
   };
   const [matchingAccountants, setMatchingAccountants] = useState<IAccountant[]>();
   return (
