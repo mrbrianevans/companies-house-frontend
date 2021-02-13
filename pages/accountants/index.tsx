@@ -34,7 +34,8 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
     const requestFilterTime = Date.now();
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer);
     setFilterMatchesLoading(true);
-    fetch("http://localhost:8080/api/accountants/filter", {
+    // fetch("http://localhost:8080/api/accountants/filter", {
+    fetch("/api/accountants/filter", {
       method: "POST",
       body: JSON.stringify(filters),
       headers: { "Content-Type": "application/json" }
@@ -166,6 +167,11 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
             </table>
           </div>
         )}
+        <div className={styles.card}>
+          <img src={"https://companies-house.fra1.digitaloceanspaces.com/sqlScreenshot.svg"}
+               alt={"Screenshot of example SQL query to filter for accountants"}
+               style={{ width: "100%" }} />
+        </div>
       </div>
     </Page>
   )

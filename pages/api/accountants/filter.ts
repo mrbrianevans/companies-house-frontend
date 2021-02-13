@@ -10,8 +10,8 @@ import filterMap from "../../../helpers/filters";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    let { body: filters }: { body: IFilter[] } = req;
-    console.log("REQUEST FILTERS: ", filters);
+    const { body: filters }: { body: IFilter[] } = req;
+    // console.log("REQUEST FILTERS: ", filters);
     const queries: string[] = [],
       values: any[] = [];
     let valueCounter = 1;
@@ -60,7 +60,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       else if (typeof value === "object") return "'" + value.join("'||'") + "'";
       else return value;
     });
-    console.log(prettyPrintQuery);
+    // console.log(prettyPrintQuery);
     if (queries.length) {
       try {
         console.time("Filtering accountants");
