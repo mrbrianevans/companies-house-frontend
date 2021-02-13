@@ -13,7 +13,7 @@ const filterByName: (filter: IStringFilter) => IMinorQuery = (filter) => {
   `;
   const value = getValues(filter);
   return { query, value };
-};
+}
 const filterBySoftware: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
@@ -22,7 +22,7 @@ const filterBySoftware: (filter: IStringFilter) => IMinorQuery = (filter) => {
   `;
   const value = [filter.values];
   return { query, value };
-};
+}
 const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (
   filter
 ) => {
@@ -33,7 +33,7 @@ const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (
   `;
   const value = [filter.min, filter.max];
   return { query, value };
-};
+}
 
 const filterByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
@@ -47,7 +47,7 @@ const filterByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
   `;
   const value = getValues(filter);
   return { query, value };
-};
+}
 
 const filterByClientCompanyNumber: (filter: IStringFilter) => IMinorQuery = (
   filter
@@ -62,7 +62,7 @@ const filterByClientCompanyNumber: (filter: IStringFilter) => IMinorQuery = (
   `;
   const value = [filter.values];
   return { query, value };
-};
+}
 
 const filterMap = new Map<string, (filter: IFilter) => IMinorQuery>();
 filterMap.set("production software", filterBySoftware);

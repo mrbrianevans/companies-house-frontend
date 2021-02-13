@@ -1,0 +1,13 @@
+steps:
+  # Install dependencies (clean)
+  - name: node
+    entrypoint: npm
+    args: [ 'ci' ]
+  # build
+  - name: node
+    entrypoint: npm
+    args: [ 'run', 'build' ]
+  # start
+  - name: node
+    entrypoint: npm
+    args: [ 'run', 'start' ]

@@ -40,8 +40,9 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
       body: JSON.stringify(filters),
       headers: { "Content-Type": "application/json" }
     })
-      .then(r => {
-        if (r.status === 200) return r; else throw new Error(JSON.stringify(r.json()));
+      .then((r) => {
+        if (r.status === 200) return r;
+        else throw new Error(JSON.stringify(r.json()));
       })
       .then((r) => r.json())
       .then((j: IAccountant[]) => setMatchingAccountants(j))
@@ -168,9 +169,13 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
           </div>
         )}
         <div className={styles.card}>
-          <img src={"https://companies-house.fra1.digitaloceanspaces.com/sqlScreenshot.svg"}
-               alt={"Screenshot of example SQL query to filter for accountants"}
-               style={{ width: "100%" }} />
+          <img
+            src={
+              "https://companies-house.fra1.digitaloceanspaces.com/sqlScreenshot.svg"
+            }
+            alt={"Screenshot of example SQL query to filter for accountants"}
+            style={{ width: "100%" }}
+          />
         </div>
       </div>
     </Page>
