@@ -5,10 +5,25 @@ Content-Type: application/json
 
 [
   {
-    "category": "production software",
+    "category": "location",
+    "comparison": "includes",
+    "values": [
+      "TauNtOn"
+    ],
+    "type": "string"
+  },
+  {
+    "category": "number of clients",
+    "comparison": "between",
+    "min": 5,
+    "max": 20,
+    "type": "number"
+  },
+  {
+    "category": "name",
     "comparison": "begins with",
     "values": [
-      "CCH Software"
+      "som"
     ],
     "type": "string"
   }

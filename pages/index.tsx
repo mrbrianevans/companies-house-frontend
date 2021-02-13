@@ -62,12 +62,14 @@ export default function Home() {
           <a className={"card-link"}>
             <Link href={"/accountants"}>
               <div className={"card-header"}>
-                <h3>Accountants</h3>
+                <h3>Accountant Filter Facility</h3>
               </div>
             </Link>
           </a>
           <div className={"card-body"}>
-            <p>Find accountants</p>
+            <p>
+              Filter UK accountants by client metrics, location, software etc
+            </p>
           </div>
         </div>
       </div>

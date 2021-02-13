@@ -3,13 +3,14 @@
 WITH moved_rows AS (
     select value                          as accountant_name,
            count(distinct company_number) as number_of_clients,
-           (SELECT array_agg(distinct value) as software
-            from accounts
-            where label = 'Name of production software'
-              and company_number = ANY (
-                select company_number
+           (SELECT array_agg(distinct c.value) as software
+            from accounts c
+            where c.label = 'Name of production software'
+              and c.company_number = ANY (
+                select b.company_number
                 from accounts b
-                where label = 'Name of entity accountants' AND b.value = a.value
+                where label = 'Name of entity accountants'
+                  AND b.value = a.value
             ))                            as software
     from accounts a
     where label = 'Name of entity accountants'
@@ -22,29 +23,41 @@ INTO accountants (name, number_of_clients, software) --specify columns if necess
 ON CONFLICT (name) DO UPDATE SET software=excluded.software;
 
 
-SELECT array_agg(distinct value) as software
-from accounts
-where label = 'Name of production software'
-  and company_number = ANY (
-    select company_number
-    from accounts
-    where label = 'Name of entity accountants'
-      AND value = 'Haines Watts'
-);
+-- Match names with company numbers for accountants
+SELECT a.name as aname, c.name as cname, c.number as cnumber, c.county
+FROM accountants a
+         INNER JOIN companies c
+                    ON c.name ILIKE a.name
+LIMIT 10;
+--update version:
+WITH matches AS
+         (
+             SELECT a.name as aname, c.name as cname, c.number as cnumber, c.county
+             FROM accountants a
+                      INNER JOIN companies c
+                                 ON lower(a.name) = lower(c.name)
+         )
+UPDATE accountants
+SET company_number=matches.cnumber
+FROM matches
+WHERE name = matches.aname
+RETURNING matches.aname, matches.cname, matches.cnumber
+;
 
-select value,
-       count(distinct company_number) as number_of_clients,
-       (SELECT array_agg(distinct value) as software
-        from accounts
-        where label = 'Name of production software'
-          and company_number = ANY (
-            select company_number
-            from accounts b
-            where label = 'Name of entity accountants' AND value = a.value
-        ))                            as software
-from accounts a
-where label = 'Name of entity accountants'
-group by value
-order by number_of_clients desc
-limit 5;
-
+WITH matches AS (
+    SELECT * FROM accountants WHERE software && (ARRAY ['CCH Software'])
+)
+SELECT DISTINCT (a.name),
+                a.company_number,
+                a.software,
+                a.number_of_clients,
+                p.area,
+                c.date,
+                c.status,
+                c.streetaddress
+FROM matches a,
+     companies c,
+     postcode_summary p
+WHERE a.company_number = c.number
+  AND c.postcode LIKE p.postcode_prefix || '%'
+LIMIT 10;

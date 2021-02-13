@@ -45,3 +45,69 @@ div.jointContainer {
 a.jointButton {
     display: flex;
 }
+
+button.icon {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-content: center;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    padding: 0.2em;
+    font-size: larger;
+    transition: all 500ms ease 0s;
+    margin: 0.2em;
+}
+
+button.icon:hover {
+    transform: scale(1.1);
+}
+
+button.pill {
+    width: 5.5rem;
+    height: 1.5rem;
+    display: grid;
+    place-content: center;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    font-size: larger;
+    transition: all 500ms ease 0s;
+}
+
+button.pill:hover {
+    transform: scale(1.1);
+}
+
+button.success {
+    background-color: aliceblue;
+    color: #0070f3;
+    border: 1px solid #0070f3;
+    border-radius: 3px;
+}
+
+button.success:hover {
+    background-color: #0070f3;
+    color: aliceblue;
+    border: 1px solid #0070f3;
+}
+
+select.standard, input.standard {
+    border-radius: 5px;
+    border-width: 1px;
+    background-color: aliceblue;
+    color: #0070f3;
+    padding: 0.2em;
+    margin: 0 0 0 0.2em;
+}
+
+div.formrow {
+    display: flex;
+    justify-content: space-between;
+    width: fit-content;
+}
+
+select.standard:first-child, input.standard:first-child {
+    margin: 0;
+}

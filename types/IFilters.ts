@@ -54,6 +54,7 @@ export interface IStringFilterOption {
   possibleComparisons: IStringFilter["comparison"][]
   category: string
   valueType: "string"
+  suggestions?: string[]
 }
 
 export type IFilterOption = INumberFilterOption | IStringFilterOption
