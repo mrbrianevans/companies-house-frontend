@@ -33,9 +33,18 @@ Content-Type: application/json
 
 
 GET /api/events/03511297
-Host: localhost:8080
-#Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
+#Host: localhost:8080
+Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
 Accept: application/json
+Content-Type: application/json
 
 ###
 
+GET /api/accountants/filter
+Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
+Accept: application/json
+Content-Type: application/json
+
+{
+  "body": "Hello, I am filter"
+}

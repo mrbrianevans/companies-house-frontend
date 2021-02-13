@@ -1,13 +1,9 @@
 steps:
   # Install dependencies (clean)
-  - name: node
+  - name: node:$_NODE_VERSION
     entrypoint: npm
     args: [ 'ci' ]
   # build
-  - name: node
+  - name: node:$_NODE_VERSION
     entrypoint: npm
     args: [ 'run', 'build' ]
-  # start
-  - name: node
-    entrypoint: npm
-    args: [ 'run', 'start' ]
