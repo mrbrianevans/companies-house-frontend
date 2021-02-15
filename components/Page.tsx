@@ -9,7 +9,7 @@ export const Page = (props: PropsWithChildren<any>) => {
       <div className={styles.container}>
         <h1 className={styles.title}>
           <Link href={"/"}>
-            <a>Companies house</a>
+            <a>Filter Facility</a>
           </Link>
         </h1>
         {props.children}

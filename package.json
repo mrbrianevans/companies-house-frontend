@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.5.3",
+    "knex": "^0.21.17",
     "mysql": "^2.18.1",
     "next": "10.0.5",
     "pg": "^8.5.1",
