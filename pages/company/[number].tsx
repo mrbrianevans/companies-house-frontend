@@ -61,7 +61,7 @@ const CompanyDetails = ({
               <li key={companyEvent.timepoint}>
                 {`Company profile: ${
                   Object.keys(companyEvent.fields_changed).length
-                } items changed`}
+                } items changed on ${companyEvent.published}`}
               </li>
             ))}
           </ul>
