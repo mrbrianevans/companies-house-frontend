@@ -51,17 +51,27 @@ const CompanyDetails = ({
             <></>
           )}
           <ul>
-            {filingEvents?.map((filingEvent) => (
-              <li
-                key={filingEvent.timepoint}
-                dangerouslySetInnerHTML={{ __html: filingEvent.description }}
-              />
-            ))}
+            {filingEvents?.map((filingEvent) => {
+              const [
+                ,
+                descriptionHeading,
+                descriptionBody
+              ] = filingEvent.description.match(/^<b>(.*)<\/b>(.*)$/);
+              return (
+                <li
+                  key={filingEvent.timepoint}
+                >
+                  {new Date(filingEvent.published).toDateString()}:
+                  <b>{descriptionHeading}</b>
+                  {descriptionBody}
+                </li>
+              );
+            })}
             {companyEvents?.map((companyEvent) => (
               <li key={companyEvent.timepoint}>
                 {`Company profile: ${
                   Object.keys(companyEvent.fields_changed).length
-                } items changed on ${companyEvent.published}`}
+                } items changed on ${new Date(companyEvent.published).toDateString()}`}
               </li>
             ))}
           </ul>
