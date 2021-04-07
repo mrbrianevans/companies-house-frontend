@@ -1,4 +1,4 @@
-import { Page } from '../components/Page'
+import { Page } from '../components/Page/Page'
 
 const styles = require('../styles/Home.module.css')
 const apiDocs = () => {

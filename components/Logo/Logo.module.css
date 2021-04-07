@@ -9,9 +9,8 @@ h1.logo {
 }
 
 h1.logo:hover {
-  border-bottom: 2px solid rgb(34, 34, 34);
   text-decoration: none;
-  background: rgba(255, 255, 255, 0.3);
+  /*background: rgba(255, 255, 255, 0.3);*/
 }
 
 h1.logo span.little {

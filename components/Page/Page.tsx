@@ -3,12 +3,11 @@ import Link from 'next/link'
 import Logo from '../Logo/Logo'
 import Footer from '../Footer/Footer'
 
-const styles = require('./Page.module.css')
+const styles = require('./Page.module.scss')
 
 export const Page = (props: PropsWithChildren<any>) => {
   return (
     <>
-      <div className={styles.background} />
       <Link href={'/'}>
         <a>
           <Logo />

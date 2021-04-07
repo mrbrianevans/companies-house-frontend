@@ -38,14 +38,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     rowCount < rowLimit && searchLevels < sqlQueries.length && (Date.now() - startTime < timeLimit || rowCount === 0);
     searchLevels++
   ) {
-    console.time(`Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`)
+    const prettyPrintQuery = sqlQueries[searchLevels].replace(/\$[0-9]+/gm, (dollarN) => {
+      const value = sqlBindings[searchLevels][Number(dollarN.slice(1)) - 1]
+      if (typeof value === 'number') return value
+      else if (typeof value === 'string') return `'${value}'`
+      else if (typeof value === 'object') return "'" + value.join("','") + "'"
+      else return value
+    })
+    // console.log(prettyPrintQuery)
+    console.time(`Querying: (${prettyPrintQuery})`)
     const { rows } = await client.query(
       sqlQueries[searchLevels] + 'ORDER BY LENGTH(name) LIMIT ' + (2 * rowLimit - rowCount),
       sqlBindings[searchLevels]
     )
     rowCount += rows.length
-    console.timeEnd(`Querying: (${sqlQueries[searchLevels]}, ${sqlBindings[searchLevels]})`)
-    console.log('resulted in ' + rows.length, 'rows')
+    console.timeEnd(`Querying: (${prettyPrintQuery})`)
+    // console.log('resulted in ' + rows.length, 'rows')
     combinedResults.push(...rows)
   }
   // @ts-ignore

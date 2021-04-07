@@ -30,7 +30,7 @@ export default function Home() {
         </Link>
         <div className={styles.aboutCard}>
           <h3>About</h3>
-          <p>This is a filtering facility website</p>
+          <p>This is a facility to filter UK companies using data from companies house</p>
         </div>
       </div>
     </Page>
@@ -39,5 +39,5 @@ export default function Home() {
 
 const getSearchLink = (value: string) => {
   if (value.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/)) return 'company/' + value
-  else return 'search/' + value
+  else return '/search' + (value ? '/' + value : '')
 }

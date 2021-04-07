@@ -48,19 +48,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             AND c.postcode = p.postcode
           LIMIT 10;
       `
-    // console.log(bigQuery)
     let bigValue = values.flat()
-    // console.log(bigValue)
-    const prettyPrintQuery =
-      // queries.join(' INTERSECT ')
-      bigQuery.replace(/\$[0-9]+/gm, (dollarN) => {
-        const value = bigValue[Number(dollarN.slice(1)) - 1]
-        if (typeof value === 'number') return value
-        else if (typeof value === 'string') return `'${value}'`
-        else if (typeof value === 'object') return "'" + value.join("'||'") + "'"
-        else return value
-      })
-    // console.log(prettyPrintQuery);
+    const prettyPrintQuery = bigQuery.replace(/\$[0-9]+/gm, (dollarN) => {
+      const value = bigValue[Number(dollarN.slice(1)) - 1]
+      if (typeof value === 'number') return value
+      else if (typeof value === 'string') return `'${value}'`
+      else if (typeof value === 'object') return "'" + value.join("','") + "'"
+      else return value
+    })
+    // console.log(prettyPrintQuery)
     if (queries.length) {
       try {
         console.time('Filtering accountants')

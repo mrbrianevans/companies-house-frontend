@@ -1,12 +1,14 @@
 import { Page } from '../../components/Page/Page'
 import * as React from 'react'
 import { useState } from 'react'
-import { NewFilterCard } from '../../components/NewFilterCard'
+import { NewFilterCard } from '../../components/NewFilterCard/NewFilterCard'
 import { IFilter, IFilterOption } from '../../types/IFilters'
 import { GetServerSideProps } from 'next'
 import { IAccountant } from '../../types/IAccountant'
+import Button from '../../components/Inputs/Button'
+import IconButton from '../../components/Inputs/IconButton'
 
-const styles = require('../../styles/Home.module.css')
+const styles = require('../../styles/Accountant.module.scss')
 
 const formStyles = require('../../styles/form.module.css')
 
@@ -52,26 +54,17 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
   return (
     <Page>
       <h1>Accountants</h1>
-      <div className={styles.grid}>
+      <div className={styles.filterContainer}>
         {showNewFilterForm ? <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} /> : <></>}
         {filters?.map((filter: IFilter, i) => (
           <div className={styles.card} style={{ width: '100%' }} key={i}>
             <h3>
               Filter {i + 1} - {filter.category}
-              <button
-                style={{
-                  float: 'right',
-                  backgroundColor: '#3b4f59'
-                }}
-                className={formStyles.icon}
-                onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}>
-                <img
-                  src={'https://companies-house.fra1.digitaloceanspaces.com/remove_icon.svg'}
-                  style={{ width: '1rem', height: '1rem' }}
-                  alt={'remove icon'}
-                  loading={'lazy'}
-                />
-              </button>
+              <IconButton
+                floatRight
+                label={'x'}
+                onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
+              />
             </h3>
             <p>
               {filter.exclude ? 'Exclude' : 'Only show'} accountants where {filter.category} {filter.comparison}{' '}
@@ -80,12 +73,7 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
           </div>
         ))}
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <button
-            onClick={applyFilter}
-            className={formStyles.pill + ' ' + formStyles.success}
-            style={{ padding: '1rem', width: '10em' }}>
-            Apply filter
-          </button>
+          <Button label={'Run query'} onClick={applyFilter} />
         </div>
         {filterMatchesLoading && (
           <div className={styles.card}>
@@ -99,7 +87,7 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
             <table style={{ width: '100%' }}>
               <thead>
                 <tr>
-                  <th></th>
+                  <th />
                   <th>Name</th>
                   <th>Company Number</th>
                   <th>Location</th>
@@ -146,9 +134,14 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
         )}
         <div className={styles.card}>
           <img
-            src={'https://companies-house.fra1.digitaloceanspaces.com/sqlScreenshot.svg'}
+            src={'/static/big_query.svg'}
             alt={'Screenshot of example SQL query to filter for accountants'}
-            style={{ width: '100%' }}
+            style={{ width: '50%' }}
+          />
+          <img
+            src={'/static/company_query.svg'}
+            alt={'Screenshot of example SQL query to search for a company by name'}
+            style={{ width: '50%' }}
           />
         </div>
       </div>
