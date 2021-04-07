@@ -1,6 +1,6 @@
-import { Page } from "../components/Page";
+import { Page } from '../components/Page/Page'
 
-const styles = require("../styles/Home.module.css");
+const styles = require('../styles/Home.module.css')
 
 const Filter = () => {
   return (
@@ -10,4 +10,4 @@ const Filter = () => {
   )
 }
 
-export default Filter;
+export default Filter

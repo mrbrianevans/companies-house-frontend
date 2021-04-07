@@ -19,41 +19,41 @@ export interface IGeneralFilter {
   category: string
   comparison: string
   exclude: boolean
-  type: "string" | "number"
+  type: 'string' | 'number'
 }
 
 export interface INumberFilter extends IGeneralFilter {
-  comparison: "is between"
+  comparison: 'is between'
   min: number
   max: number
-  type: "number"
+  type: 'number'
 }
 
 export interface IStringFilter extends IGeneralFilter {
-  comparison: "begins with" | "is exactly" | "includes" | "ends with"
+  comparison: 'begins with' | 'is exactly' | 'includes' | 'ends with'
   values: string[]
-  type: "string"
+  type: 'string'
 }
 
 export type IFilter = INumberFilter | IStringFilter
 
 // searching an array of values, whether it includes or excludes the value
 export interface IArrayFilter extends IGeneralFilter {
-  category: "software" | "location"
-  comparison: "include" | "exclude"
+  category: 'software' | 'location'
+  comparison: 'include' | 'exclude'
   value: string[] | number
 }
 
 export interface INumberFilterOption {
-  possibleComparisons: INumberFilter["comparison"][]
+  possibleComparisons: INumberFilter['comparison'][]
   category: string
-  valueType: "number"
+  valueType: 'number'
 }
 
 export interface IStringFilterOption {
-  possibleComparisons: IStringFilter["comparison"][]
+  possibleComparisons: IStringFilter['comparison'][]
   category: string
-  valueType: "string"
+  valueType: 'string'
   suggestions?: string[]
 }
 

@@ -1,10 +1,10 @@
-import { GetServerSideProps } from "next";
-import { ICompany } from "../../types/ICompany";
-import { Page } from "../../components/Page";
-import { ICompanyEvent, IFilingEvent } from "../../types/IEvent";
-import { IFinancial } from "../../types/IFinancial";
+import { GetServerSideProps } from 'next'
+import { ICompany } from '../../types/ICompany'
+import { Page } from '../../components/Page/Page'
+import { ICompanyEvent, IFilingEvent } from '../../types/IEvent'
+import { IFinancial } from '../../types/IFinancial'
 
-const styles = require("../../styles/Home.module.css");
+const styles = require('../../styles/Home.module.css')
 
 interface props {
   companyData: ICompany
@@ -14,17 +14,11 @@ interface props {
   financials: IFinancial[]
 }
 
-const CompanyDetails = ({
-                          companyData,
-                          apiResponseTime,
-                          filingEvents,
-                          companyEvents,
-                          financials
-                        }: props) => {
+const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   return (
     <Page>
       <h1>Details for company {companyData.name}</h1>
-      <div className={styles.card + " " + styles.full}>
+      <div className={styles.card + ' ' + styles.full}>
         <h4>
           {companyData.status} - {companyData.category}
         </h4>
@@ -40,38 +34,27 @@ const CompanyDetails = ({
           <h3>Sic Codes:</h3>
           <ul>
             {companyData.sicCodes?.map((sicCode) => (
-              <li>{sicCode["sic_code"]}</li>
+              <li>{sicCode['sic_code']}</li>
             ))}
           </ul>
         </div>
         <div>
-          {filingEvents?.length + companyEvents?.length ? (
-            <h3>Events</h3>
-          ) : (
-            <></>
-          )}
+          {filingEvents?.length + companyEvents?.length ? <h3>Events</h3> : <></>}
           <ul>
             {filingEvents?.map((filingEvent) => {
-              const [
-                ,
-                descriptionHeading,
-                descriptionBody
-              ] = filingEvent.description.match(/^<b>(.*)<\/b>(.*)$/);
+              const [, descriptionHeading, descriptionBody] = filingEvent.description.match(/^<b>(.*)<\/b>(.*)$/)
               return (
-                <li
-                  key={filingEvent.timepoint}
-                >
-                  {new Date(filingEvent.published).toDateString()}:
-                  <b>{descriptionHeading}</b>
+                <li key={filingEvent.timepoint}>
+                  {new Date(filingEvent.published).toDateString()}:<b>{descriptionHeading}</b>
                   {descriptionBody}
                 </li>
-              );
+              )
             })}
             {companyEvents?.map((companyEvent) => (
               <li key={companyEvent.timepoint}>
-                {`Company profile: ${
-                  Object.keys(companyEvent.fields_changed).length
-                } items changed on ${new Date(companyEvent.published).toDateString()}`}
+                {`Company profile: ${Object.keys(companyEvent.fields_changed).length} items changed on ${new Date(
+                  companyEvent.published
+                ).toDateString()}`}
               </li>
             ))}
           </ul>
@@ -81,86 +64,85 @@ const CompanyDetails = ({
           <ul>
             {financials?.map((financial) => (
               <li>
-                {new Date(financial.end_date).toLocaleDateString()}:{" "}
-                {financial.label} = {financial.value} {financial?.unit}
+                {new Date(financial.end_date).toLocaleDateString()}: {financial.label} = {financial.value}{' '}
+                {financial?.unit}
               </li>
             ))}
           </ul>
         </div>
       </div>
-      <div className={styles.apiResponseTime}>
-        API response time: {apiResponseTime}ms
-      </div>
+      <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
     </Page>
   )
 }
 
-export default CompanyDetails;
+export default CompanyDetails
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const companyNumber = context.params.number.toString();
+  const companyNumber = context.params.number.toString()
   if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {
       redirect: {
-        destination: "/search/" + companyNumber,
+        destination: '/search/' + companyNumber,
         permanent: false // not sure what this does??
       }
-    };
-  const startTime = Date.now();
+    }
+  const startTime = Date.now()
   // fetch company data from backend
-  let apiURL = "http://localhost:8080/api/company/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const apiResponse = await fetch(apiURL);
-  let companyData: ICompany;
+  let apiURL = 'http://localhost:8080/api/company/' + companyNumber
+  console.time('Fetch ' + apiURL)
+  const apiResponse = await fetch(apiURL)
+  let companyData: ICompany
   if (apiResponse.status === 200) {
-    const apiJSON = await apiResponse.json();
-    companyData = apiJSON["company"];
+    const apiJSON = await apiResponse.json()
+    companyData = apiJSON['company']
   } else {
+    //todo: get the companies house API
     companyData = {
-      category: "",
-      country: "",
-      county: "",
+      category: '',
+      country: '',
+      county: '',
       date: new Date().toString(),
-      number: "",
-      origin: "",
-      postCode: "",
-      status: "",
-      streetAddress: "",
-      name: "error occured"
-    };
+      number: '',
+      origin: '',
+      postCode: '',
+      status: '',
+      streetAddress: '',
+      name: 'error occured'
+    }
   }
   // console.timeLog("Fetch " + apiURL, companyData);
-  console.timeEnd("Fetch " + apiURL);
+  console.timeEnd('Fetch ' + apiURL)
 
   // fetch events from backend
-  apiURL = "http://localhost:8080/api/events/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const eventApiResponse = await fetch(apiURL);
-  let companyEvents: ICompanyEvent[], filingEvents: IFilingEvent[];
+  apiURL = 'http://localhost:8080/api/events/' + companyNumber
+  console.time('Fetch ' + apiURL)
+  const eventApiResponse = await fetch(apiURL)
+  let companyEvents: ICompanyEvent[], filingEvents: IFilingEvent[]
   if (eventApiResponse.status === 200) {
-    const eventApiJson = await eventApiResponse.json();
-    let { companyEvents: c, filingEvents: f } = eventApiJson;
-    companyEvents = c;
-    filingEvents = f;
+    const eventApiJson = await eventApiResponse.json()
+    let { companyEvents: c, filingEvents: f } = eventApiJson
+    companyEvents = c
+    filingEvents = f
   } else {
-    companyEvents = [];
-    filingEvents = [];
+    companyEvents = []
+    filingEvents = []
   }
 
   // fetch financials from backend
-  apiURL = "http://localhost:8080/api/accounts/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const accountApiResponse = await fetch(apiURL);
-  let financials: IFinancial[];
+  apiURL = 'http://localhost:8080/api/accounts/' + companyNumber
+  console.time('Fetch ' + apiURL)
+  const accountApiResponse = await fetch(apiURL)
+  let financials: IFinancial[]
   if (accountApiResponse.status === 200) {
-    const accountApiJson = await accountApiResponse.json();
-    let { financials: f } = accountApiJson;
-    financials = f;
+    const accountApiJson = await accountApiResponse.json()
+    let { financials: f } = accountApiJson
+    financials = f
   } else {
-    financials = [];
+    financials = []
   }
   // console.timeLog("Fetch " + apiURL, companyData);
-  console.timeEnd("Fetch " + apiURL);
+  console.timeEnd('Fetch ' + apiURL)
   const returnProps: props = {
     companyData,
     apiResponseTime: Date.now() - startTime,
