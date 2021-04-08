@@ -132,18 +132,6 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
             </table>
           </div>
         )}
-        <div className={styles.card}>
-          <img
-            src={'/static/big_query.svg'}
-            alt={'Screenshot of example SQL query to filter for accountants'}
-            style={{ width: '50%' }}
-          />
-          <img
-            src={'/static/company_query.svg'}
-            alt={'Screenshot of example SQL query to search for a company by name'}
-            style={{ width: '50%' }}
-          />
-        </div>
       </div>
     </Page>
   )
@@ -156,6 +144,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // filterOptions: [{category: "an error has occurred", possibleComparisons: ["is exactly"], valueType: 'string'}]
     filterOptions: []
   }
+
   const filterOptionsRequest = await fetch('http://localhost:8080/api/accountants/getFilters')
   if (filterOptionsRequest.status === 200) returnProps.filterOptions = await filterOptionsRequest.json()
   return {

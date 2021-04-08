@@ -22,6 +22,7 @@ div.searchBar {
   flex-direction: row;
   justify-content: flex-end;
   grid-column: 1/-1;
+  padding: 0;
 }
 
 div.searchBar > label {
@@ -30,4 +31,13 @@ div.searchBar > label {
 
 .aboutCard {
   grid-column: 1/-1;
+}
+
+div.addressBlock {
+  display: flex;
+  flex-direction: column;
+}
+
+div.addressBlock p {
+  margin: 0;
 }

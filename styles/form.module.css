@@ -1,113 +1,114 @@
 button.go {
-    background-color: aliceblue;
-    color: #0070f3;
-    border-color: #0070f3;
-    border-radius: 3px;
+  background-color: aliceblue;
+  color: #0070f3;
+  border-color: #0070f3;
+  border-radius: 3px;
 }
 
 button.go:hover,
 button.go:focus,
 button.go:active {
-    background-color: #0070f3;
-    color: aliceblue;
-    border-color: #0070f3;
+  background-color: #0070f3;
+  color: aliceblue;
+  border-color: #0070f3;
 }
 
-
 button.jointButton {
-    background-color: aliceblue;
-    color: #0070f3;
-    border-color: #0070f3;
-    border-radius: 0 5px 5px 0;
-    border-width: 1px;
+  background-color: aliceblue;
+  color: #0070f3;
+  border-color: #0070f3;
+  border-radius: 0 5px 5px 0;
+  border-width: 1px;
 }
 
 button.jointButton:hover,
 button.jointButton:focus,
 button.jointButton:active {
-    background-color: #0070f3;
-    color: aliceblue;
-    border-color: #0070f3;
+  background-color: #0070f3;
+  color: aliceblue;
+  border-color: #0070f3;
 }
 
 input.jointTextBox {
-    border-radius: 5px 0 0 5px;
-    border-width: 1px 0 1px 1px;
-    padding: 0.2em;
+  border-radius: 5px 0 0 5px;
+  border-width: 1px 0 1px 1px;
+  padding: 0.2em;
 }
 
 div.jointContainer {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 a.jointButton {
-    display: flex;
+  display: flex;
 }
 
 button.icon {
-    width: 2rem;
-    height: 2rem;
-    display: grid;
-    place-content: center;
-    border-radius: 0.75rem;
-    border: none;
-    cursor: pointer;
-    padding: 0.2em;
-    font-size: larger;
-    transition: all 500ms ease 0s;
-    margin: 0.2em;
+  width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-content: center;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  padding: 0.2em;
+  font-size: larger;
+  transition: all 500ms ease 0s;
+  margin: 0.2em;
 }
 
 button.icon:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 button.pill {
-    width: 5.5rem;
-    height: 1.5rem;
-    display: grid;
-    place-content: center;
-    border-radius: 0.75rem;
-    border: none;
-    cursor: pointer;
-    font-size: larger;
-    transition: all 500ms ease 0s;
+  width: 5.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-content: center;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  font-size: larger;
+  transition: all 500ms ease 0s;
 }
 
 button.pill:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 button.success {
-    background-color: aliceblue;
-    color: #0070f3;
-    border: 1px solid #0070f3;
-    border-radius: 3px;
+  background-color: aliceblue;
+  color: #0070f3;
+  border: 1px solid #0070f3;
+  border-radius: 3px;
 }
 
 button.success:hover {
-    background-color: #0070f3;
-    color: aliceblue;
-    border: 1px solid #0070f3;
+  background-color: #0070f3;
+  color: aliceblue;
+  border: 1px solid #0070f3;
 }
 
-select.standard, input.standard {
-    border-radius: 5px;
-    border-width: 1px;
-    background-color: aliceblue;
-    color: #0070f3;
-    padding: 0.2em;
-    margin: 0 0 0 0.2em;
+select.standard,
+input.standard {
+  border-radius: 5px;
+  border-width: 1px;
+  background-color: aliceblue;
+  color: #0070f3;
+  padding: 0.2em;
+  margin: 0 0 0 0.2em;
 }
 
 div.formrow {
-    display: flex;
-    justify-content: space-between;
-    width: fit-content;
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
 }
 
-select.standard:first-child, input.standard:first-child {
-    margin: 0;
+select.standard:first-child,
+input.standard:first-child {
+  margin: 0;
 }

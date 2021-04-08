@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { ICompany } from '../../types/ICompany'
 import { Page } from '../../components/Page/Page'
-import { ICompanyEvent, IFilingEvent } from '../../types/IEvent'
+import { DBCompanyEvent, DBFilingEvent } from '../../types/IEvent'
 import { IFinancial } from '../../types/IFinancial'
 
 const styles = require('../../styles/Home.module.css')
@@ -9,8 +9,8 @@ const styles = require('../../styles/Home.module.css')
 interface props {
   companyData: ICompany
   apiResponseTime: number
-  filingEvents?: IFilingEvent[]
-  companyEvents?: ICompanyEvent[]
+  filingEvents?: DBFilingEvent[]
+  companyEvents?: DBCompanyEvent[]
   financials: IFinancial[]
 }
 
@@ -110,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   apiURL = 'http://localhost:8080/api/events/' + companyNumber
   console.time('Fetch ' + apiURL)
   const eventApiResponse = await fetch(apiURL)
-  let companyEvents: ICompanyEvent[], filingEvents: IFilingEvent[]
+  let companyEvents: DBCompanyEvent[], filingEvents: DBFilingEvent[]
   if (eventApiResponse.status === 200) {
     const eventApiJson = await eventApiResponse.json()
     let { companyEvents: c, filingEvents: f } = eventApiJson

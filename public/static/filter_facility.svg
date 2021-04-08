@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="864" height="432" viewBox="0 0 640 320"
+	 xml:space="preserve">
+<style>/* <![CDATA[ */
+@font-face {
+        font-family: Oswald;
+        src: url('https://fonts.googleapis.com/css2?family=Oswald&display=swap');
+    }
+    svg{
+        font-family: Oswald, sans-serif;
+    }
+
+/* ]]> */</style>
+	<desc>Created with Fabric.js 3.6.3</desc>
+
+	<defs>
+</defs>
+	<g transform="matrix(5.42 0 0 5.42 412.13 217.59)" style="">
+		<text xml:space="preserve" font-size="18" font-style="normal" font-weight="bold"
+			  style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(61,61,61); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-46.28" y="5.65" >ilter Facility</tspan></text>
+</g>
+	<g transform="matrix(1 0 0 1 215.24 162.89)">
+<g style="">
+		<g transform="matrix(-1.7 0 0 -1.06 -100.81 -92.72)">
+<polygon
+		style="stroke: rgb(61,61,61); stroke-width: 8; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(61,61,61); fill-rule: nonzero; opacity: 1;"
+		vector-effect="non-scaling-stroke" points="0,-42.5 50,42.5 -50,42.5 "/>
+</g>
+	<g transform="matrix(15.83 0 0 15.83 23.17 0)" style="">
+		<text xml:space="preserve" font-size="18" font-style="normal"
+			  style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(61,61,61); fill-rule: nonzero; opacity: 1; white-space: pre;"><tspan x="-10.04" y="5.65" >F</tspan></text>
+</g>
+</g>
+</g>
+</svg>
