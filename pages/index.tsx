@@ -1,78 +1,43 @@
-import Link from "next/link";
-import { Page } from "../components/Page";
+import Link from 'next/link'
+import { Page } from '../components/Page/Page'
+import { TextInputWithButton } from '../components/Inputs/TextInputWithButton'
 
-const styles = require("../styles/Home.module.css");
+const styles = require('../styles/Home.module.css')
 export default function Home() {
   return (
     <Page>
-      <div className={styles.grid + " " + styles.smallGrid}>
-        <div className={styles.card + " " + styles.double}>
-          <a className={"card-link"}>
-            <Link href={"/docs"}>
-              <div className={"card-header"}>
-                <h3>Docs</h3>
-              </div>
-            </Link>
-          </a>
-          <div className={"card-body"}>
-            <p>Learn about using this interface</p>
-          </div>
+      <div className={styles.featureBrowserGrid}>
+        <div className={styles.searchBar} style={{ padding: 0 }}>
+          <TextInputWithButton
+            textBoxPlaceholder={'Company search'}
+            buttonLink={getSearchLink}
+            buttonText={'Search!'}
+            textBoxId={'companyNumberSearchBox'}
+            textBoxStyle={{ boxShadow: 'none', height: '2rem' }}
+          />
         </div>
-        <div className={styles.card + " " + styles.double}>
-          <a href={"#"} className={"card-link"}>
-            <Link href={"/apiDocs"}>
-              <div className={"card-header"}>
-                <h3>API Docs</h3>
-              </div>
-            </Link>
+        <Link href={'/accountants'}>
+          <a draggable={'false'}>
+            <h3>Filter accountants</h3>
+            <p>This uses accountants discolsure on accounts</p>
           </a>
-          <div className={"card-body"}>
-            <p>Use this API as a data source</p>
-          </div>
-        </div>
-        <div className={styles.card + " " + styles.double}>
-          <a href={"#"} className={"card-link"}>
-            <Link href={"/search"}>
-              <div className={"card-header"}>
-                <h3>Search</h3>
-              </div>
-            </Link>
+        </Link>
+        <Link href={'/filter'}>
+          <a draggable={'false'}>
+            <h3>Filter companies</h3>
+            <p>View a companies accounts filings and other information held by companies house</p>
           </a>
-          <div className={"card-body"}>
-            <p>
-              Search for a <code>company</code> by name
-            </p>
-          </div>
-        </div>
-        <div className={styles.card + " " + styles.double}>
-          <a href={"#"} className={"card-link"}>
-            <Link href={"/filter"}>
-              <div className={"card-header"}>
-                <h3>Filter</h3>
-              </div>
-            </Link>
-          </a>
-          <div className={"card-body"}>
-            <p>
-              Filter <code>companies</code> by metrics
-            </p>
-          </div>
-        </div>
-        <div className={styles.card + " " + styles.full}>
-          <a className={"card-link"}>
-            <Link href={"/accountants"}>
-              <div className={"card-header"}>
-                <h3>Accountant Filter Facility</h3>
-              </div>
-            </Link>
-          </a>
-          <div className={"card-body"}>
-            <p>
-              Filter UK accountants by client metrics, location, software etc
-            </p>
-          </div>
+        </Link>
+        <div className={styles.aboutCard}>
+          <h3>About</h3>
+          <p>This is a facility to filter UK companies using data from companies house</p>
         </div>
       </div>
     </Page>
   )
+}
+
+const getSearchLink = (value: string) => {
+  if (value.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/)) return 'company/' + encodeURIComponent(value)
+  else return '/search' + (value ? '/' + encodeURIComponent(value) : '')
 }

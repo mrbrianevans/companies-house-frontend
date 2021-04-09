@@ -1,0 +1,13 @@
+@import '../../styles/colors.sass';
+
+main.main {
+  max-width: 60rem;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 1rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.1);
+}
+
+div.mainContainer {
+  overflow-y: hidden;
+}

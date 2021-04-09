@@ -1,7 +1,0 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-
-export default (req: NextApiRequest, res: NextApiResponse) => {
-  res
-    .status(200)
-    .send("<b>View companies here</b> <p>This will be a browser</p>");
-}

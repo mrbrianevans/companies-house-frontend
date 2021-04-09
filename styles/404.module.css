@@ -1,0 +1,11 @@
+div.messageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.messageContainer h3 {
+  border-right: 2px solid rgb(34, 34, 34);
+  padding: 1rem;
+  margin: 1rem;
+}

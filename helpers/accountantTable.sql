@@ -18,14 +18,14 @@ WITH moved_rows AS (
     order by number_of_clients desc
 )
 INSERT
-INTO accountants (name, number_of_clients, software) --specify columns if necessary
+INTO legacy_accountants (name, number_of_clients, software) --specify columns if necessary
     (SELECT DISTINCT accountant_name, number_of_clients, software FROM moved_rows)
 ON CONFLICT (name) DO UPDATE SET software=excluded.software;
 
 
 -- Match names with company numbers for accountants
 SELECT a.name as aname, c.name as cname, c.number as cnumber, c.county
-FROM accountants a
+FROM legacy_accountants a
          INNER JOIN companies c
                     ON c.name ILIKE a.name
 LIMIT 10;
@@ -33,11 +33,11 @@ LIMIT 10;
 WITH matches AS
          (
              SELECT a.name as aname, c.name as cname, c.number as cnumber, c.county
-             FROM accountants a
+             FROM legacy_accountants a
                       INNER JOIN companies c
                                  ON lower(a.name) = lower(c.name)
          )
-UPDATE accountants
+UPDATE legacy_accountants
 SET company_number=matches.cnumber
 FROM matches
 WHERE name = matches.aname
@@ -45,7 +45,7 @@ RETURNING matches.aname, matches.cname, matches.cnumber
 ;
 
 WITH matches AS (
-    SELECT * FROM accountants WHERE software && (ARRAY ['CCH Software'])
+    SELECT * FROM legacy_accountants WHERE software && (ARRAY ['CCH Software'])
 )
 SELECT DISTINCT (a.name),
                 a.company_number,

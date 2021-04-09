@@ -1,16 +1,20 @@
 {
   "name": "companies-house-frontend",
   "version": "1.0.0",
-  "description": "My companies house project frontpage",
+  "description": "Filter facility frontend",
   "main": "dist/index.js",
   "scripts": {
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start -p 8080",
-    "format": "prettier --write **/**.{ts,tsx}",
+    "format": "prettier --write **/**.{ts,tsx,css,scss}",
     "test": "node apiSpeedTests.js"
   },
-  "keywords": [],
+  "keywords": [
+    "companies-house",
+    "accounts"
+  ],
+  "homepage": "https://filterfacility.co.uk",
   "author": "Brian Evans",
   "license": "ISC",
   "dependencies": {
@@ -22,6 +26,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "sass": "^1.32.8",
     "swr": "^0.4.0"
   },
   "devDependencies": {

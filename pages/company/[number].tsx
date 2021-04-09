@@ -1,166 +1,114 @@
-import { GetServerSideProps } from "next";
-import { ICompany } from "../../types/ICompany";
-import { Page } from "../../components/Page";
-import { ICompanyEvent, IFilingEvent } from "../../types/IEvent";
-import { IFinancial } from "../../types/IFinancial";
+import { GetServerSideProps } from 'next'
+import { ICompanyProfile } from '../../types/ICompany'
+import { Page } from '../../components/Page/Page'
+import { CompanyEvent, FilingEvent } from '../../types/IEvent'
+import { getCompanyProfile } from '../../interface/getCompanyProfile'
+import getCompanyEvents from '../../interface/getCompanyEvents'
+import { ICompanyAccounts } from '../../types/ICompanyAccounts'
+import getCompanyAccounts from '../../interface/getCompanyAccounts'
 
-const styles = require("../../styles/Home.module.css");
+const styles = require('../../styles/Home.module.css')
 
 interface props {
-  companyData: ICompany
+  companyData: ICompanyProfile
   apiResponseTime: number
-  filingEvents?: IFilingEvent[]
-  companyEvents?: ICompanyEvent[]
-  financials: IFinancial[]
+  filingEvents?: FilingEvent[]
+  companyEvents?: CompanyEvent[]
+  financials: ICompanyAccounts
 }
 
-const CompanyDetails = ({
-                          companyData,
-                          apiResponseTime,
-                          filingEvents,
-                          companyEvents,
-                          financials
-                        }: props) => {
+const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   return (
     <Page>
-      <h1>Details for company {companyData.name}</h1>
-      <div className={styles.card + " " + styles.full}>
+      <h1>{companyData.name}</h1>
+      <div className={styles.card + ' ' + styles.full}>
         <h4>
           {companyData.status} - {companyData.category}
         </h4>
-        <h3>Company number {companyData.number}</h3>
-        <div>
-          <p>{companyData.streetAddress}</p>
-          <p>{companyData.county}</p>
-          <p>{companyData.postCode}</p>
-          <p>{companyData.county}</p>
-          <p>{companyData.origin}</p>
+        <h3>Company number {companyData.company_number}</h3>
+        <div className={styles.addressBlock}>
+          <p>{companyData.streetaddress}</p>
+          <p>
+            {companyData.parish}
+            {companyData.parish && companyData.county && ', '}
+            {companyData.county}
+          </p>
+          <p>
+            {companyData?.region?.includes(companyData.country)
+              ? companyData.region
+              : companyData.region + (companyData.region && companyData.country && ', ') + companyData.country}
+          </p>
         </div>
         <div>
-          <h3>Sic Codes:</h3>
+          <h3>Industry classification:</h3>
           <ul>
-            {companyData.sicCodes?.map((sicCode) => (
-              <li>{sicCode["sic_code"]}</li>
+            {companyData.sic_codes?.map((sicCode, i) => (
+              <li key={i}>{sicCode}</li>
             ))}
           </ul>
         </div>
         <div>
-          {filingEvents?.length + companyEvents?.length ? (
-            <h3>Events</h3>
-          ) : (
-            <></>
-          )}
+          {filingEvents?.length + companyEvents?.length ? <h3>Events</h3> : <></>}
           <ul>
-            {filingEvents?.map((filingEvent) => {
-              const [
-                ,
-                descriptionHeading,
-                descriptionBody
-              ] = filingEvent.description.match(/^<b>(.*)<\/b>(.*)$/);
-              return (
-                <li
-                  key={filingEvent.timepoint}
-                >
-                  {new Date(filingEvent.published).toDateString()}:
-                  <b>{descriptionHeading}</b>
-                  {descriptionBody}
-                </li>
-              );
-            })}
+            {filingEvents
+              ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
+              ?.map((filingEvent) => {
+                const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(/^<b>(.*)<\/b>(.*)$/)
+                return (
+                  <li key={filingEvent.id}>
+                    {new Date(filingEvent.published).toDateString()}: <b>{descriptionHeading}</b>
+                    {descriptionBody}
+                  </li>
+                )
+              })}
             {companyEvents?.map((companyEvent) => (
-              <li key={companyEvent.timepoint}>
-                {`Company profile: ${
-                  Object.keys(companyEvent.fields_changed).length
-                } items changed on ${new Date(companyEvent.published).toDateString()}`}
+              <li key={companyEvent.id}>
+                {`Company profile: ${Object.keys(companyEvent.fields_changed).length} items changed on ${new Date(
+                  companyEvent.published
+                ).toDateString()}`}
               </li>
             ))}
           </ul>
         </div>
         <div style={{ maxWidth: 800 }}>
-          {financials?.length ? <h3>Accounts</h3> : <></>}
-          <ul>
-            {financials?.map((financial) => (
-              <li>
-                {new Date(financial.end_date).toLocaleDateString()}:{" "}
-                {financial.label} = {financial.value} {financial?.unit}
-              </li>
-            ))}
-          </ul>
+          {financials && (
+            <>
+              <h3>Accounts</h3>
+              <p>
+                Balance sheet date: <b>{financials.balance_sheet_date}</b>
+              </p>
+              <p>
+                Accountants: <b>{financials.accountants}</b>
+              </p>
+              <p>
+                Accounting software: <b>{financials.accounting_software}</b>
+              </p>
+            </>
+          )}
         </div>
       </div>
-      <div className={styles.apiResponseTime}>
-        API response time: {apiResponseTime}ms
-      </div>
+      <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
     </Page>
   )
 }
 
-export default CompanyDetails;
+export default CompanyDetails
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const companyNumber = context.params.number.toString();
+  const startTime = Date.now()
+  const companyNumber = context.params.number.toString()
   if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {
       redirect: {
-        destination: "/search/" + companyNumber,
+        destination: '/search/' + companyNumber,
         permanent: false // not sure what this does??
       }
-    };
-  const startTime = Date.now();
-  // fetch company data from backend
-  let apiURL = "http://localhost:8080/api/company/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const apiResponse = await fetch(apiURL);
-  let companyData: ICompany;
-  if (apiResponse.status === 200) {
-    const apiJSON = await apiResponse.json();
-    companyData = apiJSON["company"];
-  } else {
-    companyData = {
-      category: "",
-      country: "",
-      county: "",
-      date: new Date().toString(),
-      number: "",
-      origin: "",
-      postCode: "",
-      status: "",
-      streetAddress: "",
-      name: "error occured"
-    };
-  }
-  // console.timeLog("Fetch " + apiURL, companyData);
-  console.timeEnd("Fetch " + apiURL);
-
-  // fetch events from backend
-  apiURL = "http://localhost:8080/api/events/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const eventApiResponse = await fetch(apiURL);
-  let companyEvents: ICompanyEvent[], filingEvents: IFilingEvent[];
-  if (eventApiResponse.status === 200) {
-    const eventApiJson = await eventApiResponse.json();
-    let { companyEvents: c, filingEvents: f } = eventApiJson;
-    companyEvents = c;
-    filingEvents = f;
-  } else {
-    companyEvents = [];
-    filingEvents = [];
-  }
-
-  // fetch financials from backend
-  apiURL = "http://localhost:8080/api/accounts/" + companyNumber;
-  console.time("Fetch " + apiURL);
-  const accountApiResponse = await fetch(apiURL);
-  let financials: IFinancial[];
-  if (accountApiResponse.status === 200) {
-    const accountApiJson = await accountApiResponse.json();
-    let { financials: f } = accountApiJson;
-    financials = f;
-  } else {
-    financials = [];
-  }
-  // console.timeLog("Fetch " + apiURL, companyData);
-  console.timeEnd("Fetch " + apiURL);
+    }
+  const companyData = await getCompanyProfile(companyNumber)
+  const { companyEvents, filingEvents } = await getCompanyEvents(companyNumber)
+  let financials: ICompanyAccounts = await getCompanyAccounts(companyNumber)
+  // todo: only server-side render the basic company information
+  //  - fetch the rest via API on client side after page load
   const returnProps: props = {
     companyData,
     apiResponseTime: Date.now() - startTime,

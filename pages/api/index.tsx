@@ -1,5 +1,5 @@
 // API Documentation
-import { NextApiHandler } from "next";
+import { NextApiHandler } from 'next'
 
 const apiHome: NextApiHandler = (req, res) => {
   res
@@ -9,4 +9,4 @@ const apiHome: NextApiHandler = (req, res) => {
     )
 }
 
-export default apiHome;
+export default apiHome

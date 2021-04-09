@@ -1,0 +1,23 @@
+@import '../../styles/colors'
+.jointContainer
+  display: flex
+  flex-direction: row
+  flex-wrap: nowrap
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1)
+
+input.jointTextBox
+  border-width: 0
+  padding: 0.2em
+  background-color: rgba(255, 255, 255, 0.4)
+
+a.jointButton
+  display: flex
+
+button.jointButton
+  background-color: rgba(255, 255, 255, 0.8)
+  color: $primary_text
+  border-width: 0
+
+
+button.jointButton:focus, input.jointTextBox:focus
+  outline: $primary

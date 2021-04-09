@@ -1,6 +1,6 @@
 -- filter by location
 SELECT *
-FROM accountants a,
+FROM legacy_accountants a,
      companies c,
      postcode_summary p
 WHERE a.company_number = c.number

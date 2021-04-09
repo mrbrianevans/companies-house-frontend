@@ -1,0 +1,58 @@
+@import '../../styles/colors.sass';
+
+$shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+//----------BUTTON------------------------
+button.primary {
+  box-shadow: $shadow;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 0.5rem;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 300ms ease 0s;
+}
+
+button.primary:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+button.primary:focus {
+  outline: 2px solid $primary;
+}
+
+//----------ICON BUTTON--------------------
+button.iconButton {
+  @extend .primary;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: inline-grid;
+  place-content: center;
+}
+
+//---------- DROP DOWN ---------------------
+select.dropdown {
+  box-shadow: $shadow;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+}
+
+//--------------FORM ROW --------------------
+div.formRow {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(5rem, 12fr));
+}
+
+//------------------TEXT BOX--------------------
+input.textBox {
+  box-shadow: $shadow;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+}
+
+//------------------TEXT AREA--------------------
+textarea.textArea {
+  box-shadow: $shadow;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+}
