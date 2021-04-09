@@ -1,2 +1,2 @@
-GET https://api.company-information.service.gov.uk/search/companies?q=total&items_per_page=100
+GET https://api.company-information.service.gov.uk/company/08814774
 Authorization: Basic YnE5Wm9PSmp6MFVndVJQbWJLcjNxbm95RUFoLTltcEVEaTN0bW04Uzo=

@@ -8,7 +8,7 @@ interface IMinorQuery {
 const filterByName: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM accountants
+      FROM legacy_accountants
       WHERE lower(name) LIKE ANY (?)
   `
   const value = getValues(filter)
@@ -17,7 +17,7 @@ const filterByName: (filter: IStringFilter) => IMinorQuery = (filter) => {
 const filterBySoftware: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM accountants
+      FROM legacy_accountants
       WHERE software && (?)
   `
   const value = [filter.values]
@@ -26,8 +26,8 @@ const filterBySoftware: (filter: IStringFilter) => IMinorQuery = (filter) => {
 const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM accountants
-      WHERE accountants.number_of_clients BETWEEN ? AND ?
+      FROM legacy_accountants
+      WHERE legacy_accountants.number_of_clients BETWEEN ? AND ?
   `
   const value = [filter.min, filter.max]
   return { query, value }
@@ -36,7 +36,7 @@ const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (filter)
 const filterByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT a.name, a.company_number, a.software, a.number_of_clients
-      FROM accountants a,
+      FROM legacy_accountants a,
            companies c,
            postcode_summary p
       WHERE a.company_number = c.number
@@ -51,7 +51,7 @@ const filterByClientCompanyNumber: (filter: IStringFilter) => IMinorQuery = (fil
   const query = `
       SELECT a.name, a.company_number, a.software, a.number_of_clients
       FROM accounts acc,
-           accountants a
+           legacy_accountants a
       WHERE acc.value = a.name
         AND acc.label = 'Name of entity accountants'
         AND acc.company_number LIKE ANY (?)

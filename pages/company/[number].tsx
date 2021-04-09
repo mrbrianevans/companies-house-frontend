@@ -20,7 +20,7 @@ interface props {
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   return (
     <Page>
-      <h1>Details for company {companyData.name}</h1>
+      <h1>{companyData.name}</h1>
       <div className={styles.card + ' ' + styles.full}>
         <h4>
           {companyData.status} - {companyData.category}
@@ -28,10 +28,16 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
         <h3>Company number {companyData.company_number}</h3>
         <div className={styles.addressBlock}>
           <p>{companyData.streetaddress}</p>
-          <p>{companyData.county}</p>
-          <p>{companyData.postcode}</p>
-          <p>{companyData.country}</p>
-          <p>{companyData.region}</p>
+          <p>
+            {companyData.parish}
+            {companyData.parish && companyData.county && ', '}
+            {companyData.county}
+          </p>
+          <p>
+            {companyData?.region?.includes(companyData.country)
+              ? companyData.region
+              : companyData.region + (companyData.region && companyData.country && ', ') + companyData.country}
+          </p>
         </div>
         <div>
           <h3>Industry classification:</h3>
@@ -101,7 +107,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const companyData = await getCompanyProfile(companyNumber)
   const { companyEvents, filingEvents } = await getCompanyEvents(companyNumber)
   let financials: ICompanyAccounts = await getCompanyAccounts(companyNumber)
-
+  // todo: only server-side render the basic company information
+  //  - fetch the rest via API on client side after page load
   const returnProps: props = {
     companyData,
     apiResponseTime: Date.now() - startTime,

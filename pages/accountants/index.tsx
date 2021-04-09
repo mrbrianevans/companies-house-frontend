@@ -7,6 +7,7 @@ import { GetServerSideProps } from 'next'
 import { IAccountant } from '../../types/IAccountant'
 import Button from '../../components/Inputs/Button'
 import IconButton from '../../components/Inputs/IconButton'
+import Link from 'next/link'
 
 const styles = require('../../styles/Accountant.module.scss')
 
@@ -103,15 +104,19 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
                       <span style={{ paddingRight: 20, paddingLeft: 0 }}>{index + 1}</span>
                     </td>
                     <td>
-                      {accountant.name
-                        .split(' ')
-                        .slice(0, accountant.name.split(' ').length - 1)
-                        .join(' ')}
+                      <Link href={'/accountants/' + encodeURIComponent(accountant.name)}>
+                        <a target={'_blank'}>
+                          {accountant.name
+                            .split(' ')
+                            .slice(0, accountant.name.split(' ').length - 1)
+                            .join(' ')}
+                        </a>
+                      </Link>
                     </td>
                     <td>
-                      <a href={'/company/' + accountant.company_number} target={'_blank'}>
-                        {accountant.company_number}
-                      </a>
+                      <Link href={'/company/' + accountant.company_number}>
+                        <a target={'_blank'}>{accountant.company_number}</a>
+                      </Link>
                     </td>
                     <td>{accountant.area}</td>
                     <td>
@@ -141,7 +146,6 @@ export default AccountantFilterPage
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const returnProps: Props = {
-    // filterOptions: [{category: "an error has occurred", possibleComparisons: ["is exactly"], valueType: 'string'}]
     filterOptions: []
   }
 

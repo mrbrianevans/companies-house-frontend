@@ -21,7 +21,8 @@ export interface ICompanyProfile {
   company_number: string
   postcode: string
   county: string
-  built_up_area: string
+  built_up_area?: string
+  parish: string
   streetaddress: string
   country: string
   region: string
@@ -29,5 +30,5 @@ export interface ICompanyProfile {
   status: string
   category: string
   date_of_creation: string
-  data_updated: string
+  data_updated: number
 }

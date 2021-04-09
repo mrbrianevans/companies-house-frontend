@@ -3,6 +3,7 @@ import { Page } from '../../components/Page/Page'
 import { TextInputWithButton } from '../../components/Inputs/TextInputWithButton'
 import { ICompaniesHouseSearchApiResponse } from '../../types/ICompaniesHouseApiResponse'
 import axios from 'axios'
+import Link from 'next/link'
 
 const styles = require('../../styles/Search.module.sass')
 type SearchResultsProps = {
@@ -36,16 +37,14 @@ const SearchResults = ({ query, results, responseTime }: SearchResultsProps) => 
       </p>
       <div className={styles.searchResultsContainer}>
         {results.items.map((result) => (
-          <a
-            draggable={'false'}
-            className={styles.searchResult}
-            key={result.company_number}
-            href={`/company/${result.company_number}`}>
-            <h3>{highlightSearchHits(result.title, result.matches.title)}</h3>
-            <p>{highlightSearchHits(result.snippet, result.matches.snippet)}</p>
-            <p>{highlightSearchHits(result.address_snippet, result.matches.address_snippet)}</p>
-            <p>{result.description}</p>
-          </a>
+          <Link href={`/company/${result.company_number}`} key={result.company_number}>
+            <a draggable={'false'} className={styles.searchResult}>
+              <h3>{highlightSearchHits(result.title, result.matches.title)}</h3>
+              <p>{highlightSearchHits(result.snippet, result.matches.snippet)}</p>
+              <p>{highlightSearchHits(result.address_snippet, result.matches.address_snippet)}</p>
+              <p>{result.description}</p>
+            </a>
+          </Link>
         ))}
       </div>
     </Page>
