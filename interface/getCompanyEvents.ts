@@ -8,8 +8,8 @@ export interface ICompanyEvents {
 
 const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = async (company_number) => {
   try {
-    const pool = getDatabasePool()
     console.time('Query database SELECT filing events')
+    const pool = getDatabasePool()
     const { rows: filingEvents } = await pool.query(
       `SELECT DISTINCT id,
                        category,
@@ -39,6 +39,7 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
     console.error('Error occurred with fetching events from database: ')
     console.log(e)
     return { companyEvents: [], filingEvents: [] }
+  } finally {
   }
 }
 

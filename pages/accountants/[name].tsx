@@ -20,18 +20,18 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
   const [clients, setClients] = useState<undefined | ICompanyProfile[]>()
   useEffect(() => {
     console.time('Fetch clients from API')
-    axios.get('/api/accountants/getClients', { params: { name: accountantProfile.name } }).then((res) => {
+    axios.get('/api/accountants/getClients', { params: { name: accountantProfile.name_on_accounts } }).then((res) => {
       if (res.status === 200) {
         setClients(res.data)
         console.timeEnd('Fetch clients from API')
       } else console.error(res.statusText, res.data)
     })
-  }, [accountantProfile.name])
+  }, [accountantProfile.name_on_accounts])
   const clientLimitIntervals = 5
   const [clientLimit, setClientLimit] = useState(clientLimitIntervals)
   return (
     <Page>
-      <h1>{accountantProfile.name}</h1>
+      <h1>{accountantProfile.name_on_accounts}</h1>
       <div className={styles.mainContainer}>
         <div>
           View regular company page:{' '}

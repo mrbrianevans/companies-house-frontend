@@ -6,11 +6,13 @@ import FormRow from '../Inputs/FormRow'
 import Button from '../Inputs/Button'
 import IconButton from '../Inputs/IconButton'
 import TextBox from '../Inputs/TextBox'
+import TextBoxNumber from '../Inputs/TextBoxNumber'
 
 const styles = require('./NewFilterCard.module.scss')
 // const formStyles = require('../styles/form.module.css')
 type Props = {
   addFilter: (filter: IFilter) => void
+  filteringLabel: string
   filterOptions: IFilterOption[]
 }
 
@@ -18,7 +20,7 @@ export function NewFilterCard(props: Props) {
   const filterOptions: IFilterOption[] = props.filterOptions
   const [selectedFilterOption, setSelectedFilterOption] = useState<IFilterOption>(filterOptions[0])
   const [comparison, setComparison] = useState<IFilter['comparison']>(selectedFilterOption.possibleComparisons[0])
-  const [min, setMin] = useState(-1000)
+  const [min, setMin] = useState(0)
   const [max, setMax] = useState(1000)
   const [exclude, setExclude] = useState(false)
   const [values, setValues] = useState([])
@@ -59,7 +61,7 @@ export function NewFilterCard(props: Props) {
       })
     }
   }
-
+  //todo: when the filter category changes, reset the values to []
   return (
     <div className={styles.newFilterCard} style={{ width: '100%' }}>
       <h3>Add new filter</h3>
@@ -122,9 +124,9 @@ export function NewFilterCard(props: Props) {
         />
         {selectedFilterOption.valueType === 'number' ? (
           <>
-            <input type={'number'} value={min} onChange={(v) => setMin(Number(v.target.value))} />
-            <span> and </span>
-            <input type={'number'} value={max} onChange={(v) => setMax(Number(v.target.value))} />
+            <TextBoxNumber value={min} onChange={(v) => setMin(v)} />
+            <span className={styles.joiningWordInFormRow}> and </span>
+            <TextBoxNumber value={max} onChange={(v) => setMax(v)} />
           </>
         ) : (
           <>
@@ -140,8 +142,12 @@ export function NewFilterCard(props: Props) {
         )}
       </FormRow>
       <p>
-        {exclude ? 'Exclude' : 'Only show'} accountants where {selectedFilterOption.category} {comparison}{' '}
-        {selectedFilterOption.valueType === 'number' ? min + ' and ' + max : values.join(' or ')}
+        {exclude ? 'Exclude' : 'Only show'} {props.filteringLabel} where {selectedFilterOption.category} {comparison}{' '}
+        {selectedFilterOption.valueType === 'number'
+          ? min + ' and ' + max
+          : values.length
+          ? values.join(' or ')
+          : typingValue}
       </p>
 
       <Button onClick={addFilter} label={'Add filter'} />

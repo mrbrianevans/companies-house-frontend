@@ -2,8 +2,8 @@ import { getDatabasePool } from '../helpers/connectToDatabase'
 import { ICompanyProfile } from '../types/ICompany'
 
 const getAccountantClients: (name: string) => Promise<ICompanyProfile[]> = async (name) => {
+  console.time('Querying database for accountants clients')
   const pool = getDatabasePool()
-  console.time('Querying database for clients')
   const { rows: matchingClients } = await pool.query(
     `
         SELECT DISTINCT name,
@@ -33,7 +33,8 @@ const getAccountantClients: (name: string) => Promise<ICompanyProfile[]> = async
     `,
     [name]
   )
-  console.timeEnd('Querying database for clients')
+  await pool.end()
+  console.timeEnd('Querying database for accountants clients')
   return matchingClients
 }
 

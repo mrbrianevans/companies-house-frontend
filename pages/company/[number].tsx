@@ -83,6 +83,12 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
               <p>
                 Accounting software: <b>{financials.accounting_software}</b>
               </p>
+              <p>
+                Number of employees: <b>{financials.employees}</b>
+              </p>
+              <p>
+                Profit: <b>{financials.profit}</b>
+              </p>
             </>
           )}
         </div>

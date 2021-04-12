@@ -7,7 +7,7 @@ type TextBoxProps = {
   placeholder?: string
   value: string
   onChange: (newValue: string) => void
-  suggestions?: string[]
+  suggestions?: string[] //todo: give this the option of being [{value: "", label: ""}]
 }
 const TextBox = (props: TextBoxProps) => {
   const [id] = useState(

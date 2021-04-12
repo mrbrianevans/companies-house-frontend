@@ -58,3 +58,8 @@ export interface IStringFilterOption {
 }
 
 export type IFilterOption = INumberFilterOption | IStringFilterOption
+//todo: the filter system needs to be improved as follows:
+// [x] add the option for excluding
+// - add 'date' as a value type
+// - add 'is greater than' and 'is less than' for number comparisons
+// - add suggestions as value:label pairs (optionally)

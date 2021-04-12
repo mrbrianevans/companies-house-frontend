@@ -7,6 +7,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
   company_number
 ) => {
   if (!company_number.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/)) return null
+  console.time('Query database for company profile')
   const pool = getDatabasePool()
   const { rows: profileFromDb } = await pool.query(
     `
@@ -34,6 +35,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
     [company_number]
   )
   await pool.end()
+  console.timeEnd('Query database for company profile')
   if (profileFromDb.length) {
     const company: ICompanyProfile = profileFromDb[0]
     //todo: cascading importance of different address fields should coalesce into an 'area' field
@@ -41,7 +43,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
       company.parish = company.parish.slice(0, company.parish.indexOf(', unparished area'))
     return company
   } else {
-    console.log('Not in database:', company_number, '. Fetching government API')
+    console.time('Not in database: ' + company_number + '. Fetched government API')
     //check government API here
     const apiUrl = 'https://api.company-information.service.gov.uk/company/' + company_number
     const govResponse: ICompaniesHouseApiCompanyProfile = await axios
@@ -64,6 +66,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
       status: govResponse.company_status,
       streetaddress: govResponse.registered_office_address.address_line_1
     }
+    console.timeEnd('Not in database: ' + company_number + '. Fetched government API')
     return companyData
   }
 }

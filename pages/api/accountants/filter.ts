@@ -33,19 +33,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       queries.join(' INTERSECT ') +
       ')' +
       `
-          SELECT DISTINCT ON (a.name) a.name,
-                                      a.company_number,
-                                      a.software,
-                                      a.number_of_clients,
-                                      p.built_up_area as area,
-                                      c.date,
-                                      c.status,
-                                      c.streetaddress
-          FROM matches a,
-               companies c,
-               detailed_postcodes p
-          WHERE a.company_number = c.number
-            AND c.postcode = p.postcode
+          SELECT DISTINCT ON (a.name_on_accounts, a.number_of_clients) a.name_on_accounts,
+                                                                       a.company_number,
+                                                                       a.software,
+                                                                       a.number_of_clients,
+                                                                       p.built_up_area as area,
+                                                                       c.date,
+                                                                       c.status,
+                                                                       c.streetaddress
+          FROM (matches a
+                   JOIN companies c ON c.number = a.company_number
+                   JOIN detailed_postcodes p ON c.postcode = p.postcode)
+--                ,
+--                detailed_postcodes p
+--           WHERE c.postcode = p.postcode
+          ORDER BY a.number_of_clients DESC
           LIMIT 10;
       `
     let bigValue = values.flat()
@@ -56,12 +58,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       else if (typeof value === 'object') return "'" + value.join("','") + "'"
       else return value
     })
-    // console.log(prettyPrintQuery)
+    console.log(prettyPrintQuery)
     if (queries.length) {
       try {
         console.time('Filtering accountants')
         const pool = await getDatabasePool()
         const { rows: matches } = await pool.query(bigQuery, bigValue)
+        console.log('Returned', matches.length, 'rows')
         res.status(200).json(matches)
       } catch (e) {
         res.status(501).json({ sql: prettyPrintQuery, error: e.message })

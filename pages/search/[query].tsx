@@ -36,12 +36,12 @@ const SearchResults = ({ query, results, responseTime }: SearchResultsProps) => 
         {results.total_results} results for "{query}" in {responseTime}ms
       </p>
       <div className={styles.searchResultsContainer}>
-        {results.items.map((result) => (
+        {results.items?.map((result) => (
           <Link href={`/company/${result.company_number}`} key={result.company_number}>
             <a draggable={'false'} className={styles.searchResult}>
-              <h3>{highlightSearchHits(result.title, result.matches.title)}</h3>
-              <p>{highlightSearchHits(result.snippet, result.matches.snippet)}</p>
-              <p>{highlightSearchHits(result.address_snippet, result.matches.address_snippet)}</p>
+              <h3>{highlightSearchHits(result.title, result.matches?.title)}</h3>
+              <p>{highlightSearchHits(result.snippet, result.matches?.snippet)}</p>
+              <p>{highlightSearchHits(result.address_snippet, result.matches?.address_snippet)}</p>
               <p>{result.description}</p>
             </a>
           </Link>
@@ -70,6 +70,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     results: govResponse,
     responseTime: Date.now() - startTime
   })
+  console.log(
+    JSON.stringify({
+      message: `Query gov API for search query "${query}" in ${Date.now() - startTime}ms`,
+      responseTime: Date.now() - startTime,
+      class: 'gov-search-api',
+      severity: 'info'
+    })
+  )
   return {
     props: props
   }

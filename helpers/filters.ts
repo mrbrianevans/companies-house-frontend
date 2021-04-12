@@ -8,8 +8,8 @@ interface IMinorQuery {
 const filterByName: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM legacy_accountants
-      WHERE lower(name) LIKE ANY (?)
+      FROM accountants
+      WHERE lower(name_on_accounts) LIKE ANY (?)
   `
   const value = getValues(filter)
   return { query, value }
@@ -17,17 +17,17 @@ const filterByName: (filter: IStringFilter) => IMinorQuery = (filter) => {
 const filterBySoftware: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM legacy_accountants
-      WHERE software && (?)
+      FROM accountants
+      WHERE lower(software) LIKE ANY (?)
   `
-  const value = [filter.values]
+  const value = getValues(filter)
   return { query, value }
 }
 const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (filter) => {
   const query = `
       SELECT *
-      FROM legacy_accountants
-      WHERE legacy_accountants.number_of_clients BETWEEN ? AND ?
+      FROM accountants
+      WHERE accountants.number_of_clients BETWEEN ? AND ?
   `
   const value = [filter.min, filter.max]
   return { query, value }
@@ -35,8 +35,8 @@ const filterByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (filter)
 
 const filterByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
-      SELECT a.name, a.company_number, a.software, a.number_of_clients
-      FROM legacy_accountants a,
+      SELECT a.name_on_accounts, a.company_number, a.software, a.number_of_clients
+      FROM accountants a,
            companies c,
            postcode_summary p
       WHERE a.company_number = c.number
@@ -49,11 +49,11 @@ const filterByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
 
 const filterByClientCompanyNumber: (filter: IStringFilter) => IMinorQuery = (filter) => {
   const query = `
-      SELECT a.name, a.company_number, a.software, a.number_of_clients
+      SELECT a.name_on_accounts, a.company_number, a.software, a.number_of_clients
       FROM accounts acc,
-           legacy_accountants a
-      WHERE acc.value = a.name
-        AND acc.label = 'Name of entity accountants'
+           accountants a
+      WHERE acc.value = a.name_on_accounts
+        AND (acc.label = 'Name of entity accountants' OR acc.label = 'Name of entity auditors')
         AND acc.company_number LIKE ANY (?)
   `
   const value = [filter.values]
