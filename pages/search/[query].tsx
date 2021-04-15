@@ -64,10 +64,26 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       auth: { username: process.env.APIUSER, password: '' }
     })
     .then((res) => res.data)
-  console.log('Called government API for query', query)
+    .catch((e) =>
+      console.error(
+        JSON.stringify({
+          message: 'Gov API search query failed',
+          class: 'gov-search-api',
+          severity: 'ERROR',
+          errorMessage: e.message
+        })
+      )
+    )
   const props: SearchResultsProps = Object.freeze({
     query,
-    results: govResponse,
+    results: govResponse ?? {
+      total_results: 0,
+      items_per_page: 0,
+      items: [],
+      page_number: 1,
+      start_index: 0,
+      kind: 'search#companies'
+    },
     responseTime: Date.now() - startTime
   })
   console.log(

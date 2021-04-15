@@ -54,10 +54,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const prettyPrintQuery = bigQuery.replace(/\$[0-9]+/gm, (dollarN) => {
       const value = bigValue[Number(dollarN.slice(1)) - 1]
       if (typeof value === 'number') return value
-      else if (typeof value === 'string') return `'${value}'`
-      else if (typeof value === 'object') return "'" + value.join("','") + "'"
-      else return value
-    })
+      else if (typeof value === 'stri"string"urn `'${value}'`
+    ;  else if (typeof value === 'obje"object"urn "ARRAY['" + value.join("','") + "']"
+    ;  else return value
+    ;})
     console.log(prettyPrintQuery)
     if (queries.length) {
       try {

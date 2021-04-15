@@ -16,7 +16,10 @@ button.primary:hover {
   background: rgba(255, 255, 255, 0.6);
 }
 
-button.primary:focus, select.dropdown:focus, input.textBox:focus, textarea.textArea:focus {
+button.primary:focus,
+select.dropdown:focus,
+input.textBox:focus,
+textarea.textArea:focus {
   outline: 2px solid $primary;
 }
 
