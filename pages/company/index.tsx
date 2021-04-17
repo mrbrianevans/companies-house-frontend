@@ -8,6 +8,7 @@ import getCompanyFilters from '../../interface/filterCompanies/getFilterOptions'
 import Button from '../../components/Inputs/Button'
 import { ICompanyProfile } from '../../types/ICompany'
 import IconButton from '../../components/Inputs/IconButton'
+import Link from 'next/link'
 
 const styles = require('../../styles/CompanyFilter.module.sass')
 
@@ -28,20 +29,21 @@ const FilterCompanies = ({ filterOptions }: Props) => {
   const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
   const applyFilter = () => {
     const requestFilterTime = Date.now()
-    setFilterMatchesLoading(true)
-    fetch('/a"/api/companies/filter"
-      method: 'PO"POST"     body: JSON.stringify(filters),
-      headers: { 'Co"Content-Type"ap"application/json"    })
+ ;   setFilterMatchesLoading(true)
+ ;   fetch('/"/api/companies/filter"{
+      method: 'P"POST"      body: JSON.stringify(filters),
+      headers: { 'C"Content-Type"'a"application/json"
+    })
       .then((r) => {
         if (r.status === 200) return r
-        else throw new Error(JSON.stringify(r.json()))
-      })
+ ;       else throw new Error(JSON.stringify(r.json()))
+ ;     })
       .then((r) => r.json())
       .then((j: ICompanyProfile[]) => setMatchingCompanies(j))
       .then(() => setRequestResponseTime(Date.now() - requestFilterTime))
       .catch(console.error)
       .finally(() => setFilterMatchesLoading(false))
-  }
+ ; }
   const [matchingCompanies, setMatchingCompanies] = useState<ICompanyProfile[]>()
   return (
     <Page>
@@ -81,9 +83,9 @@ const FilterCompanies = ({ filterOptions }: Props) => {
                   <tr>
                     <td>{index + 1}</td>
                     <td>
-                      <a href={"/company/" + company.company_number} target={"_blank"}>
-                        {company.company_number}
-                      </a>
+                      <Link href={"/company/" + company.company_number}>
+                        <a target={"_blank"}>{company.company_number}</a>
+                      </Link>
                     </td>
                     <td>{company.name}</td>
                     <td>

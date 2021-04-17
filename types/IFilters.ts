@@ -15,14 +15,13 @@
 // - A distribution of their clients size (based on financials, and accounts type)
 // - maybe an estimation of their fees based on their clients
 
-import { IMinorQuery } from "./IQueries";
+import { IMinorQuery } from './IQueries'
 
 export interface IGeneralFilter {
   category: string
   comparison: string
   exclude: boolean
-  type: "string" | "number"
-}
+  type: '"string"| '"number"}
 
 export interface INumberFilter extends IGeneralFilter {
   comparison: "is between"
