@@ -22,7 +22,7 @@ export default function Home() {
             <p>This uses accountants discolsure on accounts</p>
           </a>
         </Link>
-        <Link href={'/filter'}>
+        <Link href={'/company'}>
           <a draggable={'false'}>
             <h3>Filter companies</h3>
             <p>View a companies accounts filings and other information held by companies house</p>

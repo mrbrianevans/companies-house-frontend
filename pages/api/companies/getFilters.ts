@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IFilterOption } from '../../../types/IFilters'
-import getAccountantFilters from '../../../interface/filterAccountants/getFilterOptions'
+import getCompanyFilters from '../../../interface/filterCompanies/getFilterOptions'
 
 // /api/accountants/getFilters
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const filterOptions: IFilterOption[] = getAccountantFilters()
+  const filterOptions: IFilterOption[] = getCompanyFilters()
   res.json(filterOptions)
 }

@@ -1,4 +1,5 @@
 import { ICompanyProfile } from '../../types/ICompany'
+import Link from 'next/link'
 
 type ClientCardProps = {
   client: ICompanyProfile
@@ -6,14 +7,16 @@ type ClientCardProps = {
 
 const ClientCard: (props: ClientCardProps) => JSX.Element = ({ client }) => {
   return (
-    <div key={client.company_number}>
-      <h4 style={{ fontWeight: 'lighter' }}>{client.name}</h4>
-      <p>
-        {client.parish}
-        {client.parish && client.county && ', '}
-        {client.county}
-      </p>
-    </div>
+    <Link key={client.company_number} href={'/company/' + client.company_number}>
+      <a>
+        <h4 style={{ fontWeight: 'lighter' }}>{client.name}</h4>
+        <p>
+          {client.parish}
+          {client.parish && client.county && ', '}
+          {client.county}
+        </p>
+      </a>
+    </Link>
   )
 }
 
