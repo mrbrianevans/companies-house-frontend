@@ -21,10 +21,11 @@ export interface IGeneralFilter {
   category: string
   comparison: string
   exclude: boolean
-  type: '"string"| '"number"}
+  type: 'string' | 'number'
+}
 
 export interface INumberFilter extends IGeneralFilter {
-  comparison: "is between"
+  comparison: 'is between'
   min: number
   max: number
   type: 'number'

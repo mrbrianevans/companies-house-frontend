@@ -11,7 +11,7 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
     console.time('Query database SELECT filing events')
     const pool = getDatabasePool()
     const { rows: filingEvents } = await pool.query(
-      `SELECT DISTINCT id,
+      `SELECT DISTINCT ON (id) id,
                        category,
                        description_code,
                        description AS description_html,
@@ -20,16 +20,16 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
                        barcode
        FROM filing_events
        WHERE company_number = $1
-       ORDER BY published;`,
+       ORDER BY id;`,
       [company_number]
     )
     console.timeEnd('Query database SELECT filing events')
     console.time('Query database SELECT company events')
     const { rows: companyEvents } = await pool.query(
-      `SELECT DISTINCT id, fields_changed, published::date::text
+      `SELECT DISTINCT ON(id) id, fields_changed, published::date::text
        FROM company_events
        WHERE company_number = $1
-       ORDER BY published;`,
+       ORDER BY id;`,
       [company_number]
     )
     console.timeEnd('Query database SELECT company events')

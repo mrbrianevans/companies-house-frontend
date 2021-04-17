@@ -7,7 +7,10 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import { getCompanyProfile } from '../../interface/getCompanyProfile'
-import ClientCard from '."../../components/Client/ClientCard";mport { useRouter } from 'n"next/router";const styles = require('../../styles/AccountantIndividual.module.sass')
+import ClientCard from '../../components/Client/ClientCard'
+import { useRouter } from 'next/router'
+
+const styles = require('../../styles/AccountantIndividual.module.sass')
 
 interface props {
   accountantProfile: IAccountant
@@ -18,18 +21,18 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
   const [clients, setClients] = useState<undefined | ICompanyProfile[]>()
   useEffect(() => {
     if (accountantProfile) {
-      console.time("Fetch clients from API");
-      axios.get("/api/accountants/getClients", { params: { name: accountantProfile.name_on_accounts } }).then((res) => {
+      console.time('Fetch clients from API')
+      axios.get('/api/accountants/getClients', { params: { name: accountantProfile.name_on_accounts } }).then((res) => {
         if (res.status === 200) {
-          setClients(res.data);
-          console.timeEnd("Fetch clients from API");
-        } else console.error(res.statusText, res.data);
-      });
+          setClients(res.data)
+          console.timeEnd('Fetch clients from API')
+        } else console.error(res.statusText, res.data)
+      })
     }
   }, [accountantProfile?.name_on_accounts])
   const clientLimitIntervals = 5
-  const [clientLimit, setClientLimit] = useState(clientLimitIntervals);
-  const router = useRouter();
+  const [clientLimit, setClientLimit] = useState(clientLimitIntervals)
+  const router = useRouter()
   return (
     <Page>
       {router.isFallback ? (
@@ -39,7 +42,7 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
           <h1>{accountantProfile.name_on_accounts}</h1>
           <div className={styles.mainContainer}>
             <div>
-              View regular company page:{" "}
+              View regular company page:{' '}
               <Link href={`/company/${accountantProfile.company_number}`}>
                 <a>{accountantProfile.company_number}</a>
               </Link>
@@ -53,14 +56,13 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
               <p>
                 Showing {clients ? clientLimit : 0} of {clients?.length ?? accountantProfile.number_of_clients} clients
               </p>
-              {!clients && "Loading list of clients"}
+              {!clients && 'Loading list of clients'}
               {clients?.slice(0, clientLimit)?.map((client) => (
                 //extract this into a separate component
                 <ClientCard key={client.company_number} client={client} />
               ))}
               {clients && clientLimit < clients.length && (
-                <button
-                  onClick={() => setClientLimit((prevState) => prevState + clientLimitIntervals)}>
+                <button onClick={() => setClientLimit((prevState) => prevState + clientLimitIntervals)}>
                   Show more
                 </button>
               )}
@@ -77,14 +79,14 @@ export default CompanyDetails
 export const getStaticProps: GetStaticProps = async (context) => {
   const {
     params: { name: nameParam }
-  } = context;
-  if (typeof nameParam != "string") return { notFound: true };
-  const name = decodeURIComponent(nameParam);
-  console.log("Requested accountant with name:", name);
-  const accountantProfile = await getAccountantProfile(name);
-  const returnProps: props = { accountantProfile };
+  } = context
+  if (typeof nameParam != 'string') return { notFound: true }
+  const name = decodeURIComponent(nameParam)
+  console.log('Requested accountant with name:', name)
+  const accountantProfile = await getAccountantProfile(name)
+  const returnProps: props = { accountantProfile }
   if (accountantProfile.company_number) {
-    returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number);
+    returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
     //todo: get possible matches from companies house search API
   }
@@ -92,9 +94,9 @@ export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400
-  };
-};
+  }
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return { fallback: true, paths: [] };
-};
+  return { fallback: true, paths: [] }
+}

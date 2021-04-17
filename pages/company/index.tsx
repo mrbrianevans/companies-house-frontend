@@ -29,42 +29,42 @@ const FilterCompanies = ({ filterOptions }: Props) => {
   const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
   const applyFilter = () => {
     const requestFilterTime = Date.now()
- ;   setFilterMatchesLoading(true)
- ;   fetch('/"/api/companies/filter"{
-      method: 'P"POST"      body: JSON.stringify(filters),
-      headers: { 'C"Content-Type"'a"application/json"
+    setFilterMatchesLoading(true)
+    fetch('/api/companies/filter', {
+      method: 'POST',
+      body: JSON.stringify(filters),
+      headers: { 'Content-Type': 'application/json' }
     })
       .then((r) => {
         if (r.status === 200) return r
- ;       else throw new Error(JSON.stringify(r.json()))
- ;     })
+        else throw new Error(JSON.stringify(r.json()))
+      })
       .then((r) => r.json())
       .then((j: ICompanyProfile[]) => setMatchingCompanies(j))
       .then(() => setRequestResponseTime(Date.now() - requestFilterTime))
       .catch(console.error)
       .finally(() => setFilterMatchesLoading(false))
- ; }
+  }
   const [matchingCompanies, setMatchingCompanies] = useState<ICompanyProfile[]>()
   return (
     <Page>
       <h1>Filter companies</h1>
       <p>This feature is still in development</p>
       <div className={styles.topLevelContainer}>
-        <NewFilterCard addFilter={addFilter} filterOptions={filterOptions}
-                       filteringLabel={"companies"} />
+        <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={'companies'} />
         <div className={styles.filterContainer}>
           {filters?.map((filter, i) => (
             <div>
-              {filter.category} {filter.comparison}{" "}
-              {filter.type === "string" ? filter.values.join(" or ") : filter.min + " and " + filter.max}
+              {filter.category} {filter.comparison}{' '}
+              {filter.type === 'string' ? filter.values.join(' or ') : filter.min + ' and ' + filter.max}
               <IconButton
-                label={"\u00D7"}
+                label={'\u00D7'}
                 onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
                 floatRight
               />
             </div>
           ))}
-          <Button label={"Run query"} onClick={applyFilter} />
+          <Button label={'Run query'} onClick={applyFilter} />
         </div>
         <div>
           <table className={styles.results}>
@@ -83,13 +83,13 @@ const FilterCompanies = ({ filterOptions }: Props) => {
                   <tr>
                     <td>{index + 1}</td>
                     <td>
-                      <Link href={"/company/" + company.company_number}>
-                        <a target={"_blank"}>{company.company_number}</a>
+                      <Link href={'/company/' + company.company_number}>
+                        <a target={'_blank'}>{company.company_number}</a>
                       </Link>
                     </td>
                     <td>{company.name}</td>
                     <td>
-                      {Math.round((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400 / 365 / 1000)}{" "}
+                      {Math.round((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400 / 365 / 1000)}{' '}
                       years
                     </td>
                     <td>{company.category}</td>

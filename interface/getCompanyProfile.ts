@@ -24,10 +24,10 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
                dp.built_up_area,
                dp.parish,
                dp.region,
-               (SELECT ARRAY_AGG(sm.description)
+               COALESCE((SELECT ARRAY_AGG(sm.description)
                 FROM sic s
                          JOIN sic_map sm ON sm.code = s.sic_code
-                WHERE s.company_number = $1) AS sic_codes
+                WHERE s.company_number = $1), ARRAY[]::varchar[]) AS sic_codes
         FROM companies c,
              detailed_postcodes dp
         WHERE c.number = $1

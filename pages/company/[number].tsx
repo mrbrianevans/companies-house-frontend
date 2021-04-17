@@ -21,14 +21,14 @@ interface props {
 
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   const router = useRouter()
-  return (;
+  return (
     <Page>
       {router.isFallback ? (
         <p>Loading company details...</p>
       ) : (
         <>
           <h1>{companyData.name}</h1>
-          <div className={styles.card + " " + styles.full}>
+          <div className={styles.card + ' ' + styles.full}>
             <h4>
               {companyData.status} - {companyData.category}
             </h4>
@@ -37,13 +37,13 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
               <p>{companyData.streetaddress}</p>
               <p>
                 {companyData.parish}
-                {companyData.parish && companyData.county && ", "}
+                {companyData.parish && companyData.county && ', '}
                 {companyData.county}
               </p>
               <p>
                 {companyData?.region?.includes(companyData.country)
                   ? companyData.region
-                  : companyData.region + (companyData.region && companyData.country && ", ") + companyData.country}
+                  : companyData.region + (companyData.region && companyData.country && ', ') + companyData.country}
               </p>
             </div>
             <div>
@@ -62,19 +62,19 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
                   ?.map((filingEvent) => {
                     const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(
                       /^<b>(.*)<\/b>(.*)$/
-                    );
+                    )
                     return (
                       <li key={filingEvent.id}>
-                        {new Date(filingEvent.published).toDateString()}: <b>{descriptionHeading}</b>
+                        {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>
                         {descriptionBody}
                       </li>
-                    );
+                    )
                   })}
                 {companyEvents?.map((companyEvent) => (
                   <li key={companyEvent.id}>
-                    {`Company profile: ${Object.keys(companyEvent.fields_changed).length} items changed on ${new Date(
-                      companyEvent.published
-                    ).toDateString()}`}
+                    {`Company profile: ${
+                      Object.keys(companyEvent.fields_changed ?? {}).length
+                    } items changed on ${new Date(companyEvent.published).toDateString()}`}
                   </li>
                 ))}
               </ul>
@@ -87,9 +87,9 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
                     Balance sheet date: <b>{financials.balance_sheet_date}</b>
                   </p>
                   <p>
-                    Accountants:{" "}
+                    Accountants:{' '}
                     <b>
-                      <Link href={"/accountants/" + financials.accountants}>
+                      <Link href={'/accountants/' + financials.accountants}>
                         <a>{financials.accountants}</a>
                       </Link>
                     </b>
@@ -110,23 +110,23 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
           <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
         </>
       )}
-    </Page>;
+    </Page>
   )
 }
 
 export default CompanyDetails
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const startTime = Date.now();
-  const companyNumber = context.params.number.toString();
+  const startTime = Date.now()
+  const companyNumber = context.params.number.toString()
   if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {
       redirect: {
-        destination: "/search/" + companyNumber,
+        destination: '/search/' + companyNumber,
         permanent: false // not sure what this does??
       }
-    };
-  const companyData = await getCompanyProfile(companyNumber);
+    }
+  const companyData = await getCompanyProfile(companyNumber)
   const { companyEvents, filingEvents } = await getCompanyEvents(companyNumber)
   let financials: ICompanyAccounts = await getCompanyAccounts(companyNumber)
   // todo: only server-side render the basic company information
@@ -138,12 +138,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
     filingEvents,
     financials
   }
+  console.log('Got this far without an error')
+  //00301303 this company throws an error in this method for some reason
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400
-  };
+  }
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  return { fallback: true, paths: [] };
-};
+  return { fallback: true, paths: [] }
+}
