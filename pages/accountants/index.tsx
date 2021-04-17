@@ -8,7 +8,7 @@ import { IAccountant } from '../../types/IAccountant'
 import Button from '../../components/Inputs/Button'
 import IconButton from '../../components/Inputs/IconButton'
 import Link from 'next/link'
-import getAccountantFilters from '../../interface/getAccountantFilters'
+import getAccountantFilters from '../../interface/filterAccountants/getFilterOptions'
 
 const styles = require('../../styles/Accountant.module.scss')
 

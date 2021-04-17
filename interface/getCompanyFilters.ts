@@ -32,4 +32,4 @@ const getCompanyFilters: () => IFilterOption[] = () => {
   ]
 }
 
-export default getCompanyFilters
+// export default getCompanyFilters

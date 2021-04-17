@@ -15,15 +15,17 @@
 // - A distribution of their clients size (based on financials, and accounts type)
 // - maybe an estimation of their fees based on their clients
 
+import { IMinorQuery } from "./IQueries";
+
 export interface IGeneralFilter {
   category: string
   comparison: string
   exclude: boolean
-  type: 'string' | 'number'
+  type: "string" | "number"
 }
 
 export interface INumberFilter extends IGeneralFilter {
-  comparison: 'is between'
+  comparison: "is between"
   min: number
   max: number
   type: 'number'
@@ -63,3 +65,8 @@ export type IFilterOption = INumberFilterOption | IStringFilterOption
 // - add 'date' as a value type
 // - add 'is greater than' and 'is less than' for number comparisons
 // - add suggestions as value:label pairs (optionally)
+
+export interface IFilterMapValue {
+  filterOption: IFilterOption
+  filter: (filter: IFilter) => IMinorQuery
+}

@@ -4,10 +4,10 @@ import { applyCompaniesFilter } from '../../../interface/filterCompanies/applyFi
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { body: filters }: { body: IFilter[] } = req
-  const { query, results } = await applyCompaniesFilter(filters)
-  if (results) res.json(results)
+  const output = await applyCompaniesFilter(filters)
+  if (output) res.json(output.results)
   else {
     console.log('results not returned')
-    res.status(501).json({ error: 'could not filter accountants' })
+    res.status(501).json({ error: 'could not filter companies' })
   }
 }

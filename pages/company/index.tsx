@@ -4,7 +4,7 @@ import * as React from 'react'
 import { useState } from 'react'
 import { GetStaticProps } from 'next'
 import { IFilter, IFilterOption } from '../../types/IFilters'
-import getCompanyFilters from '../../interface/getCompanyFilters'
+import getCompanyFilters from '../../interface/filterCompanies/getFilterOptions'
 import Button from '../../components/Inputs/Button'
 import { ICompanyProfile } from '../../types/ICompany'
 import IconButton from '../../components/Inputs/IconButton'
@@ -29,11 +29,9 @@ const FilterCompanies = ({ filterOptions }: Props) => {
   const applyFilter = () => {
     const requestFilterTime = Date.now()
     setFilterMatchesLoading(true)
-    fetch('/api/accountants/filter', {
-      method: 'POST',
-      body: JSON.stringify(filters),
-      headers: { 'Content-Type': 'application/json' }
-    })
+    fetch('/a"/api/companies/filter"
+      method: 'PO"POST"     body: JSON.stringify(filters),
+      headers: { 'Co"Content-Type"ap"application/json"    })
       .then((r) => {
         if (r.status === 200) return r
         else throw new Error(JSON.stringify(r.json()))
@@ -48,17 +46,23 @@ const FilterCompanies = ({ filterOptions }: Props) => {
   return (
     <Page>
       <h1>Filter companies</h1>
+      <p>This feature is still in development</p>
       <div className={styles.topLevelContainer}>
-        <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={'companies'} />
+        <NewFilterCard addFilter={addFilter} filterOptions={filterOptions}
+                       filteringLabel={"companies"} />
         <div className={styles.filterContainer}>
-          {filters?.map((filter) => (
+          {filters?.map((filter, i) => (
             <div>
-              {filter.category} {filter.comparison}{' '}
-              {filter.type === 'string' ? filter.values.join(' or ') : filter.min + ' and ' + filter.max}
-              <IconButton label={'\u00D7'} onClick={() => {}} floatRight />
+              {filter.category} {filter.comparison}{" "}
+              {filter.type === "string" ? filter.values.join(" or ") : filter.min + " and " + filter.max}
+              <IconButton
+                label={"\u00D7"}
+                onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
+                floatRight
+              />
             </div>
           ))}
-          <Button label={'Run query'} onClick={() => {}} />
+          <Button label={"Run query"} onClick={applyFilter} />
         </div>
         <div>
           <table className={styles.results}>
@@ -68,25 +72,22 @@ const FilterCompanies = ({ filterOptions }: Props) => {
                 <th>Company number</th>
                 <th>Name</th>
                 <th>Age</th>
-                <th>Number of employees</th>
+                <th>Type of company</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>03495756</td>
-                <td>OVERT LOCKE LIMITED</td>
-                <td>23 years</td>
-                <td>5</td>
-              </tr>
               {matchingCompanies?.length &&
                 matchingCompanies.map((company, index) => (
                   <tr>
                     <td>{index + 1}</td>
-                    <td>{company.company_number}</td>
+                    <td>
+                      <a href={"/company/" + company.company_number} target={"_blank"}>
+                        {company.company_number}
+                      </a>
+                    </td>
                     <td>{company.name}</td>
                     <td>
-                      {Math.round(((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400) * 365 * 1000)}{' '}
+                      {Math.round((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400 / 365 / 1000)}{" "}
                       years
                     </td>
                     <td>{company.category}</td>

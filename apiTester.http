@@ -16,8 +16,33 @@ Content-Type: application/json
     "category": "number of clients",
     "comparison": "between",
     "min": 5,
-    "max": 20,
+    "max": 200,
     "type": "number"
+  },
+  {
+    "category": "name",
+    "comparison": "begins with",
+    "values": [
+      "som"
+    ],
+    "type": "string"
+  }
+]
+
+###
+POST /api/companies/filter
+Host: localhost:8080
+#Host: companies-house-frontend-api-rmfuc.ondigitalocean.app
+Content-Type: application/json
+
+[
+  {
+    "category": "location",
+    "comparison": "includes",
+    "values": [
+      "TauNtOn"
+    ],
+    "type": "string"
   },
   {
     "category": "name",
@@ -47,4 +72,19 @@ Content-Type: application/json
 
 {
   "body": "Hello, I am filter"
+}
+
+###
+GET /api/search/book
+Host: localhost:8080
+
+
+###
+POST https://carbonnowsh.herokuapp.com/?code=select * from companies&language=sql
+content-type: application/json
+
+{
+  "code": "select * from companies",
+  "language": "sql",
+  "theme": "dracula"
 }

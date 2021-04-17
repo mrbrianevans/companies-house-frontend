@@ -18,12 +18,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const client = await pool.connect()
   // all the different types of search go here:
   const sqlQueries = [
-    'SELECT * FROM companies WHERE lower(name)=lower($1)',
-    'SELECT * FROM companies WHERE lower(name)=lower($1)',
-    'SELECT * FROM companies WHERE name LIKE $1',
-    'SELECT * FROM companies WHERE name LIKE $1',
-    'SELECT * FROM companies WHERE name LIKE $1',
-    'SELECT * FROM companies WHERE name LIKE ANY($1)'
+    'SELECT * FROM companies WHERE upper(name)=$1',
+    'SELECT * FROM companies WHERE upper(name)=$1',
+    'SELECT * FROM companies WHERE upper(name) LIKE $1',
+    'SELECT * FROM companies WHERE upper(name) LIKE $1',
+    'SELECT * FROM companies WHERE upper(name) LIKE $1',
+    'SELECT * FROM companies WHERE upper(name) LIKE ANY($1)'
   ]
   const sqlBindings = [
     [searchQuery],
