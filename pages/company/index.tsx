@@ -98,6 +98,19 @@ const FilterCompanies = ({ filterOptions }: Props) => {
             </tbody>
           </table>
         </div>
+        <div>
+          <h3>Planned features</h3>
+          <p>I want to add these filters in the future:</p>
+          <ul>
+            <li>events (change of ownership)</li>
+            <li>accounts (profit, assets, employees etc)</li>
+            <li>improved area filtering</li>
+            <li>officers and PSCs</li>
+            <li>company type/category (PLC,LLP,LTD etc)</li>
+            <li>status (active/dissolved etc)</li>
+            <li>type of accounts filed (micro/small/full etc)</li>
+          </ul>
+        </div>
       </div>
     </Page>
   )

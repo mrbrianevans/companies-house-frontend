@@ -43,7 +43,7 @@ export const applyCompaniesFilter: (
           FROM (matches a
                    JOIN companies c ON c.number = a.company_number
                    JOIN detailed_postcodes p ON c.postcode = p.postcode)
-          ORDER BY c.name
+          --ORDER BY c.name
           LIMIT 10;
       `
     let bigValue = values.flat()

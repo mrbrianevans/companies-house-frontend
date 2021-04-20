@@ -2,6 +2,7 @@ import { IFilterMapValue } from '../../types/IFilters'
 import { filterCompaniesByName, filterCompaniesByNameMetadata } from './filters/name'
 import { filterCompaniesByLocation, filterCompaniesByLocationMetadata } from './filters/location'
 import { filterCompaniesBySicCode, filterCompaniesBySicCodeMetadata } from './filters/sicCode'
+import { filterCompaniesByAge, filterCompaniesByAgeMetadata } from './filters/age'
 
 export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   const filterMap = new Map()
@@ -17,6 +18,10 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   //   filterOption: filterAccountantsByNumberOfClientsMetdata,
   //   filter: filterAccountantsByNumberOfClients
   // })
+  filterMap.set('age', {
+    filterOption: filterCompaniesByAgeMetadata,
+    filter: filterCompaniesByAge
+  })
   filterMap.set('location', {
     filterOption: filterCompaniesByLocationMetadata,
     filter: filterCompaniesByLocation
