@@ -138,8 +138,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     filingEvents,
     financials
   }
-  console.log('Got this far without an error')
-  //00301303 this company throws an error in this method for some reason
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400

@@ -3,6 +3,11 @@ import { filterCompaniesByName, filterCompaniesByNameMetadata } from './filters/
 import { filterCompaniesByLocation, filterCompaniesByLocationMetadata } from './filters/location'
 import { filterCompaniesBySicCode, filterCompaniesBySicCodeMetadata } from './filters/sicCode'
 import { filterCompaniesByAge, filterCompaniesByAgeMetadata } from './filters/age'
+import { filterCompaniesByStatus, filterCompaniesByStatusMetadata } from './filters/status'
+import {
+  filterCompaniesBySicCodeDescription,
+  filterCompaniesBySicCodeDescriptionMetadata
+} from './filters/sicCodeDescription'
 
 export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   const filterMap = new Map()
@@ -14,10 +19,10 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
     filterOption: filterCompaniesBySicCodeMetadata,
     filter: filterCompaniesBySicCode
   })
-  // filterMap.set('date of establishment', {
-  //   filterOption: filterAccountantsByNumberOfClientsMetdata,
-  //   filter: filterAccountantsByNumberOfClients
-  // })
+  filterMap.set('sic code description', {
+    filterOption: filterCompaniesBySicCodeDescriptionMetadata,
+    filter: filterCompaniesBySicCodeDescription
+  })
   filterMap.set('age', {
     filterOption: filterCompaniesByAgeMetadata,
     filter: filterCompaniesByAge
@@ -26,9 +31,10 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
     filterOption: filterCompaniesByLocationMetadata,
     filter: filterCompaniesByLocation
   })
-  // filterMap.set('revenue', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
-  // filterMap.set('profit', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
-  // filterMap.set('employees', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
+  filterMap.set('status', {
+    filterOption: filterCompaniesByStatusMetadata,
+    filter: filterCompaniesByStatus
+  })
   return filterMap
 }
 

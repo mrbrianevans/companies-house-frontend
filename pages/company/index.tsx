@@ -27,6 +27,8 @@ const FilterCompanies = ({ filterOptions }: Props) => {
   }
   const [filterMatchesLoading, setFilterMatchesLoading] = useState(false)
   const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
+  const [resultSetSize, setResultSetSize] = useState<number>()
+  const [resultSetSizeLoading, setResultSetSizeLoading] = useState<boolean>(true)
   const applyFilter = () => {
     const requestFilterTime = Date.now()
     setFilterMatchesLoading(true)
@@ -44,6 +46,20 @@ const FilterCompanies = ({ filterOptions }: Props) => {
       .then(() => setRequestResponseTime(Date.now() - requestFilterTime))
       .catch(console.error)
       .finally(() => setFilterMatchesLoading(false))
+    setResultSetSizeLoading(true)
+    fetch('/api/companies/countFilterResults', {
+      method: 'POST',
+      body: JSON.stringify(filters),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((r) => {
+        if (r.status === 200) return r
+        else throw new Error(JSON.stringify(r.json()))
+      })
+      .then((r) => r.json())
+      .then((j: { count: number }) => setResultSetSize(j.count))
+      .then(() => setResultSetSizeLoading(false))
+      .catch(console.error)
   }
   const [matchingCompanies, setMatchingCompanies] = useState<ICompanyProfile[]>()
   return (
@@ -67,6 +83,7 @@ const FilterCompanies = ({ filterOptions }: Props) => {
           <Button label={'Run query'} onClick={applyFilter} />
         </div>
         <div>
+          {resultSetSizeLoading || `${resultSetSize} results in ${requestResponseTime}ms`}
           <table className={styles.results}>
             <thead>
               <tr>
@@ -110,6 +127,8 @@ const FilterCompanies = ({ filterOptions }: Props) => {
             <li>status (active/dissolved etc)</li>
             <li>type of accounts filed (micro/small/full etc)</li>
           </ul>
+          <p>I want a pre-set filters section for very common filters, such as only active companies</p>
+          <p>Auto-run the query every time a new query is added or an existing one deleted</p>
         </div>
       </div>
     </Page>
