@@ -8,6 +8,13 @@ import {
   filterCompaniesBySicCodeDescription,
   filterCompaniesBySicCodeDescriptionMetadata
 } from './filters/sicCodeDescription'
+import { filterCompaniesByProfit, filterCompaniesByProfitMetadata } from './filters/profit'
+import { filterCompaniesByCreditors, filterCompaniesByCreditorsMetadata } from './filters/creditors'
+import { filterCompaniesByCurrentAssets, filterCompaniesByCurrentAssetsMetadata } from './filters/currentAssets'
+import { filterCompaniesByEmployees, filterCompaniesByEmployeesMetadata } from './filters/employees'
+import { filterCompaniesByDebtors, filterCompaniesByDebtorsMetadata } from './filters/debtors'
+import { filterCompaniesByCashAtBank, filterCompaniesByCashAtBankMetadata } from './filters/cashAtBank'
+import { filterCompaniesByNetAssets, filterCompaniesByNetAssetsMetadata } from './filters/netAssets'
 
 export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   const filterMap = new Map()
@@ -35,6 +42,38 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
     filterOption: filterCompaniesByStatusMetadata,
     filter: filterCompaniesByStatus
   })
+
+  // accounts
+  filterMap.set('profit', {
+    filterOption: filterCompaniesByProfitMetadata,
+    filter: filterCompaniesByProfit
+  })
+  filterMap.set('employees', {
+    filterOption: filterCompaniesByEmployeesMetadata,
+    filter: filterCompaniesByEmployees
+  })
+  filterMap.set('current assets', {
+    filterOption: filterCompaniesByCurrentAssetsMetadata,
+    filter: filterCompaniesByCurrentAssets
+  })
+  filterMap.set('cash at bank', {
+    filterOption: filterCompaniesByCashAtBankMetadata,
+    filter: filterCompaniesByCashAtBank
+  })
+  filterMap.set('debtors', {
+    filterOption: filterCompaniesByDebtorsMetadata,
+    filter: filterCompaniesByDebtors
+  })
+  filterMap.set('creditors', {
+    filterOption: filterCompaniesByCreditorsMetadata,
+    filter: filterCompaniesByCreditors
+  })
+  filterMap.set('net assets', {
+    filterOption: filterCompaniesByNetAssetsMetadata,
+    filter: filterCompaniesByNetAssets
+  })
+  // Generated 7 files: 22.398ms
+
   return filterMap
 }
 
