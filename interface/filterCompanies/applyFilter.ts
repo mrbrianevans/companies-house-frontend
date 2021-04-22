@@ -15,16 +15,28 @@ import { getResultCount } from './getResultCount'
 export const applyCompaniesFilter: (
   filters: IFilter[]
 ) => Promise<{ query: string; results: ICompanyProfile[] } | undefined> = async (filters) => {
+  const startTime = Date.now()
   try {
     const { value: bigValue, query: bigQuery } = combineQueries(filters, 10)
     const prettyPrintQuery = prettyPrintSqlQuery(bigQuery, bigValue)
-    console.log(prettyPrintQuery)
+    // console.log(prettyPrintQuery)
 
     try {
-      console.time('Filtering companies')
+      // console.time('Filtering companies')
       const pool = await getDatabasePool()
       const { rows: matches } = await pool.query(bigQuery, bigValue)
-      console.log('Returned', matches.length, 'rows')
+      const hash = require('object-hash')
+      console.log(
+        JSON.stringify({
+          severity: 'INFO',
+          message: `Filtered companies in ${Date.now() - startTime}ms`,
+          numberOfResultsReturned: matches.length,
+          queryProcessingTime: Date.now() - startTime,
+          filters: filters.map((filter) => filter.category).join(', '),
+          class: 'company-filter',
+          filterObjectHash: hash(filters)
+        })
+      )
       return { query: prettyPrintQuery, results: matches }
     } catch (e) {
       console.log(
@@ -37,7 +49,7 @@ export const applyCompaniesFilter: (
         })
       )
     } finally {
-      console.timeEnd('Filtering companies')
+      // console.timeEnd('Filtering companies')
     }
   } catch (e) {
     console.log(

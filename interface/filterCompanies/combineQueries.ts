@@ -36,7 +36,7 @@ export const combineQueries: (filters: IFilter[], limit?: number) => IMinorQuery
         ${limit ? 'LIMIT ' + limit : ''}
       `
   let bigValue = values.flat()
-  const prettyPrintQuery = prettyPrintSqlQuery(bigQuery, bigValue)
-  console.log('in the combine queries file', prettyPrintQuery)
+  // const prettyPrintQuery = prettyPrintSqlQuery(bigQuery, bigValue)
+  // console.log('in the combine queries file', prettyPrintQuery)
   return { query: bigQuery, value: bigValue }
 }
