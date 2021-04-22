@@ -19,18 +19,21 @@ export default function Home() {
         <Link href={'/accountants'}>
           <a draggable={'false'}>
             <h3>Filter accountants</h3>
-            <p>This uses accountants discolsure on accounts</p>
+            <p>This aggregates accountants discolsure on accounts to
+              build a picture of how many clients an accountant has</p>
           </a>
         </Link>
         <Link href={'/company'}>
           <a draggable={'false'}>
             <h3>Filter companies</h3>
-            <p>View a companies accounts filings and other information held by companies house</p>
+            <p>Filter all UK companies by parameters such as location, SIC code and name</p>
           </a>
         </Link>
         <div className={styles.aboutCard}>
           <h3>About</h3>
-          <p>This is a facility to filter UK companies using data from companies house</p>
+          <p>Every company in the UK is compelled by law to file annual accounts with Companies House,
+            who then makes these publically available.
+            This is a facility to filter UK companies using the data from companies house</p>
         </div>
       </div>
     </Page>

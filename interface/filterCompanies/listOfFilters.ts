@@ -2,6 +2,19 @@ import { IFilterMapValue } from '../../types/IFilters'
 import { filterCompaniesByName, filterCompaniesByNameMetadata } from './filters/name'
 import { filterCompaniesByLocation, filterCompaniesByLocationMetadata } from './filters/location'
 import { filterCompaniesBySicCode, filterCompaniesBySicCodeMetadata } from './filters/sicCode'
+import { filterCompaniesByAge, filterCompaniesByAgeMetadata } from './filters/age'
+import { filterCompaniesByStatus, filterCompaniesByStatusMetadata } from './filters/status'
+import {
+  filterCompaniesBySicCodeDescription,
+  filterCompaniesBySicCodeDescriptionMetadata
+} from './filters/sicCodeDescription'
+import { filterCompaniesByProfit, filterCompaniesByProfitMetadata } from './filters/profit'
+import { filterCompaniesByCreditors, filterCompaniesByCreditorsMetadata } from './filters/creditors'
+import { filterCompaniesByCurrentAssets, filterCompaniesByCurrentAssetsMetadata } from './filters/currentAssets'
+import { filterCompaniesByEmployees, filterCompaniesByEmployeesMetadata } from './filters/employees'
+import { filterCompaniesByDebtors, filterCompaniesByDebtorsMetadata } from './filters/debtors'
+import { filterCompaniesByCashAtBank, filterCompaniesByCashAtBankMetadata } from './filters/cashAtBank'
+import { filterCompaniesByNetAssets, filterCompaniesByNetAssetsMetadata } from './filters/netAssets'
 
 export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   const filterMap = new Map()
@@ -13,17 +26,54 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
     filterOption: filterCompaniesBySicCodeMetadata,
     filter: filterCompaniesBySicCode
   })
-  // filterMap.set('date of establishment', {
-  //   filterOption: filterAccountantsByNumberOfClientsMetdata,
-  //   filter: filterAccountantsByNumberOfClients
-  // })
+  filterMap.set('sic code description', {
+    filterOption: filterCompaniesBySicCodeDescriptionMetadata,
+    filter: filterCompaniesBySicCodeDescription
+  })
+  filterMap.set('age', {
+    filterOption: filterCompaniesByAgeMetadata,
+    filter: filterCompaniesByAge
+  })
   filterMap.set('location', {
     filterOption: filterCompaniesByLocationMetadata,
     filter: filterCompaniesByLocation
   })
-  // filterMap.set('revenue', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
-  // filterMap.set('profit', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
-  // filterMap.set('employees', { filterOption: filterAccountantsByLocationMetadata, filter: filterAccountantsByLocation })
+  filterMap.set('status', {
+    filterOption: filterCompaniesByStatusMetadata,
+    filter: filterCompaniesByStatus
+  })
+
+  // accounts
+  filterMap.set('profit', {
+    filterOption: filterCompaniesByProfitMetadata,
+    filter: filterCompaniesByProfit
+  })
+  filterMap.set('employees', {
+    filterOption: filterCompaniesByEmployeesMetadata,
+    filter: filterCompaniesByEmployees
+  })
+  filterMap.set('current assets', {
+    filterOption: filterCompaniesByCurrentAssetsMetadata,
+    filter: filterCompaniesByCurrentAssets
+  })
+  filterMap.set('cash at bank', {
+    filterOption: filterCompaniesByCashAtBankMetadata,
+    filter: filterCompaniesByCashAtBank
+  })
+  filterMap.set('debtors', {
+    filterOption: filterCompaniesByDebtorsMetadata,
+    filter: filterCompaniesByDebtors
+  })
+  filterMap.set('creditors', {
+    filterOption: filterCompaniesByCreditorsMetadata,
+    filter: filterCompaniesByCreditors
+  })
+  filterMap.set('net assets', {
+    filterOption: filterCompaniesByNetAssetsMetadata,
+    filter: filterCompaniesByNetAssets
+  })
+  // Generated 7 files: 22.398ms
+
   return filterMap
 }
 
