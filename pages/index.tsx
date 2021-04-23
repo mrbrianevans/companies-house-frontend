@@ -19,8 +19,10 @@ export default function Home() {
         <Link href={'/accountants'}>
           <a draggable={'false'}>
             <h3>Filter accountants</h3>
-            <p>This aggregates accountants discolsure on accounts to
-              build a picture of how many clients an accountant has</p>
+            <p>
+              This aggregates accountants discolsure on accounts to build a picture of how many clients an accountant
+              has
+            </p>
           </a>
         </Link>
         <Link href={'/company'}>
@@ -31,9 +33,10 @@ export default function Home() {
         </Link>
         <div className={styles.aboutCard}>
           <h3>About</h3>
-          <p>Every company in the UK is compelled by law to file annual accounts with Companies House,
-            who then makes these publically available.
-            This is a facility to filter UK companies using the data from companies house</p>
+          <p>
+            Every company in the UK is compelled by law to file annual accounts with Companies House, who then makes
+            these publically available. This is a facility to filter UK companies using the data from companies house
+          </p>
         </div>
       </div>
     </Page>
