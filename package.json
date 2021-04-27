@@ -18,14 +18,18 @@
   "author": "Brian Evans",
   "license": "ISC",
   "dependencies": {
+    "@companieshouse/api-sdk-node": "^1.0.25",
+    "camelcase": "^6.2.0",
     "next": "10.0.5",
     "object-hash": "^2.1.1",
     "pg": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
+    "requests": "^0.3.0",
     "sass": "^1.32.8",
-    "swr": "^0.4.0"
+    "swr": "^0.4.0",
+    "to-snake-case": "^1.0.0"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.17",

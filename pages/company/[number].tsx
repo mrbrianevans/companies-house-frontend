@@ -8,7 +8,14 @@ import { ICompanyAccounts } from '../../types/ICompanyAccounts'
 import getCompanyAccounts from '../../interface/getCompanyAccounts'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-
+import { useEffect, useState } from 'react'
+import {
+  CompanyFilingHistory,
+  FilingHistoryItem
+} from '@companieshouse/api-sdk-node/dist/services/company-filing-history'
+import { formatFilingDescription } from '../../interface/formatFilingDescription'
+import { GetFilingsListResponse } from '../api/chApi/getFilingsList'
+import { FilingItem } from '../../components/CompanyProfile/FilingItem'
 const styles = require('../../styles/Home.module.css')
 
 interface props {
@@ -21,6 +28,14 @@ interface props {
 
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   const router = useRouter()
+  const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
+  useEffect(() => {
+    if (!companyData?.company_number) return
+    fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company_number)
+      .then((res) => res.json())
+      .then((j) => setFilingHistory(j))
+      .catch(console.error)
+  }, [companyData])
   return (
     <Page>
       {router.isFallback ? (
@@ -49,7 +64,7 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
             <div>
               <h3>Industry classification:</h3>
               <ul>
-                {companyData.sic_codes?.map((sicCode, i) => (
+                {companyData?.sic_codes?.map((sicCode, i) => (
                   <li key={i}>{sicCode}</li>
                 ))}
               </ul>
@@ -78,6 +93,16 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
                   </li>
                 ))}
               </ul>
+              {filingHistory && (
+                <div>
+                  <h4>{filingHistory?.totalCount} filing history items:</h4>
+                  <ul>
+                    {filingHistory?.items?.map((item) => {
+                      return <FilingItem item={item} />
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
             <div style={{ maxWidth: 800 }}>
               {financials && (
