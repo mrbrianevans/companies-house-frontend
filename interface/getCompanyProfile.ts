@@ -2,11 +2,11 @@ import { getDatabasePool } from '../helpers/connectToDatabase'
 import { ICompanyProfile } from '../types/ICompany'
 import axios from 'axios'
 import { ICompaniesHouseApiCompanyProfile } from '../types/ICompaniesHouseApiCompanyProfile'
+import { Timer } from '../helpers/Timer'
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyProfile | null> = async (
   company_number
 ) => {
   if (!company_number.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/)) return null
-  console.time('Query database for company profile')
   const pool = getDatabasePool()
   const { rows: profileFromDb } = await pool.query(
     `
@@ -34,7 +34,6 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
     [company_number]
   )
   await pool.end()
-  console.timeEnd('Query database for company profile')
   if (profileFromDb.length) {
     const company: ICompanyProfile = profileFromDb[0]
     //todo: cascading importance of different address fields should coalesce into an 'area' field
@@ -42,14 +41,18 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
       company.parish = company.parish.slice(0, company.parish.indexOf(', unparished area'))
     return company
   } else {
-    console.time('Not in database: ' + company_number + '. Fetched government API')
-    //check government API here
+    const timer = new Timer({
+      details: { companyNumber: company_number, class: 'company-profile' },
+      label: 'Fetch company profile from Companies House API'
+    })
+    timer.start('API call')
     const apiUrl = 'https://api.company-information.service.gov.uk/company/' + company_number
     const govResponse: ICompaniesHouseApiCompanyProfile = await axios
       .get(apiUrl, {
         auth: { username: process.env.APIUSER, password: '' }
       })
       .then((res) => res.data)
+    timer.flush()
     const companyData: ICompanyProfile = {
       category: govResponse.type || null,
       company_number: govResponse.company_number || null,
@@ -65,7 +68,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
       status: govResponse.company_status || null,
       streetaddress: govResponse.registered_office_address.address_line_1 || null
     }
-    console.timeEnd('Not in database: ' + company_number + '. Fetched government API')
+    //todo: save this data in the database so that it doesn't need to be called again
     return companyData
   }
 }
