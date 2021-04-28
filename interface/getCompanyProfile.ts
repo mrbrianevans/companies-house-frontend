@@ -2,7 +2,6 @@ import { getDatabasePool } from '../helpers/connectToDatabase'
 import { ICompanyProfile } from '../types/ICompany'
 import axios from 'axios'
 import { ICompaniesHouseApiCompanyProfile } from '../types/ICompaniesHouseApiCompanyProfile'
-
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyProfile | null> = async (
   company_number
 ) => {
@@ -52,19 +51,19 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
       })
       .then((res) => res.data)
     const companyData: ICompanyProfile = {
-      category: govResponse.type,
-      company_number: govResponse.company_number,
-      country: govResponse.registered_office_address.country,
-      county: govResponse.registered_office_address.region,
+      category: govResponse.type || null,
+      company_number: govResponse.company_number || null,
+      country: govResponse.registered_office_address.country || null,
+      county: govResponse.registered_office_address.region || null,
       data_updated: Date.now(),
-      date_of_creation: govResponse.date_of_creation,
-      name: govResponse.company_name,
-      parish: govResponse.registered_office_address.locality,
-      postcode: govResponse.registered_office_address.postal_code,
-      region: govResponse.registered_office_address.region,
-      sic_codes: govResponse.sic_codes,
-      status: govResponse.company_status,
-      streetaddress: govResponse.registered_office_address.address_line_1
+      date_of_creation: govResponse.date_of_creation || null,
+      name: govResponse.company_name || null,
+      parish: govResponse.registered_office_address.locality || null,
+      postcode: govResponse.registered_office_address.postal_code || null,
+      region: govResponse.registered_office_address.region || null,
+      sic_codes: govResponse.sic_codes || null,
+      status: govResponse.company_status || null,
+      streetaddress: govResponse.registered_office_address.address_line_1 || null
     }
     console.timeEnd('Not in database: ' + company_number + '. Fetched government API')
     return companyData

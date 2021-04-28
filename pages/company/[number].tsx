@@ -8,7 +8,16 @@ import { ICompanyAccounts } from '../../types/ICompanyAccounts'
 import getCompanyAccounts from '../../interface/getCompanyAccounts'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-
+import { useEffect, useState } from 'react'
+import {
+  CompanyFilingHistory,
+  FilingHistoryItem
+} from '@companieshouse/api-sdk-node/dist/services/company-filing-history'
+import { formatFilingDescription } from '../../interface/formatFilingDescription'
+import { GetFilingsListResponse } from '../api/chApi/getFilingsList'
+import { FilingItem } from '../../components/CompanyProfile/FilingItem'
+import Button from '../../components/Inputs/Button'
+import FormRow from '../../components/Inputs/FormRow'
 const styles = require('../../styles/Home.module.css')
 
 interface props {
@@ -21,6 +30,15 @@ interface props {
 
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   const router = useRouter()
+  const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
+  const [filingHistoryDisplayLimit, setFilingHistoryDisplayLimit] = useState(5)
+  useEffect(() => {
+    if (!companyData?.company_number) return
+    fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company_number)
+      .then((res) => res.json())
+      .then((j) => setFilingHistory(j))
+      .catch(console.error)
+  }, [companyData])
   return (
     <Page>
       {router.isFallback ? (
@@ -49,36 +67,75 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
             <div>
               <h3>Industry classification:</h3>
               <ul>
-                {companyData.sic_codes?.map((sicCode, i) => (
+                {companyData?.sic_codes?.map((sicCode, i) => (
                   <li key={i}>{sicCode}</li>
                 ))}
               </ul>
             </div>
-            <div>
-              {filingEvents?.length + companyEvents?.length ? <h3>Events</h3> : <></>}
-              <ul>
-                {filingEvents
-                  ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
-                  ?.map((filingEvent) => {
-                    const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(
-                      /^<b>(.*)<\/b>(.*)$/
-                    )
-                    return (
-                      <li key={filingEvent.id}>
-                        {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>
-                        {descriptionBody}
-                      </li>
-                    )
+            {filingHistory ? (
+              <div>
+                <h3>Filing history:</h3>
+                <ul>
+                  {filingHistory?.items?.slice(0, filingHistoryDisplayLimit)?.map((item) => {
+                    return <FilingItem item={item} />
                   })}
-                {companyEvents?.map((companyEvent) => (
-                  <li key={companyEvent.id}>
-                    {`Company profile: ${
-                      Object.keys(companyEvent.fields_changed ?? {}).length
-                    } items changed on ${new Date(companyEvent.published).toDateString()}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                </ul>
+                {filingHistory.totalCount > 5 && (
+                  <FormRow>
+                    {filingHistoryDisplayLimit < filingHistory.totalCount ? (
+                      <>
+                        <Button
+                          label={'Show more'}
+                          onClick={() => setFilingHistoryDisplayLimit((prevState) => prevState + 5)}
+                        />
+                        <Button
+                          label={'Show all'}
+                          onClick={() => setFilingHistoryDisplayLimit(filingHistory.totalCount)}
+                        />
+                      </>
+                    ) : (
+                      <span>Showing all available filings on record</span>
+                    )}
+                    {filingHistoryDisplayLimit > 5 && (
+                      <Button
+                        onClick={() => setFilingHistoryDisplayLimit((prevState) => prevState - 5)}
+                        label={'Show less'}
+                      />
+                    )}
+                  </FormRow>
+                )}
+              </div>
+            ) : (
+              <>
+                {filingEvents?.length + companyEvents?.length !== 0 && (
+                  <div>
+                    <h3>Recent filing history</h3>
+                    <ul>
+                      {filingEvents
+                        ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
+                        ?.map((filingEvent) => {
+                          const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(
+                            /^<b>(.*)<\/b>(.*)$/
+                          )
+                          return (
+                            <li key={filingEvent.id}>
+                              {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>
+                              {descriptionBody}
+                            </li>
+                          )
+                        })}
+                      {companyEvents?.map((companyEvent) => (
+                        <li key={companyEvent.id}>
+                          {`Company profile: ${
+                            Object.keys(companyEvent.fields_changed ?? {}).length
+                          } items changed on ${new Date(companyEvent.published).toDateString()}`}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
+            )}
             <div style={{ maxWidth: 800 }}>
               {financials && (
                 <>

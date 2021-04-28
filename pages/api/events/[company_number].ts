@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const pool = getDatabasePool()
     console.time('Query database SELECT filing events')
-    const { rows: filingEvents } = await pool.query('SELECT * FROM filing_events WHERE company_number=$1;', [
+    const { rows: filingEvents } = await pool.query('SELECT * FROM filing_events_legacy WHERE company_number=$1;', [
       company_number
     ])
     console.timeEnd('Query database SELECT filing events')

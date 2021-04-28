@@ -15,6 +15,10 @@ import { filterCompaniesByEmployees, filterCompaniesByEmployeesMetadata } from '
 import { filterCompaniesByDebtors, filterCompaniesByDebtorsMetadata } from './filters/debtors'
 import { filterCompaniesByCashAtBank, filterCompaniesByCashAtBankMetadata } from './filters/cashAtBank'
 import { filterCompaniesByNetAssets, filterCompaniesByNetAssetsMetadata } from './filters/netAssets'
+import {
+  filterCompaniesByChangeOfOwnership,
+  filterCompaniesByChangeOfOwnershipMetadata
+} from './filters/changeOfOwnership'
 
 export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   const filterMap = new Map()
@@ -41,6 +45,10 @@ export const getCompanyFilterList: () => Map<string, IFilterMapValue> = () => {
   filterMap.set('status', {
     filterOption: filterCompaniesByStatusMetadata,
     filter: filterCompaniesByStatus
+  })
+  filterMap.set('change of ownership', {
+    filterOption: filterCompaniesByChangeOfOwnershipMetadata,
+    filter: filterCompaniesByChangeOfOwnership
   })
 
   // accounts
