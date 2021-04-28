@@ -18,7 +18,7 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
                        filing_date::text,
                        published::date::text,
                        barcode
-       FROM filing_events
+       FROM filing_events_legacy
        WHERE company_number = $1
        ORDER BY id;`,
       [company_number]

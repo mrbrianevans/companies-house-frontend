@@ -1,6 +1,7 @@
 import { createApiClient } from '@companieshouse/api-sdk-node'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { formatFilingDescription } from '../../../interface/formatFilingDescription'
+import { insertFilingEvent } from '../../../interface/insertFilingEvent'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { company_number } = req.query
@@ -19,7 +20,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (apiResponse.resource) {
     for (let item of apiResponse.resource.items) {
       const description = await formatFilingDescription(item.description, item.descriptionValues)
-      response.items.push({ description, date: item.date, id: item.transactionId })
+      response.items.push({ description, date: item.date, id: item.transactionId, category: item.category })
+      insertFilingEvent(item, description, company_number) // this can be done in the background
     }
   }
   response.items.sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf())
@@ -27,6 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 export interface GetFilingsListResponse {
-  items: { description: string; date: string; id: string }[]
+  items: { description: string; date: string; id: string; category: string }[]
   totalCount: number
 }

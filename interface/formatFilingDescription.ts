@@ -10,10 +10,11 @@ export const formatFilingDescription: (
     rowCount
   } = await pool.query('SELECT value FROM filing_history_descriptions WHERE key=$1 LIMIT 1', [descriptionCode])
   await pool.end()
+  if (rowCount != 1) return camelCase(descriptionCode)
   const description = descriptions[0]['value']
   let formattedDescription = description.replace(/{([a-z_]+)}/g, (s: string) =>
     descriptionValues ? descriptionValues[camelCase(s.slice(1, s.length - 1))] || '' : ''
   )
-  console.log('original: ', descriptions[0].value, '\nformatted:', formattedDescription, 'values:', descriptionValues)
+  // console.log('original: ', descriptions[0].value, '\nformatted:', formattedDescription, 'values:', descriptionValues)
   return formattedDescription.toString()
 }
