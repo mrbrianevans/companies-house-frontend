@@ -84,7 +84,7 @@ export class Timer {
    * stops the most recently started timer
    */
   public end() {
-    this.stop(this.mostRecentlyStartedLabel)
+    if (this.mostRecentlyStartedLabel) this.stop(this.mostRecentlyStartedLabel)
   }
   /**
    * prints times to the console in JSON format for Google Cloud Logging
@@ -93,7 +93,7 @@ export class Timer {
    */
   public flush() {
     this.finishTime = Date.now()
-    if (!this.savedTimes[this.mostRecentlyStartedLabel].finishTime) this.end()
+    if (this.mostRecentlyStartedLabel && !this.savedTimes[this.mostRecentlyStartedLabel].finishTime) this.end()
     const printObject: { [label: string]: string | number } = {
       severity: this.config?.severity ?? 'INFO',
       message: (this.config?.label ?? `Timer`) + `: ${this.finishTime - this.startTime}ms`
