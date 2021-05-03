@@ -5,6 +5,7 @@ import { ICompanyProfile } from '../../types/ICompany'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { combineQueries } from './combineQueries'
 import { getResultCount } from './getResultCount'
+import { getFilterId } from '../../helpers/getFilterId'
 // import filterMap from '../../helpers/filters'
 // /api/company
 
@@ -22,10 +23,8 @@ export const applyCompaniesFilter: (
     // console.log(prettyPrintQuery)
 
     try {
-      // console.time('Filtering companies')
       const pool = await getDatabasePool()
       const { rows: matches } = await pool.query(bigQuery, bigValue)
-      const hash = require('object-hash')
       console.log(
         JSON.stringify({
           severity: 'INFO',
@@ -34,7 +33,7 @@ export const applyCompaniesFilter: (
           queryProcessingTime: Date.now() - startTime,
           filters: filters.map((filter) => filter.category).join(', '),
           class: 'company-filter',
-          filterObjectHash: hash(filters)
+          filterObjectId: getFilterId(filters)
         })
       )
       return { query: prettyPrintQuery, results: matches }
@@ -48,8 +47,6 @@ export const applyCompaniesFilter: (
           error: e.message
         })
       )
-    } finally {
-      // console.timeEnd('Filtering companies')
     }
   } catch (e) {
     console.log(

@@ -27,6 +27,7 @@ export class Timer {
     this.startTime = Date.now()
     this.config = config
     this.savedTimes = {}
+    if (this.config?.label !== undefined) this.start(this.config.label)
   }
 
   /**

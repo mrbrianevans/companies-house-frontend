@@ -1,10 +1,11 @@
 import { IFilter } from '../../types/IFilters'
-import { combineQueries } from './combineQueries'
+import { getMatchingCompanyNumbers } from './combineQueries'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { Timer } from '../../helpers/Timer'
 
 export const getResultCount: (filters: IFilter[]) => Promise<number> = async (filters) => {
-  const { value: bigValue, query: bigQuery } = combineQueries(filters)
-  console.time('Calculate result size')
+  const { value: bigValue, query: bigQuery } = getMatchingCompanyNumbers(filters)
+  const timer = new Timer({ label: 'Count result set size' })
   const pool = await getDatabasePool()
   const { rows } = await pool.query(
     `
@@ -12,9 +13,9 @@ export const getResultCount: (filters: IFilter[]) => Promise<number> = async (fi
   `,
     bigValue
   )
-  console.timeEnd('Calculate result size')
+  timer.flush()
 
   const count: number = rows[0].count
-  console.log('Counted', count, 'results')
+  // console.log('Counted', count, 'results')
   return count
 }
