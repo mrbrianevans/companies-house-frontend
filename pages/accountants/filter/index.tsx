@@ -32,11 +32,8 @@ const AccountantFilterPage = ({ filterOptions }: Props) => {
   const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
   let clearRequestResponseTimer: NodeJS.Timeout | undefined
   const applyFilter = () => {
-    // console.log('Requesting filter from backend: ', filters)
-    const requestFilterTime = Date.now()
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
     setFilterMatchesLoading(true)
-    // fetch("http://localhost:8080/api/accountants/filterRedirect", {
     fetch('/api/accountants/filterRedirect', {
       method: 'POST',
       body: JSON.stringify({ filters }),

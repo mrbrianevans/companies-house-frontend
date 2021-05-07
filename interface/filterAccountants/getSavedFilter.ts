@@ -17,7 +17,7 @@ export const getSavedFilter: (id: string) => Promise<SavedFilter | null> = async
     UPDATE saved_filters SET 
                              last_viewed=CURRENT_TIMESTAMP,
                              view_count=view_count+1
-    WHERE id=$1 AND accountant=TRUE
+    WHERE id=$1 AND category='ACCOUNTANT'
     RETURNING view_count, created, filters, results, last_run
   `,
     [id]

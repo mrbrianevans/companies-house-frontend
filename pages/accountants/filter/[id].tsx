@@ -1,6 +1,6 @@
 import { IFilter, IFilterOption } from '../../../types/IFilters'
 import { IAccountant } from '../../../types/IAccountant'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Page } from '../../../components/Page/Page'
 import { NewFilterCard } from '../../../components/NewFilterCard/NewFilterCard'
 import IconButton from '../../../components/Inputs/IconButton'
@@ -15,13 +15,31 @@ import getAccountantFilters from '../../../interface/filterAccountants/getFilter
 const styles = require('../../../styles/Accountant.module.scss')
 
 interface Props {
-  filterOptions: IFilterOption[]
-  appliedFilters: IFilter[]
-  results: IAccountant[]
-  metadata: { id: string; name?: string; created: number; lastRun: number }
+  filterOptions?: IFilterOption[]
+  appliedFilters?: IFilter[]
+  results?: IAccountant[]
+  metadata?: { id: string; name?: string; created: number; lastRun: number }
 }
 const AccountantFilterPage = ({ appliedFilters, filterOptions, metadata, results }: Props) => {
   const router = useRouter()
+
+  // console.log('props: ', { appliedFilters, filterOptions, metadata, results })
+  const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>()
+  const [filters, setFilters] = useState<IFilter[]>()
+  const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
+  const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
+  const [matchingAccountants, setMatchingAccountants] = useState<IAccountant[]>()
+  useEffect(() => {
+    if (router.isFallback) console.log('ON A FALLBACK PAGE!', Date.now(), router.asPath)
+    else console.log('not on a fallback page', Date.now(), router.asPath)
+    if (!router.isFallback) {
+      setMatchingAccountants(results)
+      setShowNewFilterForm(filterOptions.length > 0) // this should always be true
+      setFilterMatchesLoading(false)
+      setFilters(appliedFilters)
+    }
+  }, [router.isFallback, router.asPath])
+  let clearRequestResponseTimer: NodeJS.Timeout | undefined
   if (router.isFallback) {
     return (
       // todo: this needs to be a better loading page...
@@ -30,9 +48,6 @@ const AccountantFilterPage = ({ appliedFilters, filterOptions, metadata, results
       </Page>
     )
   }
-  console.log('props: ', { appliedFilters, filterOptions, metadata, results })
-  const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>(filterOptions.length > 0)
-  const [filters, setFilters] = useState<IFilter[]>(appliedFilters)
   const addFilter = (filter: IFilter) => {
     setShowNewFilterForm(false)
     setFilters((prevState) => [filter, ...prevState])
@@ -40,35 +55,24 @@ const AccountantFilterPage = ({ appliedFilters, filterOptions, metadata, results
       setShowNewFilterForm(true)
     }, 1)
   }
-  const [filterMatchesLoading, setFilterMatchesLoading] = useState(false)
-  const [requestResponseTime, setRequestResponseTime] = useState<number | undefined>()
-  let clearRequestResponseTimer: NodeJS.Timeout | undefined
   const applyFilter = () => {
-    // console.log('Requesting filter from backend: ', filters)
-    const requestFilterTime = Date.now()
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
     setFilterMatchesLoading(true)
-    // fetch("http://localhost:8080/api/accountants/filter", {
-    fetch('/api/accountants/filter', {
+    fetch('/api/accountants/filterRedirect', {
       method: 'POST',
-      body: JSON.stringify(filters),
+      body: JSON.stringify({ filters }),
       headers: { 'Content-Type': 'application/json' }
     })
       .then((r) => {
         if (r.status === 200) return r
-        else throw new Error(JSON.stringify(r.json()))
+        else throw new Error(r.statusText)
       })
       .then((r) => r.json())
-      .then((j: IAccountant[]) => setMatchingAccountants(j))
-      .then(() => setRequestResponseTime(Date.now() - requestFilterTime))
-      .catch(console.error)
-      .finally(() => setFilterMatchesLoading(false))
+      .then((j) => router.push('/accountants/filter/' + j.id))
   }
-  const [matchingAccountants, setMatchingAccountants] = useState<IAccountant[]>(results)
   return (
     <Page>
       <h1>Accountants</h1>
-      <h2>Pre applied filter: {metadata.id}</h2>
       <div className={styles.filterContainer}>
         {showNewFilterForm && (
           <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={'accountants'} />
@@ -91,7 +95,7 @@ const AccountantFilterPage = ({ appliedFilters, filterOptions, metadata, results
         ))}
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          {filters.length ? (
+          {filters?.length ? (
             <Button label={'Run query'} onClick={applyFilter} />
           ) : (
             <p>Apply at least 1 filter to run the query</p>

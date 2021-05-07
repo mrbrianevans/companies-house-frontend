@@ -17,6 +17,17 @@ interface Props {
 }
 
 const AccountantFilterPage = ({ filterOptions }: Props) => {
+  return (
+    <Page>
+      <h1>Accountants</h1>
+      <p>
+        To filter accountants, visit{' '}
+        <Link href={'/accountants/filter'}>
+          <a>/filter</a>
+        </Link>
+      </p>
+    </Page>
+  )
   const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>(filterOptions.length > 0)
   const [filters, setFilters] = useState<IFilter[]>([])
   const addFilter = (filter: IFilter) => {

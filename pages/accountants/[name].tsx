@@ -88,6 +88,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (accountantProfile.company_number) {
     returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
+    return { notFound: true }
     //todo: get possible matches from companies house search API
   }
 

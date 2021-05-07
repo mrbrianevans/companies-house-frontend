@@ -10,6 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     body: { filters }
   }: { body: { filters: IFilter[] } } = req
   const id = getFilterId(filters)
-  if ((await getSavedFilter(id)) === null) await saveNewFilter({ filters })
-  res.json({ id })
+  const savedFilter = await getSavedFilter(id)
+  if (savedFilter === null) await saveNewFilter({ filters })
+  else if (savedFilter.filters.sort() !== filters.sort()) res.json({ id })
 }

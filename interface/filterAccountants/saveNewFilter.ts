@@ -13,19 +13,19 @@ export const saveNewFilter: (newFilter: NewFilter) => Promise<string> = async (n
   const id = getFilterId(newFilter.filters)
   const timer = new Timer({ label: 'Apply accountants filter to save in DB' })
   const { query, results } = await applyAccountantsFilter(newFilter.filters)
-  console.log('filters to save to DB: ', newFilter.filters)
+  // console.log('filters to save to DB: ', newFilter.filters)
   await pool.query(
     `
     INSERT INTO saved_filters
-    (id, accountant, filters, results, time_to_run, query)
+    (id, category, filters, results, time_to_run, query)
     VALUES 
-    ($1, $2, $3, $4, ARRAY[$5::int], $6)
+    ($1, 'ACCOUNTANT', $2, $3, ARRAY[$4::int], $5)
     ON CONFLICT (id) DO UPDATE SET
-    last_run=CURRENT_TIMESTAMP, results = $4, 
-    time_to_run = array_append(saved_filters.time_to_run, $5),
+    last_run=CURRENT_TIMESTAMP, results = $3, 
+    time_to_run = array_append(saved_filters.time_to_run, $4),
     query=excluded.query
     `,
-    [id, true, newFilter.filters, results, timer.flush(), query]
+    [id, newFilter.filters, results, timer.flush(), query]
   )
 
   return id
