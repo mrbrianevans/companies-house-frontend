@@ -1,7 +1,7 @@
 import { IFilter } from '../../types/IFilters'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/getFilterId'
-import { applyAccountantsFilter } from './applyFilter'
+import { applyCompaniesFilter } from './applyFilter'
 import { Timer } from '../../helpers/Timer'
 
 interface NewFilter {
@@ -11,15 +11,16 @@ interface NewFilter {
 export const saveNewFilter: (newFilter: NewFilter) => Promise<string> = async (newFilter) => {
   const pool = getDatabasePool()
   const id = getFilterId(newFilter.filters)
-  const timer = new Timer({ label: 'Apply accountants filter to save in DB' })
-  const { query, results } = await applyAccountantsFilter(newFilter.filters)
-  // console.log('filters to save to DB: ', newFilter.filters)
+  const timer = new Timer({ label: 'Apply company filter to save in DB' })
+  // only saves the top 10 results in the database
+  const { query, results } = await applyCompaniesFilter(newFilter.filters, 10)
   await pool.query(
     `
     INSERT INTO saved_filters
     (id, category, filters, results, time_to_run, query)
     VALUES 
-    ($1, 'ACCOUNTANT', $2, $3, ARRAY[$4::int], $5)
+     --todo: this COMPANY constant should be a typescript enum parameter
+    ($1, 'COMPANY', $2, $3, ARRAY[$4::int], $5)
     ON CONFLICT ON CONSTRAINT saved_filters_pk DO UPDATE SET
     last_run=CURRENT_TIMESTAMP, results = $3, 
     time_to_run = array_append(saved_filters.time_to_run, $4),

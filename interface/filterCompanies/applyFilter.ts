@@ -14,11 +14,12 @@ import { getFilterId } from '../../helpers/getFilterId'
 // in the main function with INTERSECT and EXCEPT statements. Only one query is issued (AND RETURNED!)
 
 export const applyCompaniesFilter: (
-  filters: IFilter[]
-) => Promise<{ query: string; results: ICompanyProfile[] } | undefined> = async (filters) => {
+  filters: IFilter[],
+  limit?: number
+) => Promise<{ query: string; results: ICompanyProfile[] } | undefined> = async (filters, limit = 10) => {
   const startTime = Date.now()
   try {
-    const { value: bigValue, query: bigQuery } = combineQueries(filters, 10)
+    const { value: bigValue, query: bigQuery } = combineQueries(filters, limit)
     const prettyPrintQuery = prettyPrintSqlQuery(bigQuery, bigValue)
     // console.log(prettyPrintQuery)
 

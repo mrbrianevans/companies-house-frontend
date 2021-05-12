@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IFilter } from '../../../types/IFilters'
-import { saveNewFilter } from '../../../interface/filterAccountants/saveNewFilter'
+import { saveNewFilter } from '../../../interface/filterCompanies/saveNewFilter'
 import { getFilterId } from '../../../helpers/getFilterId'
-import { getSavedFilter } from '../../../interface/filterAccountants/getSavedFilter'
-// /api/accountants/filterRedirect
+import { getSavedFilter } from '../../../interface/filterCompanies/getSavedFilter'
+// /api/companies/filterRedirect
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
