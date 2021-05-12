@@ -12,5 +12,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const id = getFilterId(filters)
   const savedFilter = await getSavedFilter(id)
   if (savedFilter === null) await saveNewFilter({ filters })
-  else if (savedFilter.filters.sort() !== filters.sort()) res.json({ id })
+  else if (JSON.stringify(savedFilter.appliedFilters.sort()) != JSON.stringify(filters.sort()))
+    console.error(
+      JSON.stringify({
+        severity: 'ERROR',
+        message: `Filters don't match for id ${id}`,
+        savedFilter: JSON.stringify(savedFilter.appliedFilters.sort()),
+        newFilter: JSON.stringify(filters.sort())
+      })
+    )
+  res.json({ id })
 }

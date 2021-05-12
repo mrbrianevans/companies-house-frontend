@@ -5,14 +5,16 @@ const hash = require('object-hash')
  * Returns an ID for the filters
  *
  * The ID is calculated by hashing the object with md5. It is then shrunk using
- * modulus to a maximum of 100,000 combinations. This results in a 3 letter b64.
+ * modulus to a maximum of 1 bil combinations. This results in a 5 letter b64.
  * @param filters the filters to hash for ID
  */
 export const getFilterId = (filters: IFilter[]) => {
   // sorts the filters so that a different order doesn't give a different filter
   const hashString: string = hash(filters.sort(), { algorithm: 'md5', encoding: 'hex' })
-  //generate a decimal between 10,000 and 100,000 based on the hash
-  const decimal = (Number('0x' + hashString) % 90_000) + 10000
+  //uses custom base 64 encoding to make it url safe, don't use the built in one
+  const maximum = 1073741823
+  const minimum = 16777216
+  const decimal = (Number('0x' + hashString) % (maximum - minimum)) + minimum
   //conver the decimal to a URL-safe base64 to shorten its length
   const base64 = Base64Model.encode(decimal)
   return base64

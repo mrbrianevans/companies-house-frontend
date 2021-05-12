@@ -1,16 +1,13 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { IFilter } from '../../types/IFilters'
+import { ISavedFilter } from '../../types/ISavedFilter'
 import { IAccountant } from '../../types/IAccountant'
-interface SavedFilter {
-  viewCount: number
-  // timestamp in ms when this filter was first saved
-  created: number
-  filters: IFilter[]
-  results: IAccountant[]
-  // timestamp of the last time this query was run
-  lastRun: number
-}
-export const getSavedFilter: (id: string) => Promise<SavedFilter | null> = async (id) => {
+
+/**
+ * Fetches a filter with its results from the database by the filter ID
+ *
+ * @returns SavedFilter the filter saved in the database, or null if not found
+ */
+export const getSavedFilter: (id: string) => Promise<ISavedFilter<IAccountant> | null> = async (id) => {
   const pool = await getDatabasePool()
   const { rows } = await pool.query(
     `
@@ -18,7 +15,7 @@ export const getSavedFilter: (id: string) => Promise<SavedFilter | null> = async
                              last_viewed=CURRENT_TIMESTAMP,
                              view_count=view_count+1
     WHERE id=$1 AND category='ACCOUNTANT'
-    RETURNING view_count, created, filters, results, last_run
+    RETURNING view_count, created, filters, results, last_run, time_to_run
   `,
     [id]
   )
@@ -26,10 +23,14 @@ export const getSavedFilter: (id: string) => Promise<SavedFilter | null> = async
     return null
   }
   return {
-    created: new Date(rows[0].created).valueOf(),
-    filters: rows[0].filters,
+    appliedFilters: rows[0].filters,
     results: rows[0].results,
-    lastRun: new Date(rows[0].last_run).valueOf(),
-    viewCount: rows[0].view_count
+    metadata: {
+      id,
+      lastRunTime: rows[0].time_to_run.sort()[0],
+      lastRun: new Date(rows[0].last_run).valueOf(),
+      viewCount: rows[0].view_count,
+      created: new Date(rows[0].created).valueOf()
+    }
   }
 }
