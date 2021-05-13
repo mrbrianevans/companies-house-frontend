@@ -21,3 +21,9 @@ table.resultsTable > tbody > tr > td:first-child {
   text-align: right;
   padding-right: 0.2rem;
 }
+
+
+h1.title{
+  display: flex;
+  justify-content: space-between;
+}

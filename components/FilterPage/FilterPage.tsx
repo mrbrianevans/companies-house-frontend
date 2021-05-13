@@ -107,14 +107,11 @@ export const FilterPage = <ResultType extends object>({
   }
   return (
     <Page>
-      <h1>Filter {config.labelPlural}</h1>
+      <h1 className={styles.title}>
+        Filter {config.labelPlural}
+        {savedFilter && <ShareCode text={'filfa.co/' + savedFilter.metadata.id} />}
+      </h1>
       <div className={styles.filterContainer}>
-        {savedFilter && (
-          <div>
-            Share filter!
-            <ShareCode text={'filfa.co/' + savedFilter.metadata.id} />
-          </div>
-        )}
         {showNewFilterForm && filterOptions !== undefined && (
           <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
         )}

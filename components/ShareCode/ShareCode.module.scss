@@ -1,23 +1,49 @@
-div.container {
+.container {
   display: inline-flex;
   flex-direction: row;
   align-items: stretch;
   border-radius: 0.25rem;
   background: rgba(0, 0, 0, 0.2);
+  width: CLAMP(10rem,15rem,15rem);
+  font-size: 1rem;
+  position: relative;
 }
 
-div.container > pre {
+.container > pre {
   //background: rgba(0,0,0,0.2);
   padding: 0 0.5rem;
-  max-width: 10rem;
+  width: CLAMP(5rem,10rem,10rem);
   overflow-x: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-div.container > pre::-webkit-scrollbar {
+.container > pre::-webkit-scrollbar {
   display: none;
 }
-div.container > button {
+.container > button {
+  width: CLAMP(5rem,5rem,5rem);
   background: rgba(0, 0, 0, 0.5);
   border: none;
+  cursor: pointer;
+}
+
+
+input.invisibleInput{
+  background: none;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: inherit;
+  user-focus: none;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.popup{
+  position: absolute;
+  top: -2rem;
+  width: inherit;
+  text-align: center;
+  font-weight: lighter;
+  font-family: 'Raleway', sans-serif;
 }

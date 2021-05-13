@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 const styles = require('./ShareCode.module.scss')
 
@@ -14,18 +14,26 @@ type Props = {
  * @param buttonLabel (optional) the label for the button. default is `Copy`
  */
 export const ShareCode = ({ text, buttonLabel }: Props) => {
-  const codeRef = useRef<HTMLAnchorElement>(null)
+  const codeRef = useRef<HTMLInputElement>(null)
+  const [copied, setCopied] = useState(false)
+  const [showExplainer, setShowExplainer] = useState(true)
   const copyClicked = () => {
-    codeRef.current?.focus()
+    codeRef.current?.select()
+    codeRef.current.setSelectionRange(0, 99999) /* For mobile devices */
+    document.execCommand('copy')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 3500)
   }
   return (
-    <div className={styles.container}>
+    <span className={styles.container}>
+      {copied && <span className={styles.popup}>Copied to clipboard</span>}
+      {!copied && showExplainer && <span className={styles.popup}>Shareable link</span>}
       <pre>
-        <a ref={codeRef} href={'https://' + text}>
-          {text}
+        <a href={'https://' + text}>
+          <input ref={codeRef} value={text} className={styles.invisibleInput} disabled={false} />
         </a>
       </pre>
       <button onClick={copyClicked}>{buttonLabel ?? 'Copy'}</button>
-    </div>
+    </span>
   )
 }
