@@ -8,6 +8,7 @@ import Button from '../Inputs/Button'
 import * as React from 'react'
 import { ISavedFilter } from '../../types/ISavedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
+import ButtonLink from '../Inputs/ButtonLink'
 const styles = require('./FilterPage.module.scss')
 
 interface Config {
@@ -37,6 +38,8 @@ export const FilterPage = <ResultType extends object>({
   const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>()
   const [filters, setFilters] = useState<IFilter[]>()
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
+  const [newFilterId, setNewFilterId] = useState<string>()
+  const [newFilterIdUpToDate, setNewFilterIdUpToDate] = useState<boolean>()
   useEffect(() => {
     if (!router.isFallback) {
       setShowNewFilterForm(filterOptions?.length > 0) // this should always be true
@@ -44,6 +47,28 @@ export const FilterPage = <ResultType extends object>({
       setFilters(savedFilter?.appliedFilters ?? [])
     }
   }, [router.isFallback, router.asPath])
+  useEffect(() => {
+    if (filters?.length > 0) {
+      setNewFilterIdUpToDate(false)
+      fetch(config.getFilterIdApiUrl, {
+        method: 'POST',
+        body: JSON.stringify({ filters }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((r) => {
+          if (r.status === 200) return r
+          else throw new Error(r.statusText)
+        })
+        .then((r) => r.json())
+        .then(async (j) => {
+          setNewFilterId(config.redirectUrl(j.id))
+          setNewFilterIdUpToDate(true)
+        })
+    } else {
+      setNewFilterId(config.redirectUrl(''))
+      setNewFilterIdUpToDate(true)
+    }
+  }, [filters])
   let clearRequestResponseTimer: NodeJS.Timeout | undefined
   if (router.isFallback) {
     return (
@@ -74,7 +99,8 @@ export const FilterPage = <ResultType extends object>({
       })
       .then((r) => r.json())
       .then(async (j) => {
-        if (j.id !== savedFilter?.metadata.id) await router.push(config.redirectUrl(j.id))
+        if (j.id !== savedFilter?.metadata.id)
+          await router.push(config.redirectUrl(j.id), config.redirectUrl(j.id), { scroll: false })
         else setFilterMatchesLoading(false)
       })
       .catch(console.error)
@@ -112,7 +138,11 @@ export const FilterPage = <ResultType extends object>({
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
           {filters?.length ? (
-            <Button label={'Run query'} onClick={applyFilter} />
+            newFilterIdUpToDate ? (
+              <ButtonLink href={newFilterId} scroll={false} label={'Run query'} />
+            ) : (
+              <Button label={'Run query'} onClick={applyFilter} />
+            )
           ) : (
             <p>Apply at least 1 filter to run the query</p>
           )}
