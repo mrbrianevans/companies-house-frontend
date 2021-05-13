@@ -7,6 +7,7 @@ import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
 import * as React from 'react'
 import { ISavedFilter } from '../../types/ISavedFilter'
+import { ShareCode } from '../ShareCode/ShareCode'
 const styles = require('./FilterPage.module.scss')
 
 interface Config {
@@ -82,6 +83,12 @@ export const FilterPage = <ResultType extends object>({
     <Page>
       <h1>Filter {config.labelPlural}</h1>
       <div className={styles.filterContainer}>
+        {savedFilter && (
+          <div>
+            Share filter!
+            <ShareCode text={'filfa.co/' + savedFilter.metadata.id} />
+          </div>
+        )}
         {showNewFilterForm && filterOptions !== undefined && (
           <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
         )}

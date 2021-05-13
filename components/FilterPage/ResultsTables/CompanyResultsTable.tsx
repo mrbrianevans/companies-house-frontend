@@ -20,7 +20,7 @@ export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[];
       <tbody>
         {matchingResults?.length > 0 &&
           matchingResults.map((company, index) => (
-            <tr>
+            <tr key={index}>
               <td>{index + 1}</td>
               <td>
                 <Link href={'/company/' + company.company_number}>
