@@ -17,14 +17,6 @@ export const getResultCount: (filters: IFilter[]) => Promise<number> = async (fi
   `,
     bigValue
   )
-  console.log(
-    prettyPrintSqlQuery(
-      `
-  WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;
-  `,
-      bigValue
-    )
-  )
   const count: number = rows[0].count
   timer.next(`Persist result size ${count} in DB`)
   await pool.query(`UPDATE saved_filters SET result_count=$1 WHERE id=$2 AND category='COMPANY'`, [count, filterId])

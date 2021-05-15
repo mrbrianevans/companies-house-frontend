@@ -4,7 +4,7 @@
   align-items: stretch;
   border-radius: 0.25rem;
   background: rgba(0, 0, 0, 0.2);
-  width: CLAMP(10rem,15rem,15rem);
+  width: CLAMP(10rem, 15rem, 15rem);
   font-size: 1rem;
   position: relative;
 }
@@ -12,7 +12,7 @@
 .container > pre {
   //background: rgba(0,0,0,0.2);
   padding: 0 0.5rem;
-  width: CLAMP(5rem,10rem,10rem);
+  width: CLAMP(5rem, 10rem, 10rem);
   overflow-x: scroll;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -21,14 +21,13 @@
   display: none;
 }
 .container > button {
-  width: CLAMP(5rem,5rem,5rem);
+  width: CLAMP(5rem, 5rem, 5rem);
   background: rgba(0, 0, 0, 0.5);
   border: none;
   cursor: pointer;
 }
 
-
-input.invisibleInput{
+input.invisibleInput {
   background: none;
   border: none;
   font-size: inherit;
@@ -39,7 +38,7 @@ input.invisibleInput{
   font-weight: inherit;
 }
 
-.popup{
+.popup {
   position: absolute;
   top: -1.5rem;
   width: inherit;

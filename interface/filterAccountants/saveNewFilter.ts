@@ -11,9 +11,11 @@ interface NewFilter {
 export const saveNewFilter: (newFilter: NewFilter) => Promise<string> = async (newFilter) => {
   const pool = getDatabasePool()
   const id = getFilterId(newFilter.filters)
-  const timer = new Timer({ label: 'Apply accountants filter to save in DB' })
+  const timer = new Timer({
+    label: 'Apply accountants filter to save in DB',
+    details: { class: 'save-accountant-filter' }
+  })
   const { query, results } = await applyAccountantsFilter(newFilter.filters)
-  // console.log('filters to save to DB: ', newFilter.filters)
   await pool.query(
     `
     INSERT INTO saved_filters

@@ -28,13 +28,12 @@ table.resultsTable a:hover {
   font-weight: bold;
 }
 
-
-h1.title{
+h1.title {
   display: flex;
   justify-content: space-between;
 }
 
-div.runQuery{
+div.runQuery {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -42,7 +41,7 @@ div.runQuery{
   flex-direction: row-reverse;
 }
 
-.appliedFilter{
+.appliedFilter {
   align-items: center;
   display: flex;
   justify-content: space-between;

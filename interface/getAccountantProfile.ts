@@ -1,8 +1,9 @@
 import { IAccountant } from '../types/IAccountant'
 import { getDatabasePool } from '../helpers/connectToDatabase'
+import { Timer } from '../helpers/Timer'
 
 const getAccountantProfile: (name: string) => Promise<IAccountant | null> = async (name) => {
-  console.time('Query database for accountant profile')
+  const timer = new Timer({ label: 'Get accountant profile from DB', details: { class: 'get-accountant-profile' } })
   const pool = getDatabasePool()
   const { rows: matchingAccountants, rowCount: foundMatchingAccountants } = await pool.query(
     `
@@ -13,7 +14,7 @@ const getAccountantProfile: (name: string) => Promise<IAccountant | null> = asyn
     [name]
   )
   await pool.end()
-  console.timeEnd('Query database for accountant profile')
+  timer.flush()
   if (foundMatchingAccountants) return matchingAccountants[0]
   return null
 }
