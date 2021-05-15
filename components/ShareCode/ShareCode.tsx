@@ -30,7 +30,7 @@ export const ShareCode = ({ text, buttonLabel }: Props) => {
       {!copied && showExplainer && <span className={styles.popup}>Shareable link</span>}
       <pre>
         <a href={'https://' + text}>
-          <input ref={codeRef} value={text} className={styles.invisibleInput} disabled={false} />
+          <input ref={codeRef} value={text} className={styles.invisibleInput} readOnly />
         </a>
       </pre>
       <button onClick={copyClicked}>{buttonLabel ?? 'Copy'}</button>

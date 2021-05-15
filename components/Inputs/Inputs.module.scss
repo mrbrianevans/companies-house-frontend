@@ -6,13 +6,15 @@ button.primary,
 a.primary {
   box-shadow: $shadow;
   background: rgba(255, 255, 255, 0.4);
-  padding: 0.5rem;
+  padding: 0 0.5rem;
   cursor: pointer;
   border: 2px solid transparent;
   height: 2rem;
   transition: border-color 300ms ease 0s;
   font-family: Raleway, sans-serif;
   font-size: 1rem;
+  display: inline-grid;
+  place-content: center;
 }
 
 button.primary:hover,
@@ -20,6 +22,14 @@ a.primary:hover {
   background: rgba(255, 255, 255, 0.6);
 }
 
+button.primary,
+select.dropdown,
+input.textBox,
+textarea.textArea,
+a.primary {
+  font-family: Raleway, sans-serif;
+  font-size: 1rem;
+}
 button.primary:focus,
 select.dropdown:focus,
 input.textBox:focus,

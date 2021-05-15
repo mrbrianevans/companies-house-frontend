@@ -4,6 +4,7 @@ import { GetStaticProps } from 'next'
 import getAccountantFilters from '../../../interface/filterAccountants/getFilterOptions'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
+import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
 
 interface Props {
   filterOptions: IFilterOption[]
@@ -11,16 +12,7 @@ interface Props {
 
 const AccountantFilterPage = ({ filterOptions }: Props) => {
   return (
-    <FilterPage
-      ResultsTable={AccountantResultsTable}
-      config={{
-        getFilterIdApiUrl: '/api/accountants/filterRedirect',
-        redirectUrl: (id) => '/accountants/filter/' + id,
-        labelPlural: 'accountants',
-        labelSingular: 'accountant'
-      }}
-      filterOptions={filterOptions}
-    />
+    <FilterPage ResultsTable={AccountantResultsTable} config={accountantFilterConfig} filterOptions={filterOptions} />
   )
 }
 

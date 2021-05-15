@@ -4,7 +4,7 @@ import { saveNewFilter } from '../../../interface/filterAccountants/saveNewFilte
 import { getFilterId } from '../../../helpers/getFilterId'
 import { getSavedFilter } from '../../../interface/filterAccountants/getSavedFilter'
 // /api/accountants/filterRedirect
-
+const filterRevalidateDays = 1
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     body: { filters }

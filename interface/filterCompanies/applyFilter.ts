@@ -11,7 +11,7 @@ import { getFilterId } from '../../helpers/getFilterId'
 
 // the way this works, is each filter is passed to its corrosponding function
 // which returns the sql to filter by it, and then all the sqls are combined
-// in the main function with INTERSECT and EXCEPT statements. Only one query is issued (AND RETURNED!)
+// in the main function with INTERSECT and EXCEPT statements. Only one sql query is executed (AND RETURNED!)
 
 export const applyCompaniesFilter: (
   filters: IFilter[],

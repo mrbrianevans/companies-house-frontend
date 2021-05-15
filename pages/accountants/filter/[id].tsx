@@ -7,6 +7,8 @@ import getAccountantFilters from '../../../interface/filterAccountants/getFilter
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
 import { ISavedFilter } from '../../../types/ISavedFilter'
+import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
+import { saveNewFilter } from '../../../interface/filterAccountants/saveNewFilter'
 
 interface Props {
   filterOptions?: IFilterOption[]
@@ -16,12 +18,7 @@ const AccountantFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
     <FilterPage
       ResultsTable={AccountantResultsTable}
-      config={{
-        getFilterIdApiUrl: '/api/accountants/filterRedirect',
-        redirectUrl: (id) => '/accountants/filter/' + id,
-        labelPlural: 'accountants',
-        labelSingular: 'accountant'
-      }}
+      config={accountantFilterConfig}
       filterOptions={filterOptions}
       savedFilter={savedFilter}
     />
@@ -43,6 +40,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
+  //todo: if the saved filter was run a long time ago, revalidate it in the background
   const returnProps: Props = {
     filterOptions: getAccountantFilters(),
     savedFilter: savedFilter

@@ -27,12 +27,7 @@ export const AccountantResultsTable: React.FC<{ matchingResults: IAccountant[]; 
             </td>
             <td>
               <Link href={'/accountants/' + encodeURIComponent(accountant.name_on_accounts)}>
-                <a target={'_blank'}>
-                  {accountant.name_on_accounts
-                    .split(' ')
-                    .slice(0, accountant.name_on_accounts.split(' ').length - 1)
-                    .join(' ')}
-                </a>
+                <a target={'_blank'}>{accountant.name_on_accounts}</a>
               </Link>
             </td>
             <td>
@@ -41,7 +36,11 @@ export const AccountantResultsTable: React.FC<{ matchingResults: IAccountant[]; 
               </Link>
             </td>
             <td>{accountant.area}</td>
-            <td>{Math.round((Date.now() - new Date(accountant.date).valueOf()) / (86400 * 1000 * 365))} years</td>
+            <td>
+              {accountant.date !== null &&
+                accountant.date !== undefined &&
+                Math.round((Date.now() - new Date(accountant.date).valueOf()) / (86400 * 1000 * 365)) + 'years'}{' '}
+            </td>
             <td>{accountant.software.split(' ').slice(0, 3).join(' ')}</td>
             <td>{accountant.number_of_clients}</td>
           </tr>

@@ -21,9 +21,31 @@ table.resultsTable > tbody > tr > td:first-child {
   text-align: right;
   padding-right: 0.2rem;
 }
+table.resultsTable a {
+  text-decoration: underline;
+}
+table.resultsTable a:hover {
+  font-weight: bold;
+}
 
 
 h1.title{
   display: flex;
   justify-content: space-between;
+}
+
+div.runQuery{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row-reverse;
+}
+
+.appliedFilter{
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  font-weight: bold;
 }

@@ -2,12 +2,12 @@ import { IFilterOption } from '../../../types/IFilters'
 import * as React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { getSavedFilter } from '../../../interface/filterCompanies/getSavedFilter'
-import { FilterPage } from '../../../components/FilterPage/FilterPage'
+import { FilterConfig, FilterPage } from '../../../components/FilterPage/FilterPage'
 import { ISavedFilter } from '../../../types/ISavedFilter'
 import { ICompanyProfile } from '../../../types/ICompany'
 import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
 import getCompanyFilters from '../../../interface/filterCompanies/getFilterOptions'
-
+import { companyFilterConfig } from '../../../configuration/companyFilterConfig'
 interface Props {
   filterOptions?: IFilterOption[]
   savedFilter: ISavedFilter<ICompanyProfile>
@@ -16,12 +16,7 @@ const CompanyFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
     <FilterPage
       ResultsTable={CompanyResultsTable}
-      config={{
-        getFilterIdApiUrl: '/api/companies/filterRedirect',
-        redirectUrl: (id) => '/company/filter/' + id,
-        labelPlural: 'companies',
-        labelSingular: 'company'
-      }}
+      config={companyFilterConfig}
       filterOptions={filterOptions}
       savedFilter={savedFilter}
     />
@@ -43,6 +38,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
+
   const returnProps: Props = {
     filterOptions: getCompanyFilters(),
     savedFilter: savedFilter

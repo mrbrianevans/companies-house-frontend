@@ -9,13 +9,16 @@ import * as React from 'react'
 import { ISavedFilter } from '../../types/ISavedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
 import ButtonLink from '../Inputs/ButtonLink'
+import { formatApproximation } from '../../helpers/numberFormatter'
 const styles = require('./FilterPage.module.scss')
 
-interface Config {
+export interface FilterConfig {
+  // the url of the api endpoint which returns the estimated count for a filter
+  countResultsApiUrl: string
   // the url of the api endpoint which returns an ID for an array of filters
   getFilterIdApiUrl: string
-  // a function which takes a filter id, and returns the frontend url to view it
-  redirectUrl: (id: string) => string
+  // a string to append the filter id to, and returns the frontend url to view it
+  redirectUrl: string
   // the things you are filtering for, eg: companies, accountants
   labelPlural: string
   // the thing you are filtering for, eg: company, accountant
@@ -24,7 +27,7 @@ interface Config {
 interface Props<ResultType> {
   filterOptions?: IFilterOption[]
   ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
-  config: Config
+  config: FilterConfig
   savedFilter?: ISavedFilter<ResultType>
 }
 
@@ -40,6 +43,8 @@ export const FilterPage = <ResultType extends object>({
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
   const [newFilterId, setNewFilterId] = useState<string>()
   const [newFilterIdUpToDate, setNewFilterIdUpToDate] = useState<boolean>()
+  const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
+  const [estimatedCount, setEstimatedCount] = useState<number>()
   useEffect(() => {
     if (!router.isFallback) {
       setShowNewFilterForm(filterOptions?.length > 0) // this should always be true
@@ -61,11 +66,24 @@ export const FilterPage = <ResultType extends object>({
         })
         .then((r) => r.json())
         .then(async (j) => {
-          setNewFilterId(config.redirectUrl(j.id))
+          setNewFilterId(config.redirectUrl + j.id)
           setNewFilterIdUpToDate(true)
         })
+      setCountUpToDate(false)
+      fetch(config.countResultsApiUrl, {
+        method: 'POST',
+        body: JSON.stringify({ filters }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+        .then((r) => {
+          if (r.status === 200) return r.json()
+          else throw new Error(r.statusText)
+        })
+        .then((j) => setEstimatedCount(Number(j.count)))
+        .then(() => setCountUpToDate(true))
     } else {
-      setNewFilterId(config.redirectUrl(''))
+      // this is useless because the button is hidden
+      setNewFilterId(config.redirectUrl)
       setNewFilterIdUpToDate(true)
     }
   }, [filters])
@@ -98,9 +116,9 @@ export const FilterPage = <ResultType extends object>({
         else throw new Error(r.statusText)
       })
       .then((r) => r.json())
-      .then(async (j) => {
+      .then((j) => {
         if (j.id !== savedFilter?.metadata.id)
-          await router.push(config.redirectUrl(j.id), config.redirectUrl(j.id), { scroll: false })
+          return router.push(config.redirectUrl + j.id, config.redirectUrl + j.id, { scroll: false })
         else setFilterMatchesLoading(false)
       })
       .catch(console.error)
@@ -109,7 +127,7 @@ export const FilterPage = <ResultType extends object>({
     <Page>
       <h1 className={styles.title}>
         Filter {config.labelPlural}
-        {savedFilter && <ShareCode text={'filfa.co/' + savedFilter.metadata.id} />}
+        {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
       </h1>
       <div className={styles.filterContainer}>
         {showNewFilterForm && filterOptions !== undefined && (
@@ -117,28 +135,37 @@ export const FilterPage = <ResultType extends object>({
         )}
         {filters?.map((filter: IFilter, i) => (
           <div style={{ width: '100%' }} key={i}>
-            <h3>
-              Filter {i + 1} - {filter.category}
+            <p className={styles.appliedFilter}>
+              {filter.category} {filter.comparison}{' '}
+              {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
               <IconButton
-                floatRight
                 label={'x'}
                 onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
               />
-            </h3>
-            <p>
-              {filter.exclude ? 'Exclude' : 'Only show'} {config.labelPlural} where {filter.category}{' '}
-              {filter.comparison}{' '}
-              {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
             </p>
           </div>
         ))}
-
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        <h2>Filter results</h2>
+        <div className={styles.runQuery}>
           {filters?.length ? (
-            newFilterIdUpToDate ? (
-              <ButtonLink href={newFilterId} scroll={false} label={'Run query'} />
+            estimatedCount !== 0 ? (
+              <>
+                {newFilterIdUpToDate ? (
+                  <ButtonLink href={newFilterId} scroll={false} label={'Run query'} />
+                ) : (
+                  <Button label={'Run query'} onClick={applyFilter} />
+                )}
+                {newCountUpToDate && (
+                  <span className={styles.estimatedCount}>
+                    {estimatedCount !== 1 && 'Approximately '}
+                    {formatApproximation(estimatedCount)}{' '}
+                    {estimatedCount === 1 ? config.labelSingular : config.labelPlural}{' '}
+                    {estimatedCount === 1 ? 'matches' : 'match'} your filter{filters.length !== 1 && 's'}
+                  </span>
+                )}
+              </>
             ) : (
-              <Button label={'Run query'} onClick={applyFilter} />
+              <span>No {config.labelPlural} match your filters</span>
             )
           ) : (
             <p>Apply at least 1 filter to run the query</p>
@@ -149,10 +176,10 @@ export const FilterPage = <ResultType extends object>({
             <h2>Loading...</h2>
           </div>
         )}
-        {savedFilter?.results && !filterMatchesLoading && (
+
+        {savedFilter?.results?.length > 0 && !filterMatchesLoading && (
           <div style={{ width: '100%' }}>
-            <h2>Filter results</h2>
-            <pre>{savedFilter.metadata.lastRunTime}ms response time</pre>
+            <pre>Query executed in {savedFilter.metadata.lastRunTime}ms</pre>
             <ResultsTable matchingResults={savedFilter.results} tableClassName={styles.resultsTable} />
           </div>
         )}

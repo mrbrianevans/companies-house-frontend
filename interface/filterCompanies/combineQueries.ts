@@ -38,6 +38,9 @@ export const getMatchingCompanyNumbers: (filters: IFilter[]) => IMinorQuery = (f
     )
     values.push(value)
   }
+  if (queries.length == 0) {
+    return { query: 'SELECT number FROM companies LIMIT 1', value: [] }
+  }
   let bigQuery = queries.join(' INTERSECT ')
   let bigValue = values.flat()
   return { query: bigQuery, value: bigValue }

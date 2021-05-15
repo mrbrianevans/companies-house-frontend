@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { query, results } = await applyAccountantsFilter(filters)
   if (results) res.json(results)
   else {
-    console.log('results not returned')
+    console.log('could not filter accountants')
     res.status(501).json({ error: 'could not filter accountants' })
   }
 }
