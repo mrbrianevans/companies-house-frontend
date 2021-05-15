@@ -8,7 +8,7 @@ export interface ICompanyEvents {
 
 const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = async (company_number) => {
   try {
-    console.time('Query database SELECT filing events')
+    // console.time('Query database SELECT filing events')
     const pool = getDatabasePool()
     const { rows: filingEvents } = await pool.query(
       `SELECT DISTINCT ON (id) id,
@@ -23,8 +23,8 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
        ORDER BY id;`,
       [company_number]
     )
-    console.timeEnd('Query database SELECT filing events')
-    console.time('Query database SELECT company events')
+    // console.timeEnd('Query database SELECT filing events')
+    // console.time('Query database SELECT company events')
     const { rows: companyEvents } = await pool.query(
       `SELECT DISTINCT ON(id) id, fields_changed, published::date::text
        FROM company_events
@@ -32,7 +32,7 @@ const getCompanyEvents: (company_number: string) => Promise<ICompanyEvents> = as
        ORDER BY id;`,
       [company_number]
     )
-    console.timeEnd('Query database SELECT company events')
+    // console.timeEnd('Query database SELECT company events')
     await pool.end()
     return { filingEvents, companyEvents }
   } catch (e) {

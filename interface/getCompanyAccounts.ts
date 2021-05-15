@@ -2,7 +2,6 @@ import { getDatabasePool } from '../helpers/connectToDatabase'
 import { ICompanyAccounts } from '../types/ICompanyAccounts'
 
 const getCompanyAccounts: (company_number: string) => Promise<ICompanyAccounts | null> = async (companyNumber) => {
-  console.time('Query database for company accounts')
   const pool = getDatabasePool()
   const { rows: accountsRows, rowCount: inWideAccounts } = await pool.query(
     `
@@ -28,7 +27,6 @@ const getCompanyAccounts: (company_number: string) => Promise<ICompanyAccounts |
     [companyNumber]
   )
   await pool.end()
-  console.timeEnd('Query database for company accounts')
   if (inWideAccounts) return accountsRows[0]
 
   return null

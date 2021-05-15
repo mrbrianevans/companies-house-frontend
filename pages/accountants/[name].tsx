@@ -82,12 +82,13 @@ export const getStaticProps: GetStaticProps = async (context) => {
   } = context
   if (typeof nameParam != 'string') return { notFound: true }
   const name = decodeURIComponent(nameParam)
-  console.log('Requested accountant with name:', name)
+  // console.log('Requested accountant with name:', name)
   const accountantProfile = await getAccountantProfile(name)
   const returnProps: props = { accountantProfile }
   if (accountantProfile.company_number) {
     returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
+    return { notFound: true }
     //todo: get possible matches from companies house search API
   }
 

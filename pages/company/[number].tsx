@@ -18,6 +18,7 @@ import { GetFilingsListResponse } from '../api/chApi/getFilingsList'
 import { FilingItem } from '../../components/CompanyProfile/FilingItem'
 import Button from '../../components/Inputs/Button'
 import FormRow from '../../components/Inputs/FormRow'
+import { Timer } from '../../helpers/Timer'
 const styles = require('../../styles/Home.module.css')
 
 interface props {
@@ -174,7 +175,6 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
 export default CompanyDetails
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const startTime = Date.now()
   const companyNumber = context.params.number.toString()
   if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {
@@ -183,21 +183,26 @@ export const getStaticProps: GetStaticProps = async (context) => {
         permanent: false // not sure what this does??
       }
     }
+  const timer = new Timer({
+    label: `Load company profile page details (company number:${companyNumber})`,
+    details: { class: 'company-profile' }
+  })
+  timer.start('Get company profile')
   const companyData = await getCompanyProfile(companyNumber)
+  timer.next('Get company and filing events')
   const { companyEvents, filingEvents } = await getCompanyEvents(companyNumber)
+  timer.next('Get company accounts')
   let financials: ICompanyAccounts = await getCompanyAccounts(companyNumber)
-  // todo: only server-side render the basic company information
-  //  - fetch the rest via API on client side after page load
   const returnProps: props = {
     companyData,
-    apiResponseTime: Date.now() - startTime,
+    apiResponseTime: timer.flush(), // this console logs and returns the time
     companyEvents,
     filingEvents,
     financials
   }
   return {
     props: returnProps, // will be passed to the page component as props
-    revalidate: 86400
+    revalidate: 86400 // revalidate every 24 hours
   }
 }
 

@@ -22,7 +22,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
   const [buttonText, setButtonText] = useState<string | undefined>(props.buttonText ?? 'Search!')
   const router = useRouter()
   useEffect(() => {
-    setButtonText('Search!')
+    setButtonText(props.buttonText ?? 'Search!')
   }, [router.asPath])
   const onSubmit = async (event?: React.MouseEvent<HTMLButtonElement>) => {
     if (props.buttonLink && props.buttonLink(value) === decodeURIComponent(router.asPath)) {

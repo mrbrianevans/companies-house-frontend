@@ -1,0 +1,21 @@
+$shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+ul.FeatureList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+ul.FeatureList > li {
+  box-shadow: $shadow;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 0.5rem 1rem;
+  font-family: Raleway, sans-serif;
+  font-size: 1rem;
+  display: inline-grid;
+  place-content: center;
+  margin: 0.25rem 0.5rem;
+  list-style: none;
+}

@@ -7,12 +7,12 @@ export const filterCompaniesByChangeOfOwnership: (filter: INumberFilter) => IMin
   // - add the values[] of the event to the database to check for the same person, and the actual date
   // - the query is too slow, so speed it up somehow
   const query = `
-      SELECT DISTINCT company_number FROM filing_events_legacy 
+      SELECT DISTINCT company_number FROM filing_events
         WHERE description_code = 'notification-of-a-person-with-significant-control'
         AND filing_date BETWEEN CURRENT_DATE - (?::TEXT||' days')::INTERVAL
                 AND CURRENT_DATE - (?::TEXT||' days')::INTERVAL
 INTERSECT 
-      SELECT DISTINCT company_number FROM filing_events_legacy 
+      SELECT DISTINCT company_number FROM filing_events
         WHERE description_code = 'cessation-of-a-person-with-significant-control'
         AND filing_date BETWEEN CURRENT_DATE - (?::TEXT||' days')::INTERVAL
                 AND CURRENT_DATE - (?::TEXT||' days')::INTERVAL
