@@ -13,7 +13,7 @@ const AccountantFilterPage = () => {
       <p>
         To filter accountants, visit{' '}
         <Link href={'/accountants/filter'}>
-          <a>/filter</a>
+          <a>/accountants/filter</a>
         </Link>
       </p>
       <p>Start off a filter by name:</p>

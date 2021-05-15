@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { Page } from '../components/Page/Page'
 import { TextInputWithButton } from '../components/Inputs/TextInputWithButton'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 const styles = require('../styles/Home.module.css')
 export default function Home() {

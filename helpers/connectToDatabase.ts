@@ -1,12 +1,4 @@
 import { Pool } from 'pg'
-// import Knex from 'knex';
-export const getLegacyDatabasePool: () => Pool = () => {
-  return new Pool({
-    ssl: {
-      rejectUnauthorized: false
-    }
-  })
-}
 
 export const getDatabasePool: () => Pool = () => {
   return new Pool({

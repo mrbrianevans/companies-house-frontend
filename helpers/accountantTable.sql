@@ -4,15 +4,15 @@ WITH moved_rows AS (
     select value                          as accountant_name,
            count(distinct company_number) as number_of_clients,
            (SELECT array_agg(distinct c.value) as software
-            from accounts c
+            from company_accounts c
             where c.label = 'Name of production software'
               and c.company_number = ANY (
                 select b.company_number
-                from accounts b
+                from company_accounts b
                 where label = 'Name of entity accountants'
                   AND b.value = a.value
             ))                            as software
-    from accounts a
+    from company_accounts a
     where label = 'Name of entity accountants'
     group by value
     order by number_of_clients desc
