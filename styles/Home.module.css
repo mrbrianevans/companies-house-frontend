@@ -20,7 +20,7 @@ div.featureBrowserGrid > div:focus-within {
 div.searchBar {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
   grid-column: 1/-1;
   padding: 0;
 }
