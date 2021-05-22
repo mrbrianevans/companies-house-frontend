@@ -33,5 +33,18 @@ export default NextAuth({
     // error: '/auth/error', // Error code passed in query string as ?error=
     // verifyRequest: '/auth/verify-request', // (used for check email message)
     // newUser: null // If set, new users will be directed here on first sign in
+  },
+  callbacks: {
+    session: async (session, user) => {
+      return Promise.resolve(
+        Object.assign(session, {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email
+          }
+        })
+      )
+    }
   }
 })
