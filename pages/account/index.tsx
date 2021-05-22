@@ -4,7 +4,7 @@ import ButtonLink from '../../components/Inputs/ButtonLink'
 import Button from '../../components/Inputs/Button'
 import { TextInputWithButton } from '../../components/Inputs/TextInputWithButton'
 
-const SigninError = () => {
+const AccountPage = () => {
   const [session, loading] = useSession()
   return (
     <Page dontShowLogin dontShowLogout>
@@ -23,6 +23,9 @@ const SigninError = () => {
               (this feature doesn't work yet)
             </p>
             <p>
+              View your saved filters: <ButtonLink href={'/account/savedFilters'} label={'Saved filters'} />
+            </p>
+            <p>
               <Button label={'Sign out'} onClick={signOut} />
             </p>
           </>
@@ -35,4 +38,4 @@ const SigninError = () => {
   )
 }
 
-export default SigninError
+export default AccountPage

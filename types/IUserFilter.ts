@@ -14,3 +14,15 @@ export interface IUserFilter {
   // (optional) the filter object of the applied filters
   filters: IFilter[]
 }
+
+// the filter info to display to the user
+export interface IUserFilterDisplay {
+  // a rendering of the filter to plain english
+  english: string
+  // timestamp of when the user saved the filter
+  dateSaved: number
+  savedFilterCode: string
+  category: 'ACCOUNTANT' | 'COMPANY'
+  // the relative url from root/ to the filter
+  urlToFilter: string
+}

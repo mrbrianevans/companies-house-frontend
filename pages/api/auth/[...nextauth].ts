@@ -28,7 +28,6 @@ export default NextAuth({
     type: 'postgres'
   },
   pages: {
-    //todo: setup these custom pages
     signIn: '/signin',
     error: '/auth/error', // Error code passed in query string as ?error=
     verifyRequest: '/auth/checkEmail', // (used for check email message)

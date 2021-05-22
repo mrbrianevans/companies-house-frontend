@@ -45,6 +45,8 @@ export const FilterPage = <ResultType extends object>({
   const [newFilterIdUpToDate, setNewFilterIdUpToDate] = useState<boolean>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
   const [estimatedCount, setEstimatedCount] = useState<number>()
+  //todo: async get if the user has already saved this filter on page load
+  const [saveMessage, setSaveMessage] = useState<string>()
   useEffect(() => {
     if (!router.isFallback) {
       setShowNewFilterForm(filterOptions?.length > 0) // this should always be true
@@ -123,10 +125,33 @@ export const FilterPage = <ResultType extends object>({
       })
       .catch(console.error)
   }
+  const saveFilterToAccount = () => {
+    fetch(`/api/filter/saveFilterToAccount`, {
+      method: 'PUT',
+      body: JSON.stringify({ id: savedFilter.metadata.id, category: config.labelSingular.toUpperCase() }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((r) => {
+        if (r.status === 200) return r
+        else throw new Error(r.statusText)
+      })
+      .then((r) => r.json())
+      .then((j) => {
+        // j.id is the ID of the saved filter
+        setSaveMessage('Filter saved')
+        // setTimeout(() => setSaveMessage(undefined), 3000)
+        // return router.push('/account/savedFilters/' + j.id)
+      })
+      .catch(console.error)
+  }
   return (
     <Page>
       <h1 className={styles.title}>
         Filter {config.labelPlural}
+        <Button
+          label={saveMessage ?? String.fromCharCode(0x25bc) + ' Save this filter'}
+          onClick={saveFilterToAccount}
+        />
         {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
       </h1>
       <div className={styles.filterContainer}>

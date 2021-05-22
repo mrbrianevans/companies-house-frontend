@@ -27,12 +27,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   SELECT u.*, sf.filters
   FROM user_filters u 
       JOIN saved_filters sf on u.saved_filter_fk = sf.id and u.category = sf.category
-  
-  WHERE id=$1
+  WHERE u.id=$1
   `,
       [user_filter_id]
     )
     .then(({ rows }) => rows[0])
+  if (user_filter.user_id_fk.toString() !== userId.toString()) {
+    res.status(403).send('Not authorised to download this filter')
+    return
+  } else if (!user_filter) {
+    res.status(404).send("Filter doesn't exist")
+    return
+  }
   //todo: get the download limit remaining on the users account
   const limit = 1000
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)

@@ -74,18 +74,6 @@ export function NewFilterCard(props: Props) {
         {/*    onChange={(v) => setExclude(v.target.checked)}*/}
         {/*  />*/}
         {/*</label>*/}
-        {/*<select*/}
-        {/*  className={formStyles.standard}*/}
-        {/*  value={selectedFilterOption.category}*/}
-        {/*  onChange={(e) => {*/}
-        {/*    const selectedOption = filterOptions.find((option) => option.category === e.target.value)*/}
-        {/*    setSelectedFilterOption(selectedOption)*/}
-        {/*    setComparison(validateSelectedFilterCriteria(selectedOption, comparison))*/}
-        {/*  }}>*/}
-        {/*  {filterOptions.map((filterOption) => (*/}
-        {/*    <option key={filterOption.category}>{filterOption.category}</option>*/}
-        {/*  ))}*/}
-        {/*</select>*/}
         <DropDown
           options={filterOptions.map((filterOption) => ({ value: filterOption.category }))}
           value={selectedFilterOption.category}
@@ -95,25 +83,6 @@ export function NewFilterCard(props: Props) {
             setComparison(validateSelectedFilterCriteria(selectedOption, comparison))
           }}
         />
-        {/*<select*/}
-        {/*  className={formStyles.standard}*/}
-        {/*  value={comparison}*/}
-        {/*  onChange={(v) => {*/}
-        {/*    if (*/}
-        {/*      'begins with' == v.target.value ||*/}
-        {/*      v.target.value === 'includes' ||*/}
-        {/*      v.target.value === 'is exactly' ||*/}
-        {/*      v.target.value === 'ends with'*/}
-        {/*    )*/}
-        {/*      setComparison(v.target.value)*/}
-        {/*  }}>*/}
-        {/*  {*/}
-        {/*    // @ts-ignore*/}
-        {/*    selectedFilterOption.possibleComparisons.map((criterion: IFilter['comparison']) => (*/}
-        {/*      <option key={criterion}>{criterion}</option>*/}
-        {/*    ))*/}
-        {/*  }*/}
-        {/*</select>*/}
         <DropDown
           // @ts-ignore
           options={selectedFilterOption.possibleComparisons.map((value: any) => ({ value }))}
@@ -130,7 +99,15 @@ export function NewFilterCard(props: Props) {
           </>
         ) : (
           <>
-            <TextBox value={typingValue} onChange={setTypingValue} suggestions={selectedFilterOption.suggestions} />
+            <TextBox
+              value={typingValue}
+              onChange={setTypingValue}
+              suggestions={selectedFilterOption.suggestions}
+              onEnter={() => {
+                addValue(typingValue.trim())
+                setTypingValue('')
+              }}
+            />
             <IconButton
               label={'+'}
               onClick={() => {
