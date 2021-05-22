@@ -15,6 +15,7 @@ export interface TextInputWithButtonProps {
   buttonOnClick?: (textValue: string) => void
   buttonLink?: (textValue: string) => string
   initialValue?: string
+  textInputType?: 'text' | 'email'
 }
 
 export const TextInputWithButton = (props: TextInputWithButtonProps) => {
@@ -37,7 +38,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
   return (
     <div className={styles.jointContainer}>
       <input
-        type={'text'}
+        type={props.textInputType ?? 'text'}
         placeholder={props.textBoxPlaceholder}
         className={styles.jointTextBox}
         id={props.textBoxId}

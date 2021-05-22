@@ -29,13 +29,14 @@ export default NextAuth({
   },
   pages: {
     //todo: setup these custom pages
-    // signIn: '/signin',
-    // error: '/auth/error', // Error code passed in query string as ?error=
-    // verifyRequest: '/auth/verify-request', // (used for check email message)
-    // newUser: null // If set, new users will be directed here on first sign in
+    signIn: '/signin',
+    error: '/auth/error', // Error code passed in query string as ?error=
+    verifyRequest: '/auth/checkEmail', // (used for check email message)
+    newUser: '/auth/newUser' // If set, new users will be directed here on first sign in
   },
   callbacks: {
     session: async (session, user) => {
+      // this is to add in the user id to getSession() and useSession()
       return Promise.resolve(
         Object.assign(session, {
           user: {
@@ -46,5 +47,35 @@ export default NextAuth({
         })
       )
     }
+  },
+  // this logs out auth events for logging monitoring
+  events: {
+    createUser: async (message) =>
+      console.log(
+        JSON.stringify({
+          message: 'New user signed up',
+          user: message.email,
+          severity: 'INFO',
+          class: 'auth'
+        })
+      ),
+    signIn: async (message) =>
+      console.log(
+        JSON.stringify({
+          message: 'User signed in',
+          user: message.user.email,
+          severity: 'DEBUG',
+          class: 'auth'
+        })
+      ),
+    error: async (message) =>
+      console.log(
+        JSON.stringify({
+          message: 'Sign in error',
+          errorObject: message,
+          severity: 'ERROR',
+          class: 'auth'
+        })
+      )
   }
 })

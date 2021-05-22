@@ -3,11 +3,14 @@ import { Page } from '../components/Page/Page'
 import { TextInputWithButton } from '../components/Inputs/TextInputWithButton'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import ButtonLink from '../components/Inputs/ButtonLink'
+import { useSession } from 'next-auth/client'
 
 const styles = require('../styles/Home.module.css')
 export default function Home() {
+  const [session, loading] = useSession()
   return (
-    <Page>
+    <Page dontShowLogin>
       <div className={styles.featureBrowserGrid}>
         <div className={styles.searchBar} style={{ padding: 0 }}>
           <TextInputWithButton
@@ -17,6 +20,7 @@ export default function Home() {
             textBoxId={'companyNumberSearchBox'}
             textBoxStyle={{ boxShadow: 'none', height: '2rem' }}
           />
+          {!loading && !session && <ButtonLink href={'/auth/signin'} label={'Sign in!'} />}
         </div>
         <Link href={'/accountants'}>
           <a draggable={'false'}>

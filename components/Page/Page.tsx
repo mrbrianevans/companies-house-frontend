@@ -8,13 +8,13 @@ import Button from '../Inputs/Button'
 import { useRouter } from 'next/router'
 const styles = require('./Page.module.scss')
 
-export const Page = (props: PropsWithChildren<any>) => {
+interface Props extends PropsWithChildren<any> {
+  dontShowLogin?: boolean
+  dontShowLogout?: boolean
+}
+
+export const Page = (props: Props) => {
   const [session, loading] = useSession()
-  const router = useRouter()
-  const [newSignIn, setNewSignin] = useState<boolean>()
-  useEffect(() => {
-    if (router.query.signin) setNewSignin(true)
-  }, [router])
   return (
     <>
       <Link href={'/'}>
@@ -24,16 +24,24 @@ export const Page = (props: PropsWithChildren<any>) => {
       </Link>
       <div className={styles.mainContainer}>
         <main className={styles.main}>
-          {newSignIn && <h1>Successfully signed in with email</h1>}
-          {!loading &&
-            (session ? (
-              <p>
-                Signed in as {session.user.email}
-                <Button label={'Sign out'} onClick={() => signOut()} />
-              </p>
-            ) : (
-              <ButtonLink href={'/signin'} label={'Sign in'} />
-            ))}
+          {!loading && (
+            <div style={{ placeItems: 'center end', display: 'grid' }}>
+              {session
+                ? props.dontShowLogout !== true && (
+                    <p>
+                      Signed in as {session.user.email}. <ButtonLink href={'/account'} label={'View account'} />{' '}
+                      <a onClick={() => signOut()} href={'#'}>
+                        Sign out
+                      </a>
+                    </p>
+                  )
+                : props.dontShowLogin !== true && (
+                    <div style={{ margin: '0.2rem' }}>
+                      <ButtonLink href={'/auth/signin'} label={'Sign in'} />
+                    </div>
+                  )}
+            </div>
+          )}
           <div className={styles.container}>{props.children}</div>
         </main>
       </div>
