@@ -1,4 +1,12 @@
-import { CSSProperties, useEffect, useState } from 'react'
+import {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  CSSProperties,
+  DetailedHTMLProps,
+  InputHTMLAttributes,
+  useEffect,
+  useState
+} from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -12,10 +20,14 @@ export interface TextInputWithButtonProps {
   // textBoxOnChange: (newValue: string)=>void
   buttonStyle?: CSSProperties
   buttonText?: string
-  buttonOnClick?: (textValue: string) => void
+  buttonOnClick?: ((textValue: string) => void) | ((textValue: string) => Promise<void>)
   buttonLink?: (textValue: string) => string
   initialValue?: string
   textInputType?: 'text' | 'email'
+  buttonProps?: DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+  buttonLinkProps?: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
+  textBoxProps?: DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  textBoxOnChange?: (newValue: string) => void
 }
 
 export const TextInputWithButton = (props: TextInputWithButtonProps) => {
@@ -32,7 +44,13 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
       return
     }
     setButtonText('Loading...')
-    if (props.buttonOnClick) props.buttonOnClick(value)
+    try {
+      if (props.buttonOnClick) await props.buttonOnClick(value)
+      setButtonText(buttonText)
+    } catch (e) {
+      console.error(e)
+    }
+
     if (props.buttonLink && !event) await router.push(props.buttonLink(value))
   }
   return (
@@ -45,6 +63,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
         value={value}
         style={props.textBoxStyle || {}}
         onChange={(c) => {
+          props.textBoxOnChange(c.target.value)
           setValue(c.target.value)
         }}
         onKeyPress={async (k) => {
@@ -55,6 +74,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
         }}
         autoComplete={'off'}
         autoCapitalize={'on'}
+        {...props.textBoxProps}
       />
       {props.buttonLink ? (
         <Link href={props.buttonLink(value)} prefetch={false}>
@@ -64,15 +84,17 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
             onMouseOver={() => {
               if (props.buttonLink && props.buttonLink(value) !== decodeURIComponent(router.asPath))
                 router.prefetch(props.buttonLink(value))
-            }}>
+            }}
+            {...props.buttonLinkProps}>
             <button
               className={styles.jointButton}
               style={{ fontSize: 'inherit', width: '100%' }}
               onClick={(event) => {
                 onSubmit(event)
-              }}>
-              {buttonText || 'Search!'}
-            </button>
+              }}
+              children={buttonText || 'Search!'}
+              {...props.buttonProps}
+            />
           </a>
         </Link>
       ) : (
@@ -81,9 +103,10 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
           style={props.buttonStyle}
           onClick={() => {
             onSubmit()
-          }}>
-          {buttonText || 'Search!'}
-        </button>
+          }}
+          children={buttonText || 'Search!'}
+          {...props.buttonProps}
+        />
       )}
     </div>
   )
