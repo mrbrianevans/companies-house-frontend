@@ -3,6 +3,7 @@ import { getSession } from 'next-auth/client'
 import { getDatabasePool } from '../../../helpers/connectToDatabase'
 import { IUserFilter } from '../../../types/IUserFilter'
 import { combineQueries } from '../../../interface/filterCompanies/combineQueries'
+
 const QueryStream = require('pg-query-stream')
 import * as csv from 'fast-csv'
 import { Timer } from '../../../helpers/Timer'
@@ -26,11 +27,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const user_filter: IUserFilter = await client
     .query(
       `
-  SELECT u.*, sf.filters
-  FROM user_filters u 
-      JOIN saved_filters sf on u.saved_filter_fk = sf.id and u.category = sf.category
-  WHERE u.id=$1
-  `,
+          SELECT u.*, sf.filters
+          FROM user_filters u
+                   JOIN saved_filters sf on u.saved_filter_fk = sf.id and u.category = sf.category
+          WHERE u.id = $1
+      `,
       [user_filter_id]
     )
     .then(({ rows }) => rows[0])
@@ -44,28 +45,56 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   //todo: get the download limit remaining on the users account
   const limit = 1000
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
-  const timer = new Timer({ label: 'Stream query to CSV' })
+  const timer = new Timer({
+    label: 'Stream query to CSV',
+    details: { class: 'download-csv', filterId: user_filter.saved_filter_fk }
+  })
   const storage = new Storage()
   const bucket = storage.bucket('filter-facility-csv-downloads')
   const fileHandle = bucket.file(user_filter.category + '/' + user_filter.saved_filter_fk)
-  const storageStream = fileHandle.createWriteStream({ metadata: { contentType: 'application/csv' } })
-  const query = new QueryStream(bigQuery, bigValue)
-  const pgStream = client.query(query)
-  const csvStream = csv.format()
-  pgStream.pipe(csvStream).pipe(storageStream)
-  pgStream.on('end', async () => {
-    await client.release()
-    res.status(200).json({
-      message: `success in ${timer.flush()}ms`,
-      link: await fileHandle.getSignedUrl({
-        action: 'read',
-        expires: new Date(Date.now() + 86400), // expires in 24 hours
-        promptSaveAs: 'filter-facility-download.csv',
-        contentType: 'application/csv'
+  res.setHeader('content-type', 'text/csv')
+  const [exists] = await fileHandle.exists()
+  if (exists) {
+    timer.start('Piping CSV from Storage to API response')
+    try {
+      await new Promise((resolve, reject) =>
+        fileHandle
+          .createReadStream()
+          .on('end', resolve)
+          .on('error', reject)
+          .on('data', (d: Buffer) => res.write(d))
+      )
+      res.end()
+    } catch (e) {
+      res.status(500).send(e.message)
+    } finally {
+      client.release()
+      timer.flush()
+    }
+  } else {
+    const storageStream = fileHandle.createWriteStream({ metadata: { contentType: 'text/csv' } })
+    const query = new QueryStream(bigQuery, bigValue)
+    const pgStream = client.query(query)
+    const csvStream = csv.format()
+    try {
+      timer.start('Querying database, piping results to Storage and API response')
+      await new Promise((resolve, reject) => {
+        pgStream // query results
+          .pipe(csvStream) // convert JSON to CSV
+          .on('data', (d: Buffer) => res.write(d)) // send to client
+          // split the pipe: one output to Storage, and one to res
+          .pipe(storageStream) // save to file in Cloud Storage
+          .on('error', reject)
+          .on('finish', resolve)
       })
-    })
-  })
-  pgStream.on('error', console.error)
-  //todo: pipe from PSQL to CSV to Storage
-  // need a translation layer between postgres (json) and csv
+      res.end()
+    } catch (e) {
+      console.error(JSON.stringify({ severity: 'ERROR', message: 'Failed to pipe results to Google Cloud Storage' }))
+      res.status(500).send('Download failed')
+      return
+    } finally {
+      client.release()
+      timer.flush()
+    }
+  }
 }

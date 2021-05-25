@@ -1,3 +1,7 @@
+//todo:
+// - add the option of adding metadata to the log after its been started (details setter)
+// - make class a built-in, required param in the constructor (force)
+
 type Config = {
   /**
    * the severity of the log, changes the way its printed in google cloud logging
