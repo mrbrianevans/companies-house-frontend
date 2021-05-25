@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@companieshouse/api-sdk-node": "^1.0.25",
+    "@google-cloud/storage": "^5.8.5",
     "camelcase": "^6.2.0",
     "fast-csv": "^4.3.6",
     "next": "10.0.5",

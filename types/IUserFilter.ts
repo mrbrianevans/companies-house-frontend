@@ -25,4 +25,8 @@ export interface IUserFilterDisplay {
   category: 'ACCOUNTANT' | 'COMPANY'
   // the relative url from root/ to the filter
   urlToFilter: string
+  // the id in user_filters
+  userFilterId: string
+  // total results from this filter (no limits)
+  resultCount: number
 }

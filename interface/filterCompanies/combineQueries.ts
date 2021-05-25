@@ -28,6 +28,9 @@ export const getMatchingCompanyNumbers: (filters: IFilter[]) => IMinorQuery = (f
     values: any[] = []
   let valueCounter = 1
   for (const filter of filters) {
+    if (!filterMap.has(filter.category)) {
+      console.log('Filter not found:', filter.category, filter)
+    }
     //each type of filter has a function that returns a sql query
     const { query, value } = filterMap.get(filter.category).filter(filter)
     // updates the $1 references for the number of values

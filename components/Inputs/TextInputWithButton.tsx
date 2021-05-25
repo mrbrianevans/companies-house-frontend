@@ -63,7 +63,7 @@ export const TextInputWithButton = (props: TextInputWithButtonProps) => {
         value={value}
         style={props.textBoxStyle || {}}
         onChange={(c) => {
-          props.textBoxOnChange(c.target.value)
+          if (props.textBoxOnChange) props.textBoxOnChange(c.target.value)
           setValue(c.target.value)
         }}
         onKeyPress={async (k) => {

@@ -19,11 +19,14 @@ export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDi
     [id]
   )
   timer.flush()
-  return filters.map((filter) => ({
+  let savedFilters: IUserFilterDisplay[] = filters.map((filter) => ({
     english: translateFiltersToEnglish(filter.filters),
     dateSaved: new Date(filter.saved_date).valueOf(),
     savedFilterCode: filter.saved_filter_fk,
     category: filter.category,
-    urlToFilter: `/${dbEnumToUrlMapping[filter.category]}/filter/${filter.saved_filter_fk}`
+    urlToFilter: `/${dbEnumToUrlMapping[filter.category]}/filter/${filter.saved_filter_fk}`,
+    userFilterId: filter.user_saved_id.toString(),
+    resultCount: Number(filter.result_count)
   }))
+  return savedFilters
 }

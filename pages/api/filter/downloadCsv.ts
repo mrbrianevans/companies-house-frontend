@@ -5,6 +5,8 @@ import { IUserFilter } from '../../../types/IUserFilter'
 import { combineQueries } from '../../../interface/filterCompanies/combineQueries'
 const QueryStream = require('pg-query-stream')
 import * as csv from 'fast-csv'
+import { Timer } from '../../../helpers/Timer'
+import { Storage } from '@google-cloud/storage'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
@@ -42,11 +44,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   //todo: get the download limit remaining on the users account
   const limit = 1000
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
+  const timer = new Timer({ label: 'Stream query to CSV' })
+  const storage = new Storage()
+  const bucket = storage.bucket('filter-facility-csv-downloads')
+  const fileHandle = bucket.file(user_filter.category + '/' + user_filter.saved_filter_fk)
+  const storageStream = fileHandle.createWriteStream({ metadata: { contentType: 'application/csv' } })
   const query = new QueryStream(bigQuery, bigValue)
   const pgStream = client.query(query)
-  const csvStream = csv.parse({ headers: true })
-  pgStream.pipe(csvStream).pipe(process.stdout)
+  const csvStream = csv.format()
+  pgStream.pipe(csvStream).pipe(storageStream)
+  pgStream.on('end', async () => {
+    await client.release()
+    res.status(200).json({
+      message: `success in ${timer.flush()}ms`,
+      link: await fileHandle.getSignedUrl({
+        action: 'read',
+        expires: new Date(Date.now() + 86400), // expires in 24 hours
+        promptSaveAs: 'filter-facility-download.csv',
+        contentType: 'application/csv'
+      })
+    })
+  })
+  pgStream.on('error', console.error)
   //todo: pipe from PSQL to CSV to Storage
   // need a translation layer between postgres (json) and csv
-  await client.release()
 }
