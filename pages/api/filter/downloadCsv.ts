@@ -43,6 +43,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return
   }
   //todo: get the download limit remaining on the users account
+  const remainingExports: number = await client
+    .query(
+      `
+  SELECT 
+         -- the users original quota for the month, minus:
+         (SELECT export_usage FROM user_export_usage 
+          WHERE user_id=$1 
+            AND category=$2
+            AND period=TO_CHAR(CURRENT_TIMESTAMP, 'Mon YYYY')
+         ) 
+             AS remaining_exports ;
+  `,
+      [userId, user_filter.category]
+    )
+    .then(({ rows }) => rows[0]['remaining_exports'])
+  console.log('The user has', remainingExports, 'remaining exports this month')
+  // this saves the export to count against the users quote. Should be moved to end of file with the time taken to produce the download
+  await client.query(
+    `
+  INSERT INTO user_exports (id, user_filter_fk, timestamp) VALUES (DEFAULT, $1, DEFAULT);
+  `,
+    [user_filter_id]
+  )
   const limit = 1000
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
   const timer = new Timer({
@@ -53,6 +76,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const bucket = storage.bucket('csv-export-cache')
   const fileHandle = bucket.file(user_filter.category + '/' + user_filter.saved_filter_fk)
   res.setHeader('content-type', 'text/csv')
+  //todo: refactor into a single try catch finally statement for the whole file. at the end, insert a row into user_exports
   const [exists] = await fileHandle.exists()
   if (exists) {
     timer.start('Piping CSV from Storage to API response')

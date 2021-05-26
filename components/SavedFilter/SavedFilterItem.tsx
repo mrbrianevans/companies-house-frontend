@@ -19,6 +19,7 @@ export const SavedFilterItem: React.FC<Props> = ({ savedFilter }) => {
         View filter: <ButtonLink href={savedFilter.urlToFilter} label={savedFilter.savedFilterCode} />
       </p>
       <ButtonLink
+        prefetch={false} // users are billed for these requests, so DO NOT prefetch
         href={'/api/filter/downloadCsv?id=' + savedFilter.userFilterId}
         aProps={{
           target: '_blank',

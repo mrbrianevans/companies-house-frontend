@@ -1,6 +1,8 @@
 //todo:
 // - add the option of adding metadata to the log after its been started (details setter)
-// - make class a built-in, required param in the constructor (force)
+// - make 'class' a built-in, required param in the constructor (force)
+// - add error handling methods, such as handlePostgresError(e)
+// this should really be in every single interface method, from the top to the return
 
 type Config = {
   /**
