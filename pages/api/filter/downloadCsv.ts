@@ -50,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     details: { class: 'download-csv', filterId: user_filter.saved_filter_fk }
   })
   const storage = new Storage()
-  const bucket = storage.bucket('filter-facility-csv-downloads')
+  const bucket = storage.bucket('csv-export-cache')
   const fileHandle = bucket.file(user_filter.category + '/' + user_filter.saved_filter_fk)
   res.setHeader('content-type', 'text/csv')
   const [exists] = await fileHandle.exists()
