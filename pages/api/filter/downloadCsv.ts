@@ -66,7 +66,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   `,
     [user_filter_id]
   )
-  const limit = 1000
+  const limit = 10_000_000 // temporary to allow testing large files
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
   const timer = new Timer({
     label: 'Stream query to CSV',

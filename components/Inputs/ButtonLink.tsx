@@ -7,7 +7,7 @@ interface ButtonProps extends LinkProps {
   aProps?: React.DetailedHTMLProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
   children?: any
 }
-const Button = (props: ButtonProps) => {
+const ButtonLink = (props: ButtonProps) => {
   return (
     <Link href={props.href} {...props}>
       <a className={styles.primary} {...props.aProps}>
@@ -17,4 +17,4 @@ const Button = (props: ButtonProps) => {
   )
 }
 
-export default Button
+export default ButtonLink
