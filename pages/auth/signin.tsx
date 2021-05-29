@@ -27,7 +27,7 @@ const SignIn = () => {
         buttonStyle={{ fontSize: '1.2rem', padding: '0.6rem 1.6rem' }}
         textBoxStyle={{ fontSize: '1.2rem' }}
         textInputType={'email'}
-        textBoxProps={{spellCheck: false, autoComplete: 'on', autoCapitalize: 'off'}}
+        textBoxProps={{ spellCheck: false, autoComplete: 'on', autoCapitalize: 'off' }}
       />
       <p style={{ fontSize: '0.7rem' }}>
         Your email address will not be used for anything other than authenticating your account

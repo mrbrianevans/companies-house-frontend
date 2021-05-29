@@ -13,5 +13,5 @@ export interface IFilterConfig {
   // the thing you are filtering for, eg: company, accountant
   labelSingular: string
 
-  filters: {sqlGenerator:(filter: IFilter)=>IMinorQuery, filterOption: IFilterOption}[]
+  filters: { sqlGenerator: (filter: IFilter) => IMinorQuery; filterOption: IFilterOption }[]
 }

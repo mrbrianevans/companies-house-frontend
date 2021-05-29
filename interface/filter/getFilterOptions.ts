@@ -7,9 +7,9 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 type GetFilterOptionsParams = {
   category: FilterCategory
 }
-const getFilterOptions: (params: GetFilterOptionsParams)=>IFilterOption[] = ({category})=>{
-  const config = getFilterConfig({category})
+const getFilterOptions: (params: GetFilterOptionsParams) => IFilterOption[] = ({ category }) => {
+  const config = getFilterConfig({ category })
   const filters = config.filters
-  const filterOptions = filters.map(filter=>filter.filterOption)
+  const filterOptions = filters.map((filter) => filter.filterOption)
   return filterOptions
 }

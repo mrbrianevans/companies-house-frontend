@@ -115,9 +115,8 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
                       {filingEvents
                         ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
                         ?.map((filingEvent) => {
-                          const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(
-                            /^<b>(.*)<\/b>(.*)$/
-                          )
+                          const [, descriptionHeading, descriptionBody] =
+                            filingEvent.description_html.match(/^<b>(.*)<\/b>(.*)$/)
                           return (
                             <li key={filingEvent.id}>
                               {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>

@@ -1,6 +1,6 @@
 /** takes a list of filters, converts them to queries using combineQueries, queries the database, and returns a result list*/
 import { IFilter } from '../../types/IFilters'
-import { FilterCategory } from "../../types/FilterCategory";
+import { FilterCategory } from '../../types/FilterCategory'
 
 type Params = {
   filters: IFilter[]

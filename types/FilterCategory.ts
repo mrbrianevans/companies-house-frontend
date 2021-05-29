@@ -1,5 +1,4 @@
-
 export enum FilterCategory {
-  COMPANY = "COMPANY",
-  ACCOUNTANT = "ACCOUNTANT"
+  COMPANY = 'COMPANY',
+  ACCOUNTANT = 'ACCOUNTANT'
 }

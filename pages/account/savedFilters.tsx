@@ -29,6 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!session) {
     return { notFound: true }
   }
+  // @ts-ignore this needs to be fixed! define a helper function to get more info about a user on the backend
   const savedFilters = await getUserSavedFilters(session.user.id)
   const props: Props = { savedFilters }
   return { props }

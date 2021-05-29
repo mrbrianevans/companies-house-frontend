@@ -7,5 +7,5 @@ export const companyFilterConfig: IFilterConfig = {
   redirectUrl: '/company/filter/',
   labelPlural: 'companies',
   labelSingular: 'company',
-  filters: [{filterOption: filterCompaniesByAgeMetadata, sqlGenerator: filterCompaniesByAge}]
+  filters: [{ filterOption: filterCompaniesByAgeMetadata, sqlGenerator: filterCompaniesByAge }]
 }

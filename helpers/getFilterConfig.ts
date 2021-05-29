@@ -6,7 +6,7 @@ type GetFilterConfigParams = {
   category: FilterCategory
 }
 
-const getFilterConfig: (params: GetFilterConfigParams) => IFilterConfig = ({category}) => {
+const getFilterConfig: (params: GetFilterConfigParams) => IFilterConfig = ({ category }) => {
   return filterConfigs[category]
 }
 

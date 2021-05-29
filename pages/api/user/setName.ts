@@ -9,6 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(401).send('Not logged in')
     return
   }
+  // @ts-ignore this needs to be fixed! define a helper function to get more info about a user on the backend
   const userId = session.user.id
   const { name, timestamp } = req.body
   console.log('req.body.name', name)

@@ -1,7 +1,6 @@
-
 import { IFilter } from '../../types/IFilters'
 import { IMinorQuery } from '../../types/IQueries'
-import { FilterCategory } from "../../types/FilterCategory";
+import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
 type Params = {
   filters: IFilter[]
@@ -10,13 +9,13 @@ type Params = {
 /** combines multiple queries using either INTERSECT or EXCEPT depending on exclusion
  * takes a list of filters, returns a SQL query string to get the distinct unique identifiers
  */
-const combineQueries: (params: Params) => IMinorQuery = ({filters, category}) => {
+const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) => {
   //steps
   // 1. loop through filters, convert each to a SQL query, (function from config)
   // 2. join into single query
   const filterConfig = getFilterConfig({ category })
   // if this line every needs to be copied elsewhere, it should rather be extracted to a method
-  const filterMap = new Map(filterConfig.filters.map(filter=>[filter.filterOption.category, filter.sqlGenerator]))
+  const filterMap = new Map(filterConfig.filters.map((filter) => [filter.filterOption.category, filter.sqlGenerator]))
   const queries: string[] = []
   const values: any[] = []
   let valueCounter = 1
@@ -40,7 +39,7 @@ const combineQueries: (params: Params) => IMinorQuery = ({filters, category}) =>
   }
   let bigQuery = queries.join(' INTERSECT ') // this will change to EXCEPT for excluded filters
   let bigValue = values.flat()
-  return {query: bigQuery, value: bigValue}
+  return { query: bigQuery, value: bigValue }
 }
 
 export default combineQueries
