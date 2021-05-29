@@ -26,7 +26,7 @@ export const filterCompaniesBy${pascalName}: (filter: INumberFilter) => IMinorQu
   return { query, value: [filter.min, filter.max] }
 }
 
-export const filterCompaniesBy${pascalName}Metadata: IFilterOption = {
+export const filterCompaniesBy${pascalName}Metadata: INumberFilterOption = {
   category: '${lowerName}',
   possibleComparisons: ['is between'],
   valueType: 'number'

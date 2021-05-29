@@ -39,13 +39,6 @@ export interface IStringFilter extends IGeneralFilter {
 
 export type IFilter = INumberFilter | IStringFilter
 
-// searching an array of values, whether it includes or excludes the value
-export interface IArrayFilter extends IGeneralFilter {
-  category: 'software' | 'location'
-  comparison: 'include' | 'exclude'
-  value: string[] | number
-}
-
 export interface INumberFilterOption {
   possibleComparisons: INumberFilter['comparison'][]
   category: string

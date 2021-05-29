@@ -1,4 +1,4 @@
-import { INumberFilter } from '../../../types/IFilters'
+import { INumberFilter, INumberFilterOption } from '../../../types/IFilters'
 import { IMinorQuery } from '../../../types/IQueries'
 
 export const filterCompaniesByAge: (filter: INumberFilter) => IMinorQuery = (filter) => {
@@ -12,7 +12,7 @@ export const filterCompaniesByAge: (filter: INumberFilter) => IMinorQuery = (fil
   return { query, value: [filter.max, filter.min] }
 }
 
-export const filterCompaniesByAgeMetadata = {
+export const filterCompaniesByAgeMetadata: INumberFilterOption = {
   category: 'age',
   possibleComparisons: ['is between'],
   valueType: 'number'

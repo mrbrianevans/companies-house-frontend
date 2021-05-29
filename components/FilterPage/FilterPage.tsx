@@ -10,24 +10,13 @@ import { ISavedFilter } from '../../types/ISavedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
 import ButtonLink from '../Inputs/ButtonLink'
 import { formatApproximation } from '../../helpers/numberFormatter'
+import { IFilterConfig } from '../../types/IFilterConfig'
 const styles = require('./FilterPage.module.scss')
 
-export interface FilterConfig {
-  // the url of the api endpoint which returns the estimated count for a filter
-  countResultsApiUrl: string
-  // the url of the api endpoint which returns an ID for an array of filters
-  getFilterIdApiUrl: string
-  // a string to append the filter id to, and returns the frontend url to view it
-  redirectUrl: string
-  // the things you are filtering for, eg: companies, accountants
-  labelPlural: string
-  // the thing you are filtering for, eg: company, accountant
-  labelSingular: string
-}
 interface Props<ResultType> {
   filterOptions?: IFilterOption[]
   ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
-  config: FilterConfig
+  config: IFilterConfig
   savedFilter?: ISavedFilter<ResultType>
 }
 
