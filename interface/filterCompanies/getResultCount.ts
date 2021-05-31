@@ -2,11 +2,11 @@ import { IFilter } from '../../types/IFilters'
 import { getMatchingCompanyNumbers } from './combineQueries'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getFilterId } from '../../helpers/getFilterId'
+import { FilterCategory } from '../../types/FilterCategory'
 
 export const getResultCount: (filters: IFilter[]) => Promise<number> = async (filters) => {
-  const filterId = getFilterId(filters)
+  const filterId = getFilterId(filters, FilterCategory.COMPANY)
   //todo: check cache for persisted result set size (SELECT result_count FROM saved_filter WHERE id = id)
   const { value: bigValue, query: bigQuery } = getMatchingCompanyNumbers(filters)
   const timer = new Timer({ label: 'Count result set size', details: { filterId, filterType: 'Company' } })

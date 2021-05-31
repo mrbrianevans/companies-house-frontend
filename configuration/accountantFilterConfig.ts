@@ -10,5 +10,7 @@ export const accountantFilterConfig: IFilterConfig = {
   redirectUrl: '/accountants/filter/',
   labelPlural: 'accountants',
   labelSingular: 'accountant',
-  filters: [{ filterOption: filterAccountantBySoftwareMetadata, sqlGenerator: filterAccountantsBySoftware }]
+  filters: [{ filterOption: filterAccountantBySoftwareMetadata, sqlGenerator: filterAccountantsBySoftware }],
+  main_table: 'accountants',
+  uniqueIdentifier: 'name'
 }

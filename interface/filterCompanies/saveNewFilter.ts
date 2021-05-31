@@ -3,6 +3,7 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/getFilterId'
 import { applyCompaniesFilter } from './applyFilter'
 import { Timer } from '../../helpers/Timer'
+import { FilterCategory } from '../../types/FilterCategory'
 
 interface NewFilter {
   filters: IFilter[]
@@ -10,7 +11,7 @@ interface NewFilter {
 
 export const saveNewFilter: (newFilter: NewFilter) => Promise<string> = async (newFilter) => {
   const pool = getDatabasePool()
-  const id = getFilterId(newFilter.filters)
+  const id = getFilterId(newFilter.filters, FilterCategory.COMPANY)
   const timer = new Timer({ label: 'Apply company filter to save in DB' })
   // only saves the top 10 results in the database
   const { query, results } = await applyCompaniesFilter(newFilter.filters, 10)

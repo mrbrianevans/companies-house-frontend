@@ -12,7 +12,7 @@ interface CountResultsParams {
 }
 /** takes a list of filters, combines the queries, queries the database for COUNT(combinedQueries) with no limit*/
 const countResults: (params: CountResultsParams) => Promise<number> = async ({ filters, category }) => {
-  const filterId = getFilterId(filters)
+  const filterId = getFilterId(filters, category)
   const timer = new Timer({ label: 'Count result set size', details: { filterId, filterType: category } })
   // check cache for persisted result set size
   const pool = await getDatabasePool()

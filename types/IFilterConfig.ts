@@ -14,4 +14,9 @@ export interface IFilterConfig {
   labelSingular: string
 
   filters: { sqlGenerator: (filter: IFilter) => IMinorQuery; filterOption: IFilterOption }[]
+
+  // the filters primary table from where results are returned
+  main_table: string,
+  // a uniquely identifying column in the database table such as a company number, accountant name, or person number
+  uniqueIdentifier: string
 }

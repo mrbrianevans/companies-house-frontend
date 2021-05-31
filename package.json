@@ -16,7 +16,9 @@
   ],
   "homepage": "https://filterfacility.co.uk",
   "author": "Brian Evans",
-  "engines" : { "node" : ">=16.0.0" },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "@companieshouse/api-sdk-node": "^1.0.25",
     "@google-cloud/storage": "^5.8.5",

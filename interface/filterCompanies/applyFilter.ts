@@ -1,11 +1,10 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { IFilter } from '../../types/IFilters'
-import { getCompanyFilterList } from './listOfFilters'
 import { ICompanyProfile } from '../../types/ICompany'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { combineQueries } from './combineQueries'
-import { getResultCount } from './getResultCount'
 import { getFilterId } from '../../helpers/getFilterId'
+import { FilterCategory } from '../../types/FilterCategory'
 // import filterMap from '../../helpers/filters'
 // /api/company
 
@@ -34,7 +33,7 @@ export const applyCompaniesFilter: (
           queryProcessingTime: Date.now() - startTime,
           filters: filters.map((filter) => filter.category).join(', '),
           class: 'company-filter',
-          filterObjectId: getFilterId(filters)
+          filterObjectId: getFilterId(filters, FilterCategory.COMPANY)
         })
       )
       return { query: prettyPrintQuery, results: matches }
