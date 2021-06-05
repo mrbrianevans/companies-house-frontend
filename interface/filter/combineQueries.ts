@@ -23,6 +23,7 @@ const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) 
     if (!filterMap.has(filter.category)) {
       //todo: replace with error logger helper method
       console.log('Filter not found:', filter.category, filter)
+      continue;
     }
     //each type of filter has a function that returns a sql query
     const { query, value } = filterMap.get(filter.category)(filter)
@@ -35,7 +36,8 @@ const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) 
     values.push(value)
   }
   if (queries.length == 0) {
-    return { query: 'SELECT number FROM companies LIMIT 1', value: [] }
+    console.log('Error in combineQueries. Zero filters to combine')
+    return { query: `SELECT * FROM ${filterConfig.main_table}`, value: [] }
   }
   let bigQuery = queries.join(' INTERSECT ') // this will change to EXCEPT for excluded filters
   let bigValue = values.flat()

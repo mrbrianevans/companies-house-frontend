@@ -12,5 +12,5 @@ export const accountantFilterConfig: IFilterConfig = {
   labelSingular: 'accountant',
   filters: [{ filterOption: filterAccountantBySoftwareMetadata, sqlGenerator: filterAccountantsBySoftware }],
   main_table: 'accountants',
-  uniqueIdentifier: 'name'
+  uniqueIdentifier: 'name_on_accounts'
 }

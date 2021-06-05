@@ -23,7 +23,7 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 #set($params_list = $params.split(', '))
 #set($output_list = $comma_seperated_output.split(', '))
 
-// input parameters for $camelName
+// input parameters for $camelName - $params
 export interface $Params {
 #if(${comma_seperated_params} == "")
     filters: IFilter[]
@@ -34,7 +34,7 @@ export interface $Params {
     #end
 #end
 }
-// return type of $camelName
+// return type of $camelName - $comma_seperated_output
 export interface $Output {
 #if($comma_seperated_output != "")
     #foreach ($output in $output_list)
@@ -51,11 +51,11 @@ export interface $Output {
  * @returns  $Output $comma_seperated_output
  */
 export async function $camelName({ $params }: $Params): Promise<$Output>{
-    const timer = new Timer({label: "Call $camelName method", filename: "${DIR_PATH}/${FILE_NAME}"})
+    const timer = new Timer({label: "$camelName() method call", filename: "${DIR_PATH}/${FILE_NAME}"})
     const pool = getDatabasePool()
     #if(${comma_seperated_params} == "")
     const id = getFilterId(filters, category)
-    const config = getFilterConfig(category)
+    const config = getFilterConfig({ category })
     #end
     const { rows } = await pool.query(`
     SELECT * FROM companies LIMIT 10

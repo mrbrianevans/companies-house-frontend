@@ -19,12 +19,17 @@ import { ${Params}, ${Output} } from '../../interface/${sub_directory}/${camelNa
 /** Frontend AJAX call to $camelName method on the backend 
  *
  * @example
- * await #[[$END$]]#fetch${PascalName}({ $params })
+ * const { $comma_seperated_output } = await #[[$END$]]#fetch${PascalName}({ $params })
  */
 export const fetch${PascalName}: (params: ${Params}) => Promise<${Output}> = async({ $params }) => {
   return await fetch('/api/filter/${camelName}', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ $params })
-  }).then(r => r.json())
+  }).then(r => {
+  if(r.status === 200)
+    return r.json()
+  console.error("Failed to call $camelName API endpoint")
+  return null
+  }).catch(console.error) 
 }

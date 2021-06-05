@@ -17,6 +17,8 @@ type Config = {
    * any key-value pairs to include in the console log
    */
   details?: { [key: string]: string | number }
+  // filename of the typescript source file where the log is coming from. Soon to become mandatory
+  filename?: string
 }
 export class Timer {
   private readonly startTime: number
@@ -91,10 +93,10 @@ export class Timer {
    * stops the most recently started timer
    */
   public end() {
-    if (this.mostRecentlyStartedLabel) this.stop(this.mostRecentlyStartedLabel)
+    if (this.mostRecentlyStartedLabel) return this.stop(this.mostRecentlyStartedLabel)
   }
   /**
-   * prints times to the console in JSON format for Google Cloud Logging
+   * prints times to the console in JSON format for Google Cloud Logging.
    *
    * Will end the most recently started timer if not already ended
    */
@@ -103,7 +105,8 @@ export class Timer {
     if (this.mostRecentlyStartedLabel && !this.savedTimes[this.mostRecentlyStartedLabel].finishTime) this.end()
     const printObject: { [label: string]: string | number } = {
       severity: this.config?.severity ?? 'INFO',
-      message: (this.config?.label ?? `Timer`) + `: ${this.finishTime - this.startTime}ms`
+      message: (this.config?.label ?? `Timer`) + `: ${this.finishTime - this.startTime}ms`,
+      filename: this.config?.filename
     }
     Object.entries(this.savedTimes).forEach(([label, times]) => {
       printObject[label] = times.time

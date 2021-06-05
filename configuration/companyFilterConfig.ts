@@ -1,5 +1,6 @@
 import { IFilterConfig } from '../types/IFilterConfig'
 import { filterCompaniesByAge, filterCompaniesByAgeMetadata } from '../interface/filterCompanies/filters/age'
+import { ICompanyProfile } from '../types/ICompany'
 
 export const companyFilterConfig: IFilterConfig = {
   countResultsApiUrl: '/api/companies/countFilterResults',
@@ -8,6 +9,6 @@ export const companyFilterConfig: IFilterConfig = {
   labelPlural: 'companies',
   labelSingular: 'company',
   filters: [{ filterOption: filterCompaniesByAgeMetadata, sqlGenerator: filterCompaniesByAge }],
-  main_table: 'companies',
-  uniqueIdentifier: 'number'
+  main_table: 'wide_accounts_combined',
+  uniqueIdentifier: 'company_number'
 }

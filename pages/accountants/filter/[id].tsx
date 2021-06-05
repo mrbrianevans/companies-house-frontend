@@ -2,13 +2,13 @@ import { IFilterOption } from '../../../types/IFilters'
 import { IAccountant } from '../../../types/IAccountant'
 import * as React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { getSavedFilter } from '../../../interface/filterAccountants/getSavedFilter'
-import getAccountantFilters from '../../../interface/filterAccountants/getFilterOptions'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
 import { ISavedFilter } from '../../../types/ISavedFilter'
 import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
-import { saveNewFilter } from '../../../interface/filterAccountants/saveNewFilter'
+import { FilterCategory } from '../../../types/FilterCategory'
+import getFilterOptions from '../../../interface/filter/getFilterOptions'
+import getCachedFilter from '../../../interface/filter/getCachedFilter'
 
 interface Props {
   filterOptions?: IFilterOption[]
@@ -18,7 +18,7 @@ const AccountantFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
     <FilterPage
       ResultsTable={AccountantResultsTable}
-      config={accountantFilterConfig}
+      config={accountantFilterConfig} category={FilterCategory.ACCOUNTANT}
       filterOptions={filterOptions}
       savedFilter={savedFilter}
     />
@@ -34,7 +34,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getSavedFilter(id)
+  const savedFilter = await getCachedFilter<IAccountant>({cachedFilterId: id, category: FilterCategory.ACCOUNTANT})
   if (savedFilter === null) {
     return {
       notFound: true
@@ -42,7 +42,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   //todo: if the saved filter was run a long time ago, revalidate it in the background
   const returnProps: Props = {
-    filterOptions: getAccountantFilters(),
+    filterOptions: getFilterOptions({category: FilterCategory.ACCOUNTANT}),
     savedFilter: savedFilter
   }
   return {

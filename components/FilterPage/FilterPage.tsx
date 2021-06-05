@@ -1,29 +1,33 @@
 import { Page } from '../Page/Page'
 import { IFilter, IFilterOption } from '../../types/IFilters'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NewFilterCard } from '../NewFilterCard/NewFilterCard'
 import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
-import * as React from 'react'
 import { ISavedFilter } from '../../types/ISavedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
 import ButtonLink from '../Inputs/ButtonLink'
 import { formatApproximation } from '../../helpers/numberFormatter'
 import { IFilterConfig } from '../../types/IFilterConfig'
+import { FilterCategory } from '../../types/FilterCategory'
+import { fetchCountResults } from '../../ajax/filter/countResults'
+import { fetchCacheFilter } from '../../ajax/filter/cacheFilter'
+import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
   filterOptions?: IFilterOption[]
   ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
   config: IFilterConfig
+  category: FilterCategory
   savedFilter?: ISavedFilter<ResultType>
 }
 
 export const FilterPage = <ResultType extends object>({
   savedFilter,
   filterOptions,
-  config,
+  config, category,
   ResultsTable
 }: Props<ResultType>) => {
   const router = useRouter()
@@ -46,30 +50,17 @@ export const FilterPage = <ResultType extends object>({
   useEffect(() => {
     if (filters?.length > 0) {
       setNewFilterIdUpToDate(false)
-      fetch(config.getFilterIdApiUrl, {
-        method: 'POST',
-        body: JSON.stringify({ filters }),
-        headers: { 'Content-Type': 'application/json' }
+      fetchGetFilterId({filters, category}).then(fi => {
+        if(!fi) return // failed to get id. Need an error message somewhere
+        setNewFilterId(config.redirectUrl + fi.id)
+        setNewFilterIdUpToDate(true)
+        const daysStaleRevalidate = 1
+        // run the filter if it hasn't been run in the last day
+        if(!fi.lastRun || fi.lastRun < Date.now()-1000*86400*daysStaleRevalidate)
+          fetchCacheFilter({filters, category})
       })
-        .then((r) => {
-          if (r.status === 200) return r
-          else throw new Error(r.statusText)
-        })
-        .then((r) => r.json())
-        .then(async (j) => {
-          setNewFilterId(config.redirectUrl + j.id)
-          setNewFilterIdUpToDate(true)
-        })
       setCountUpToDate(false)
-      fetch(config.countResultsApiUrl, {
-        method: 'POST',
-        body: JSON.stringify({ filters }),
-        headers: { 'Content-Type': 'application/json' }
-      })
-        .then((r) => {
-          if (r.status === 200) return r.json()
-          else throw new Error(r.statusText)
-        })
+      fetchCountResults({filters, category})
         .then((j) => setEstimatedCount(Number(j.count)))
         .then(() => setCountUpToDate(true))
     } else {
@@ -97,22 +88,12 @@ export const FilterPage = <ResultType extends object>({
   const applyFilter = () => {
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
     setFilterMatchesLoading(true)
-    fetch(config.getFilterIdApiUrl, {
-      method: 'POST',
-      body: JSON.stringify({ filters }),
-      headers: { 'Content-Type': 'application/json' }
+    fetchGetFilterId({filters, category}).then(fi => {
+      if(!fi) return // failed to get id. Need an error message somewhere
+      if (fi.id !== savedFilter?.metadata.id)
+        return router.push(config.redirectUrl + fi.id, config.redirectUrl + fi.id, { scroll: false })
+      else setFilterMatchesLoading(false)
     })
-      .then((r) => {
-        if (r.status === 200) return r
-        else throw new Error(r.statusText)
-      })
-      .then((r) => r.json())
-      .then((j) => {
-        if (j.id !== savedFilter?.metadata.id)
-          return router.push(config.redirectUrl + j.id, config.redirectUrl + j.id, { scroll: false })
-        else setFilterMatchesLoading(false)
-      })
-      .catch(console.error)
   }
   const saveFilterToAccount = () => {
     fetch(`/api/filter/saveFilterToAccount`, {
@@ -147,7 +128,7 @@ export const FilterPage = <ResultType extends object>({
         {showNewFilterForm && filterOptions !== undefined && (
           <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
         )}
-        {filters?.map((filter: IFilter, i) => (
+        {filters!==undefined && filters instanceof Array && filters?.map((filter: IFilter, i) => (
           <div style={{ width: '100%' }} key={i}>
             <p className={styles.appliedFilter}>
               {filter.category} {filter.comparison}{' '}

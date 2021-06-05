@@ -15,8 +15,15 @@ import { NextApiRequest, NextApiResponse } from 'next'
 #else
     #set($params = $comma_seperated_params)
 #end
+// api endpoint on /api/$sub_directory/$camelName
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { body: { $params } }: { body: ${Params} } = req
-  const { $comma_seperated_output }: ${Output} = await $camelName({ $params })
-  res.json({ $comma_seperated_output })
+  const output = await $camelName({ $params })
+  if(output){
+      const { $comma_seperated_output }: ${Output} = output
+      res.json({ $comma_seperated_output })
+      return
+  }else{
+    res.status(500)
+  }
 }
