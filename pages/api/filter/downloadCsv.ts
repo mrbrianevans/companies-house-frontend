@@ -28,9 +28,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const user_filter: IUserFilter = await client
     .query(
       `
-          SELECT u.*, sf.filters
+          SELECT u.*, cf.filters, cf.category
           FROM user_filters u
-                   JOIN saved_filters sf on u.saved_filter_fk = sf.id and u.category = sf.category
+                   JOIN cached_filters cf on u.cached_filter_fk = cf.id
           WHERE u.id = $1
       `,
       [user_filter_id]
@@ -71,11 +71,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
   const timer = new Timer({
     label: 'Stream query to CSV',
-    details: { class: 'download-csv', filterId: user_filter.saved_filter_fk }
+    details: { class: 'download-csv', filterId: user_filter.cached_filter_fk ?? 'null' }
   })
   const storage = new Storage()
   const bucket = storage.bucket('csv-export-cache')
-  const fileHandle = bucket.file(user_filter.category + '/' + user_filter.saved_filter_fk)
+  console.assert(user_filter.category && user_filter.cached_filter_fk, 'referencing GCS file with undefined name')
+  const fileHandle = bucket.file(user_filter.category + '/' + user_filter.cached_filter_fk)
   res.setHeader('content-type', 'text/csv')
   //todo: refactor into a single try catch finally statement for the whole file. at the end, insert a row into user_exports
   const [exists] = await fileHandle.exists()

@@ -1,4 +1,3 @@
-
 import { IFilter } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { Timer } from '../../helpers/Timer'
@@ -13,7 +12,7 @@ type Params = {
   sort?: string[]
 }
 type AppliedFilters<FilterCategoryType> = {
-  query: string,
+  query: string
   results: FilterCategoryType[]
 }
 /**
@@ -21,11 +20,15 @@ type AppliedFilters<FilterCategoryType> = {
  * queries the database,
  * and returns a result list with a pretty printed query
  * */
-const applyFilters: <FilterCategoryType>(params: Params) => Promise<AppliedFilters<FilterCategoryType>> =
-  async ({ filters, category, limit, sort }) => {
-  const timer = new Timer({label: 'Apply filters'})
+const applyFilters: <FilterCategoryType>(params: Params) => Promise<AppliedFilters<FilterCategoryType>> = async ({
+  filters,
+  category,
+  limit,
+  sort
+}) => {
+  const timer = new Timer({ label: 'Apply filters' })
   // todo: add filter id to the log
-  const {query, value} = combineQueries({ filters, category })
+  const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
   const pool = await getDatabasePool()
   // add the limit to the end of the query

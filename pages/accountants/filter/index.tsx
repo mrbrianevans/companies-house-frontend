@@ -14,7 +14,12 @@ interface Props {
 
 const AccountantFilterPage = ({ filterOptions }: Props) => {
   return (
-    <FilterPage ResultsTable={AccountantResultsTable} config={accountantFilterConfig} category={FilterCategory.ACCOUNTANT} filterOptions={filterOptions} />
+    <FilterPage
+      ResultsTable={AccountantResultsTable}
+      config={accountantFilterConfig}
+      category={FilterCategory.ACCOUNTANT}
+      filterOptions={filterOptions}
+    />
   )
 }
 
@@ -22,7 +27,7 @@ export default AccountantFilterPage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const returnProps: Props = {
-    filterOptions: getFilterOptions({category: FilterCategory.ACCOUNTANT})
+    filterOptions: getFilterOptions({ category: FilterCategory.ACCOUNTANT })
   }
   return {
     props: returnProps

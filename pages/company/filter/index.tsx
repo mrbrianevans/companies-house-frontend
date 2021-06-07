@@ -13,14 +13,21 @@ interface Props {
 }
 //todo: give the estimated result count in the same box as the preview button
 const CompanyFilterPage = ({ filterOptions }: Props) => {
-  return <FilterPage ResultsTable={CompanyResultsTable} config={filterConfig} filterOptions={filterOptions} category={FilterCategory.COMPANY} />
+  return (
+    <FilterPage
+      ResultsTable={CompanyResultsTable}
+      config={filterConfig}
+      filterOptions={filterOptions}
+      category={FilterCategory.COMPANY}
+    />
+  )
 }
 
 export default CompanyFilterPage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const returnProps: Props = {
-    filterOptions: getFilterOptions({category: FilterCategory.COMPANY})
+    filterOptions: getFilterOptions({ category: FilterCategory.COMPANY })
   }
   return {
     props: returnProps

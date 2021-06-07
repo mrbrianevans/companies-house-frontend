@@ -12,13 +12,16 @@ const hash = require('object-hash')
  */
 export const getFilterId = (filters: IFilter[], category: FilterCategory) => {
   // sorts the filters so that a different order doesn't give a different filter
-  const hashString: string = hash({ filters, category }, {
-    algorithm: 'md5',
-    encoding: 'hex',
-    unorderedArrays: true,
-    unorderedObjects: true,
-    unorderedSets: true
-  })
+  const hashString: string = hash(
+    { filters, category },
+    {
+      algorithm: 'md5',
+      encoding: 'hex',
+      unorderedArrays: true,
+      unorderedObjects: true,
+      unorderedSets: true
+    }
+  )
   //uses custom base 64 encoding to make it url safe, don't use the built in one
   const maximum = 1073741823
   const minimum = 16777216

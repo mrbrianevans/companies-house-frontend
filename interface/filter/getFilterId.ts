@@ -10,7 +10,6 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
-
 // input parameters for getFilterId - filters, category
 export interface GetFilterIdParams {
   filters: IFilter[]
@@ -35,9 +34,10 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
   const timer = new Timer({ label: 'getFilterId() method call', filename: 'interface/filter/getFilterId.ts' })
   const pool = getDatabasePool()
   const id = getFilterIdHelper(filters, category)
-  const {query, value} = combineQueries({filters, category})
+  const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
-  const { rows }: {rows: {id:string, last_run?: Date}[]} = await pool.query(`
+  const { rows }: { rows: { id: string; last_run?: Date }[] } = await pool.query(
+    `
       INSERT INTO cached_filters 
           (id, category, query, filters) 
       VALUES ($1, $2, $3, $4)
@@ -45,10 +45,12 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
           -- unfortunately this update is required for the RETURNING
           DO UPDATE SET id=cached_filters.id
       RETURNING id, last_run
-  `, [id, category, prettyPrintedQuery, filters])
+  `,
+    [id, category, prettyPrintedQuery, filters]
+  )
   await pool.end()
   timer.flush()
-  const output: GetFilterIdOutput = {id: rows[0]?.id, lastRun: rows[0]?.last_run?.valueOf()}
+  const output: GetFilterIdOutput = { id: rows[0]?.id, lastRun: rows[0]?.last_run?.valueOf() }
   console.log('interface method temp log: lastRun:', output.lastRun)
   return output
 }

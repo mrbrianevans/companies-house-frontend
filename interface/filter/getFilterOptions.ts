@@ -1,4 +1,3 @@
-
 import { IFilterOption } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'

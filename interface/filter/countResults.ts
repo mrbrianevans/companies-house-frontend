@@ -8,7 +8,6 @@ import { getFilterId } from '../../helpers/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
 
-
 // input parameters for countResults - filters, category
 export interface CountResultsParams {
   filters: IFilter[]

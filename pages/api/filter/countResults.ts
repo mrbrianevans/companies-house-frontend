@@ -5,7 +5,9 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 // api endpoint on /api/filter/countResults
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body: { filters, category } }: { body: CountResultsParams } = req
+  const {
+    body: { filters, category }
+  }: { body: CountResultsParams } = req
   const { count }: CountResultsOutput = await countResults({ filters, category })
   res.json({ count })
 }

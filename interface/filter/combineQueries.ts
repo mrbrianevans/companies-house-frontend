@@ -23,7 +23,7 @@ const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) 
     if (!filterMap.has(filter.category)) {
       //todo: replace with error logger helper method
       console.log('Filter not found:', filter.category, filter)
-      continue;
+      continue
     }
     //each type of filter has a function that returns a sql query
     const { query, value } = filterMap.get(filter.category)(filter)

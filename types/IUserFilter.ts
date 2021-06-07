@@ -3,9 +3,9 @@ import { IFilter } from './IFilters'
 export interface IUserFilter {
   id: number
   // references the filter_id in the saved_filters table
-  saved_filter_fk: string
+  cached_filter_fk: string
   // a user input title to describe the filter
-  title: string
+  title?: string | null
   // a timestamp of when this filter was first saved by the user
   created: string
   // references the user id in the users table
@@ -21,7 +21,7 @@ export interface IUserFilterDisplay {
   english: string
   // timestamp of when the user saved the filter
   dateSaved: number
-  savedFilterCode: string
+  cachedFilterId: string
   category: 'ACCOUNTANT' | 'COMPANY'
   // the relative url from root/ to the filter
   urlToFilter: string

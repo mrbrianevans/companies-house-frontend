@@ -1,7 +1,7 @@
 import { IFilter, IFilterOption } from './IFilters'
 import { IMinorQuery } from './IQueries'
 
-export interface IFilterConfig{
+export interface IFilterConfig {
   // the url of the api endpoint which returns the estimated count for a filter
   countResultsApiUrl: string
   // the url of the api endpoint which returns an ID for an array of filters
@@ -16,7 +16,7 @@ export interface IFilterConfig{
   filters: { sqlGenerator: (filter: IFilter) => IMinorQuery; filterOption: IFilterOption }[]
 
   // the filters primary table from where results are returned
-  main_table: string,
+  main_table: string
   // a uniquely identifying column in the database table such as a company number, accountant name, or person number
   uniqueIdentifier: string
 }

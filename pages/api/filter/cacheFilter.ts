@@ -4,13 +4,14 @@ import { CacheFilterParams, CacheFilterOutput, cacheFilter } from '../../../inte
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { body: { filters, category } }: { body: CacheFilterParams } = req
+  const {
+    body: { filters, category }
+  }: { body: CacheFilterParams } = req
   const output = await cacheFilter({ filters, category })
-  if(output) {
+  if (output) {
     const { id }: CacheFilterOutput = output
     res.json({ id })
-  }else{
+  } else {
     res.status(500).send('Failed to get filter id')
   }
-
 }

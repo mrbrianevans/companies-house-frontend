@@ -14,6 +14,7 @@ import { FilterCategory } from '../../types/FilterCategory'
 import { fetchCountResults } from '../../ajax/filter/countResults'
 import { fetchCacheFilter } from '../../ajax/filter/cacheFilter'
 import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
+import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
@@ -27,7 +28,8 @@ interface Props<ResultType> {
 export const FilterPage = <ResultType extends object>({
   savedFilter,
   filterOptions,
-  config, category,
+  config,
+  category,
   ResultsTable
 }: Props<ResultType>) => {
   const router = useRouter()
@@ -50,17 +52,17 @@ export const FilterPage = <ResultType extends object>({
   useEffect(() => {
     if (filters?.length > 0) {
       setNewFilterIdUpToDate(false)
-      fetchGetFilterId({filters, category}).then(fi => {
-        if(!fi) return // failed to get id. Need an error message somewhere
+      fetchGetFilterId({ filters, category }).then((fi) => {
+        if (!fi) return // failed to get id. Need an error message somewhere
         setNewFilterId(config.redirectUrl + fi.id)
         setNewFilterIdUpToDate(true)
         const daysStaleRevalidate = 1
         // run the filter if it hasn't been run in the last day
-        if(!fi.lastRun || fi.lastRun < Date.now()-1000*86400*daysStaleRevalidate)
-          fetchCacheFilter({filters, category})
+        if (!fi.lastRun || fi.lastRun < Date.now() - 1000 * 86400 * daysStaleRevalidate)
+          fetchCacheFilter({ filters, category })
       })
       setCountUpToDate(false)
-      fetchCountResults({filters, category})
+      fetchCountResults({ filters, category })
         .then((j) => setEstimatedCount(Number(j.count)))
         .then(() => setCountUpToDate(true))
     } else {
@@ -88,31 +90,18 @@ export const FilterPage = <ResultType extends object>({
   const applyFilter = () => {
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
     setFilterMatchesLoading(true)
-    fetchGetFilterId({filters, category}).then(fi => {
-      if(!fi) return // failed to get id. Need an error message somewhere
+    fetchGetFilterId({ filters, category }).then((fi) => {
+      if (!fi) return // failed to get id. Need an error message somewhere
       if (fi.id !== savedFilter?.metadata.id)
         return router.push(config.redirectUrl + fi.id, config.redirectUrl + fi.id, { scroll: false })
       else setFilterMatchesLoading(false)
     })
   }
   const saveFilterToAccount = () => {
-    fetch(`/api/filter/saveFilterToAccount`, {
-      method: 'PUT',
-      body: JSON.stringify({ id: savedFilter.metadata.id, category: config.labelSingular.toUpperCase() }),
-      headers: { 'Content-Type': 'application/json' }
+    fetchSaveUserFilter({ savedFilterId: savedFilter.metadata.id }).then((r) => {
+      if (r) setSaveMessage('Filter saved')
+      else setSaveMessage('Failed to save')
     })
-      .then((r) => {
-        if (r.status === 200) return r
-        else throw new Error(r.statusText)
-      })
-      .then((r) => r.json())
-      .then((j) => {
-        // j.id is the ID of the saved filter
-        setSaveMessage('Filter saved')
-        // setTimeout(() => setSaveMessage(undefined), 3000)
-        // return router.push('/account/savedFilters/' + j.id)
-      })
-      .catch(console.error)
   }
   return (
     <Page>
@@ -128,18 +117,20 @@ export const FilterPage = <ResultType extends object>({
         {showNewFilterForm && filterOptions !== undefined && (
           <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
         )}
-        {filters!==undefined && filters instanceof Array && filters?.map((filter: IFilter, i) => (
-          <div style={{ width: '100%' }} key={i}>
-            <p className={styles.appliedFilter}>
-              {filter.category} {filter.comparison}{' '}
-              {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
-              <IconButton
-                label={'x'}
-                onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
-              />
-            </p>
-          </div>
-        ))}
+        {filters !== undefined &&
+          filters instanceof Array &&
+          filters?.map((filter: IFilter, i) => (
+            <div style={{ width: '100%' }} key={i}>
+              <p className={styles.appliedFilter}>
+                {filter.category} {filter.comparison}{' '}
+                {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
+                <IconButton
+                  label={'x'}
+                  onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
+                />
+              </p>
+            </div>
+          ))}
         <h2>Filter results</h2>
         <div className={styles.runQuery}>
           {filters?.length ? (

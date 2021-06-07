@@ -18,7 +18,8 @@ const AccountantFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
     <FilterPage
       ResultsTable={AccountantResultsTable}
-      config={accountantFilterConfig} category={FilterCategory.ACCOUNTANT}
+      config={accountantFilterConfig}
+      category={FilterCategory.ACCOUNTANT}
       filterOptions={filterOptions}
       savedFilter={savedFilter}
     />
@@ -34,7 +35,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<IAccountant>({cachedFilterId: id, category: FilterCategory.ACCOUNTANT})
+  const savedFilter = await getCachedFilter<IAccountant>({ cachedFilterId: id, category: FilterCategory.ACCOUNTANT })
   if (savedFilter === null) {
     return {
       notFound: true
@@ -42,7 +43,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   //todo: if the saved filter was run a long time ago, revalidate it in the background
   const returnProps: Props = {
-    filterOptions: getFilterOptions({category: FilterCategory.ACCOUNTANT}),
+    filterOptions: getFilterOptions({ category: FilterCategory.ACCOUNTANT }),
     savedFilter: savedFilter
   }
   return {

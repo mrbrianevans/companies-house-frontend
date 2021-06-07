@@ -22,7 +22,7 @@ import { ${Params}, ${Output} } from '../../interface/${sub_directory}/${camelNa
  * const { $comma_seperated_output } = await #[[$END$]]#fetch${PascalName}({ $params })
  */
 export const fetch${PascalName}: (params: ${Params}) => Promise<${Output}> = async({ $params }) => {
-  return await fetch('/api/filter/${camelName}', {
+  return await fetch('/api/${sub_directory}/${camelName}', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ $params })

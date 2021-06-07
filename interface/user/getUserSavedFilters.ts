@@ -4,6 +4,7 @@ import { translateFiltersToEnglish } from '../../helpers/translateFiltersToEngli
 import { IUserFilterDisplay } from '../../types/IUserFilter'
 import { dbEnumToUrlMapping } from '../../configuration/dbEnumToUrlMapping'
 import { Timer } from '../../helpers/Timer'
+import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 
 // fetches a list of the filters saved by a user. authenticate user before calling this!
 export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDisplay[]> = async (id) => {
@@ -11,20 +12,21 @@ export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDi
   const pool = await getDatabasePool()
   const { rows: filters }: { rows: ICombinedSavedFilter[] } = await pool.query(
     `
-  SELECT u.id AS user_saved_id, u.saved_filter_fk, u.title, u.created AS saved_date, u.user_id_fk AS user_id, u.category, 
-         sf.last_viewed, sf.view_count, sf.last_run, sf.time_to_run, sf.filters, sf.query, sf.results, sf.result_count 
-  FROM user_filters u JOIN saved_filters sf on sf.id = u.saved_filter_fk and sf.category = u.category
+  SELECT u.id AS user_saved_id, u.cached_filter_fk, u.title, u.created AS saved_date, u.user_id_fk AS user_id, cf.category,
+         cf.last_viewed, cf.view_count, cf.last_run, cf.time_to_run, cf.filters, cf.query, cf.result_count 
+  FROM user_filters u JOIN cached_filters cf on cf.id = u.cached_filter_fk
   WHERE u.user_id_fk = $1
   `,
     [id]
   )
+  serialiseResultDates(filters)
   timer.flush()
   let savedFilters: IUserFilterDisplay[] = filters.map((filter) => ({
     english: translateFiltersToEnglish(filter.filters),
     dateSaved: new Date(filter.saved_date).valueOf(),
-    savedFilterCode: filter.saved_filter_fk,
+    cachedFilterId: filter.cached_filter_fk,
     category: filter.category,
-    urlToFilter: `/${dbEnumToUrlMapping[filter.category]}/filter/${filter.saved_filter_fk}`,
+    urlToFilter: `/${dbEnumToUrlMapping[filter.category]}/filter/${filter.cached_filter_fk}`,
     userFilterId: filter.user_saved_id.toString(),
     resultCount: Number(filter.result_count)
   }))

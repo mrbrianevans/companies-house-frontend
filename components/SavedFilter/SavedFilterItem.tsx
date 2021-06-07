@@ -16,7 +16,7 @@ export const SavedFilterItem: React.FC<Props> = ({ savedFilter }) => {
       <p>Category: {savedFilter.category}</p>
       <p>Saved on {new Date(savedFilter.dateSaved).toDateString()}</p>
       <p>
-        View filter: <ButtonLink href={savedFilter.urlToFilter} label={savedFilter.savedFilterCode} />
+        View filter: <ButtonLink href={savedFilter.urlToFilter} label={savedFilter.cachedFilterId} />
       </p>
       <ButtonLink
         prefetch={false} // users are billed for these requests, so DO NOT prefetch
