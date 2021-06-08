@@ -115,7 +115,24 @@ export const FilterPage = <ResultType extends object>({
       </h1>
       <div className={styles.filterContainer}>
         {showNewFilterForm && filterOptions !== undefined && (
-          <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
+          <NewFilterCard
+            addFilter={addFilter}
+            filterOptions={filterOptions}
+            filteringLabel={config.labelPlural}
+            onChange={() => {
+              console.time('get filter id onChange')
+              fetchGetFilterId({ filters, category }).then((res) => {
+                console.timeEnd('get filter id onChange')
+                // console.log('Got an id of ' + res.id)
+              })
+              // console.log('filter changed. call getFilterId and make "Add filter" button a link to that ID')
+            }}
+            onHoverAdd={() => {
+              console.time('get filter id onHover ')
+              fetchGetFilterId({ filters, category }).then(() => console.timeEnd('get filter id onHover '))
+              // console.log('hover over button. perhaps call cacheFilter in anticipation of click')
+            }}
+          />
         )}
         {filters !== undefined &&
           filters instanceof Array &&

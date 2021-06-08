@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IFilter, IFilterOption } from '../../types/IFilters'
 import DropDown from '../Inputs/DropDown'
 import FormRow from '../Inputs/FormRow'
@@ -14,6 +14,9 @@ type Props = {
   addFilter: (filter: IFilter) => void
   filteringLabel: string
   filterOptions: IFilterOption[]
+  onChange?: (filter: IFilter) => void
+  // only calls once per filter change
+  onHoverAdd?: ((filter: IFilter) => void) | ((filter: IFilter) => Promise<void>)
 }
 
 export function NewFilterCard(props: Props) {
@@ -25,7 +28,34 @@ export function NewFilterCard(props: Props) {
   const [exclude, setExclude] = useState(false)
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
-
+  const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
+  // @ts-ignore this is very bad type design
+  const getCurrentFilter: () => IFilter = () => {
+    if (selectedFilterOption.valueType === 'number')
+      return {
+        category: selectedFilterOption.category,
+        comparison: 'is between',
+        type: 'number',
+        min,
+        max,
+        exclude
+      }
+    else if (selectedFilterOption.valueType === 'string') {
+      // @ts-ignore i'm sorry, i'm checking this manually
+      return {
+        category: selectedFilterOption.category,
+        comparison: comparison,
+        type: 'string',
+        values: [...values, typingValue].filter((v) => v),
+        exclude
+      }
+    }
+  }
+  // listen for changes to the filter and call onChange()
+  useEffect(() => {
+    setHasCalledOnHover(false)
+    props.onChange(getCurrentFilter())
+  }, [min, max, exclude, values, typingValue, selectedFilterOption, comparison])
   const validateSelectedFilterCriteria = (
     selectedFilterOption: IFilterOption,
     selectedFilterCriteria: IFilter['comparison']
@@ -41,25 +71,7 @@ export function NewFilterCard(props: Props) {
     if (value.length) setValues((prevState) => [...prevState, value])
   }
   const addFilter = () => {
-    if (selectedFilterOption.valueType === 'number')
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: 'is between',
-        type: 'number',
-        min,
-        max,
-        exclude
-      })
-    else if (selectedFilterOption.valueType === 'string') {
-      // @ts-ignore i'm sorry, i'm checking this manually
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: comparison,
-        type: 'string',
-        values: [...values, typingValue].filter((v) => v),
-        exclude
-      })
-    }
+    props.addFilter(getCurrentFilter())
   }
   //todo: when the filter category changes, reset the values to []
   return (
@@ -127,7 +139,16 @@ export function NewFilterCard(props: Props) {
           : typingValue}
       </p>
 
-      <Button onClick={addFilter} label={'Add filter'} />
+      <Button
+        onClick={addFilter}
+        label={'Add filter'}
+        onHover={() => {
+          if (!hasCalledOnHover) {
+            props.onHoverAdd(getCurrentFilter())
+            setHasCalledOnHover(true)
+          }
+        }}
+      />
     </div>
   )
 }
