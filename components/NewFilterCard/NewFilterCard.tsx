@@ -17,6 +17,7 @@ type Props = {
   onChange?: (filter: IFilter) => void
   // only calls once per filter change
   onHoverAdd?: ((filter: IFilter) => void) | ((filter: IFilter) => Promise<void>)
+  resetWhenChanged?: any
 }
 
 export function NewFilterCard(props: Props) {
@@ -29,6 +30,9 @@ export function NewFilterCard(props: Props) {
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
   const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
+  useEffect(() => {
+    console.log('rendered new filter component (should set values to default)')
+  }, [props.resetWhenChanged])
   // @ts-ignore this is very bad type design
   const getCurrentFilter: () => IFilter = () => {
     if (selectedFilterOption.valueType === 'number')
@@ -54,7 +58,7 @@ export function NewFilterCard(props: Props) {
   // listen for changes to the filter and call onChange()
   useEffect(() => {
     setHasCalledOnHover(false)
-    props.onChange(getCurrentFilter())
+    if (props.onChange !== undefined) props.onChange(getCurrentFilter())
   }, [min, max, exclude, values, typingValue, selectedFilterOption, comparison])
   const validateSelectedFilterCriteria = (
     selectedFilterOption: IFilterOption,
@@ -144,7 +148,7 @@ export function NewFilterCard(props: Props) {
         label={'Add filter'}
         onHover={() => {
           if (!hasCalledOnHover) {
-            props.onHoverAdd(getCurrentFilter())
+            if (props.onHoverAdd !== undefined) props.onHoverAdd(getCurrentFilter())
             setHasCalledOnHover(true)
           }
         }}

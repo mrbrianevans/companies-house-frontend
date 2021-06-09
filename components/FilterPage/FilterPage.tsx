@@ -34,7 +34,7 @@ export const FilterPage = <ResultType extends object>({
 }: Props<ResultType>) => {
   const router = useRouter()
   const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>()
-  const [filters, setFilters] = useState<IFilter[]>()
+  const [filters, setFilters] = useState<IFilter[]>([])
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
   const [newFilterId, setNewFilterId] = useState<string>()
   const [newFilterIdUpToDate, setNewFilterIdUpToDate] = useState<boolean>()
@@ -50,25 +50,19 @@ export const FilterPage = <ResultType extends object>({
     }
   }, [router.isFallback, router.asPath])
   useEffect(() => {
-    if (filters?.length > 0) {
-      setNewFilterIdUpToDate(false)
-      fetchGetFilterId({ filters, category }).then((fi) => {
-        if (!fi) return // failed to get id. Need an error message somewhere
-        setNewFilterId(config.redirectUrl + fi.id)
-        setNewFilterIdUpToDate(true)
-        const daysStaleRevalidate = 1
-        // run the filter if it hasn't been run in the last day
-        if (!fi.lastRun || fi.lastRun < Date.now() - 1000 * 86400 * daysStaleRevalidate)
-          fetchCacheFilter({ filters, category })
-      })
-      setCountUpToDate(false)
-      fetchCountResults({ filters, category })
-        .then((j) => setEstimatedCount(Number(j.count)))
-        .then(() => setCountUpToDate(true))
-    } else {
-      // this is useless because the button is hidden
-      setNewFilterId(config.redirectUrl)
-      setNewFilterIdUpToDate(true)
+    console.log('effect used with filter length:', filters?.length, 'router fallback:', router.isFallback)
+    if (!router.isFallback) {
+      // this means the client is on the right page
+      // when a filter is added or removed, the new filter id is fetched, and then the client redirected to that filters page
+      if (filters?.length > 0) {
+        fetchGetFilterId({ filters: filters, category }).then((res) => {
+          if (res.id !== savedFilter?.metadata?.id)
+            return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
+          else console.log('already on the right page. not redirecting')
+        })
+      } else {
+        router.push(config.redirectUrl, config.redirectUrl, { scroll: false })
+      }
     }
   }, [filters])
   let clearRequestResponseTimer: NodeJS.Timeout | undefined
@@ -81,11 +75,7 @@ export const FilterPage = <ResultType extends object>({
     )
   }
   const addFilter = (filter: IFilter) => {
-    setShowNewFilterForm(false)
-    setFilters((prevState) => [filter, ...prevState])
-    setTimeout(() => {
-      setShowNewFilterForm(true)
-    }, 1)
+    setFilters([filter, ...filters])
   }
   const applyFilter = () => {
     if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
@@ -119,19 +109,8 @@ export const FilterPage = <ResultType extends object>({
             addFilter={addFilter}
             filterOptions={filterOptions}
             filteringLabel={config.labelPlural}
-            onChange={() => {
-              console.time('get filter id onChange')
-              fetchGetFilterId({ filters, category }).then((res) => {
-                console.timeEnd('get filter id onChange')
-                // console.log('Got an id of ' + res.id)
-              })
-              // console.log('filter changed. call getFilterId and make "Add filter" button a link to that ID')
-            }}
-            onHoverAdd={() => {
-              console.time('get filter id onHover ')
-              fetchGetFilterId({ filters, category }).then(() => console.timeEnd('get filter id onHover '))
-              // console.log('hover over button. perhaps call cacheFilter in anticipation of click')
-            }}
+            // this is not ideal, because it will reset if a filter is removed (not good). Should depend on AddFilter
+            resetWhenChanged={savedFilter?.metadata?.id}
           />
         )}
         {filters !== undefined &&

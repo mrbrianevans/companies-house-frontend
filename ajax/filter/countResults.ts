@@ -16,6 +16,11 @@ export const fetchCountResults: (params: CountResultsParams) => Promise<CountRes
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ filters, category })
   })
-    .then((r) => r.json())
+    .then((r) => {
+      console.log('count results returned:', r.status)
+      if (r.status === 200) return r.json()
+      console.error('Failed to call countResults API endpoint')
+      return null
+    })
     .catch(console.error)
 }

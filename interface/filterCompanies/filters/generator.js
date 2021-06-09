@@ -34,10 +34,10 @@ export const filterCompaniesBy${pascalName}Metadata: INumberFilterOption = {
 `
 
   fs.writeFileSync(camelName + '.ts', fileContents)
-  console.log(`filterMap.set('${lowerName}', {
+  console.log(`, {
     filterOption: filterCompaniesBy${pascalName}Metadata,
-    filter: filterCompaniesBy${pascalName}
-  })`)
+    sqlGenerator: filterCompaniesBy${pascalName}
+  }`)
   // console.timeEnd('Wrote ' + lowerName + '.ts')
 }
 

@@ -7,8 +7,8 @@ import { ICompanyProfile } from '../../../types/ICompany'
 import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
 import { companyFilterConfig } from '../../../configuration/companyFilterConfig'
 import { FilterCategory } from '../../../types/FilterCategory'
-import getCachedFilter from '../../../interface/filter/getCachedFilter'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
+import getCachedFilterWithResults from '../../../interface/filter/getCachedFilterWithResults'
 
 interface Props {
   filterOptions?: IFilterOption[]
@@ -35,7 +35,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<ICompanyProfile>({ cachedFilterId: id, category: FilterCategory.COMPANY })
+  const savedFilter = await getCachedFilterWithResults<ICompanyProfile>({
+    cachedFilterId: id,
+    category: FilterCategory.COMPANY
+  })
   if (savedFilter === null) {
     return {
       notFound: true

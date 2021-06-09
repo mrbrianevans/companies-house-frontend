@@ -1,4 +1,4 @@
-import { IStringFilter } from '../../../types/IFilters'
+import { IStringFilter, IStringFilterOption } from '../../../types/IFilters'
 import { IMinorQuery } from '../../../types/IQueries'
 import { getSqlLikeValues } from '../../../helpers/getSqlLikeValues'
 
@@ -12,7 +12,7 @@ export const filterCompaniesBySicCode: (filter: IStringFilter) => IMinorQuery = 
   return { query, value }
 }
 
-export const filterCompaniesBySicCodeMetadata = {
+export const filterCompaniesBySicCodeMetadata: IStringFilterOption = {
   category: 'sic code',
   possibleComparisons: ['begins with', 'is exactly'],
   valueType: 'string',

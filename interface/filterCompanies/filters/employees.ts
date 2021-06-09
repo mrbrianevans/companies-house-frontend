@@ -12,7 +12,7 @@ export const filterCompaniesByEmployees: (filter: INumberFilter) => IMinorQuery 
   return { query, value: [filter.min, filter.max] }
 }
 
-export const filterCompaniesByEmployeesMetadata: IFilterOption = {
+export const filterCompaniesByEmployeesMetadata: INumberFilterOption = {
   category: 'employees',
   possibleComparisons: ['is between'],
   valueType: 'number'

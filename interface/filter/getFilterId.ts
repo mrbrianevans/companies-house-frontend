@@ -36,11 +36,12 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
   const id = getFilterIdHelper(filters, category)
   const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
+  const executeQueryTimer = timer.start('execute query')
   const { rows }: { rows: { id: string; last_run?: Date }[] } = await pool.query(
     `
       INSERT INTO cached_filters 
-          (id, category, query, filters) 
-      VALUES ($1, $2, $3, $4)
+          (id, category, query, filters, view_count, created) 
+      VALUES ($1, $2, $3, $4, 0, CURRENT_TIMESTAMP)
       ON CONFLICT ON CONSTRAINT cached_filters_id_pk 
           -- unfortunately this update is required for the RETURNING
           DO UPDATE SET id=cached_filters.id
@@ -48,9 +49,9 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
   `,
     [id, category, prettyPrintedQuery, filters]
   )
+  executeQueryTimer.stop()
   await pool.end()
   timer.flush()
   const output: GetFilterIdOutput = { id: rows[0]?.id, lastRun: rows[0]?.last_run?.valueOf() }
-  console.log('interface method temp log: lastRun:', output.lastRun)
   return output
 }
