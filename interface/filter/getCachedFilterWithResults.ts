@@ -4,6 +4,8 @@ import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Timer } from '../../helpers/Timer'
+import applyFilters from './applyFilters'
+import { cacheResults } from './cacheResults'
 
 interface getCachedFilterWithResultsParams {
   cachedFilterId: string
@@ -42,32 +44,17 @@ async function getCachedFilterWithResults<FilterResultsType>({
     // filter has not been cached
     return null
   }
-  //join the cached filter on cached_filter_records returning the cached results
-  const filterConfig = getFilterConfig({ category: rows[0].category })
-  const resultsQueryTimer = timer.start('Query database for already cached results')
-  const { rows: results }: { rows: FilterResultsType[] } = await pool.query(
-    `
-      SELECT m.*
-      FROM cached_filter_results cfr 
-           LEFT JOIN ${filterConfig.main_table} m ON cfr.data_fk = m.${filterConfig.uniqueIdentifier}
-      WHERE cfr.filter_fk=$1;
-  `,
-    [cachedFilterId]
-  )
-  resultsQueryTimer.stop()
-  console.log('got results in getCachedFilterWithResults', results.length)
-  if (results.length === 0) {
-    console.log('cached filter requested with empty result set. need to query database for results before returning')
-  }
+  const { filters, category, time_to_run, view_count, last_run, created } = rows[0]
+  const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
   const cachedFilter: ISavedFilter<FilterResultsType> = {
     appliedFilters: rows[0].filters,
     results: serialiseResultDates(results),
     metadata: {
       id: cachedFilterId,
-      lastRunTime: rows[0].time_to_run ? rows[0].time_to_run[rows[0].time_to_run.length - 1] : 0,
-      lastRun: new Date(rows[0].last_run).valueOf(),
-      viewCount: rows[0].view_count,
-      created: new Date(rows[0].created).valueOf()
+      lastRunTime: time_to_run?.slice(-1)[0] ?? 0,
+      lastRun: new Date(last_run).valueOf(),
+      viewCount: view_count,
+      created: new Date(created).valueOf()
     }
   }
   timer.flush()

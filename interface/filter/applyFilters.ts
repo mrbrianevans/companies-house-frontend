@@ -30,13 +30,14 @@ const applyFilters: <FilterCategoryType>(params: Params) => Promise<AppliedFilte
   // todo: add filter id to the log
   const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
-  const pool = await getDatabasePool()
+  const pool = getDatabasePool()
   // add the limit to the end of the query
   const limitedQuery = query + ' LIMIT $' + (value.length + 1)
   value.push(Number(limit))
   const { rows: matches } = await pool.query(limitedQuery, value)
   await pool.end()
   timer.flush()
+  //todo: save in cached filters the fact that it was run and the time it took to run. not sure if this is the right place
   return { query: prettyPrintedQuery, results: matches }
 }
 

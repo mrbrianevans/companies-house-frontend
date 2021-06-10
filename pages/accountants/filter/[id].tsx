@@ -9,6 +9,7 @@ import { accountantFilterConfig } from '../../../configuration/accountantFilterC
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
+import getCachedFilterWithResults from '../../../interface/filter/getCachedFilterWithResults'
 
 interface Props {
   filterOptions?: IFilterOption[]
@@ -35,7 +36,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<IAccountant>({ cachedFilterId: id, category: FilterCategory.ACCOUNTANT })
+  const savedFilter = await getCachedFilterWithResults<IAccountant>({
+    cachedFilterId: id,
+    category: FilterCategory.ACCOUNTANT
+  })
   if (savedFilter === null) {
     return {
       notFound: true

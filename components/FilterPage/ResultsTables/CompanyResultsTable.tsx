@@ -6,6 +6,7 @@ export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[];
   matchingResults,
   tableClassName
 }) => {
+  // @ts-ignore
   return (
     <table className={tableClassName}>
       <thead>
@@ -15,6 +16,8 @@ export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[];
           <th>Name</th>
           <th>Age</th>
           <th>Type of company</th>
+          <th>Balance sheet date</th>
+          <th>Officers</th>
         </tr>
       </thead>
       <tbody>
@@ -32,6 +35,10 @@ export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[];
                 {Math.round((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400 / 365 / 1000)} years
               </td>
               <td>{company.category}</td>
+              {/*@ts-ignore */}
+              <td>{company.balance_sheet_date}</td>
+              {/*@ts-ignore */}
+              <td>{company.officers?.join(' & ')}</td>
             </tr>
           ))}
       </tbody>

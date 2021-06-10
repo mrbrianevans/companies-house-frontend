@@ -17,7 +17,6 @@ type Props = {
   onChange?: (filter: IFilter) => void
   // only calls once per filter change
   onHoverAdd?: ((filter: IFilter) => void) | ((filter: IFilter) => Promise<void>)
-  resetWhenChanged?: any
 }
 
 export function NewFilterCard(props: Props) {
@@ -30,9 +29,6 @@ export function NewFilterCard(props: Props) {
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
   const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
-  useEffect(() => {
-    console.log('rendered new filter component (should set values to default)')
-  }, [props.resetWhenChanged])
   // @ts-ignore this is very bad type design
   const getCurrentFilter: () => IFilter = () => {
     if (selectedFilterOption.valueType === 'number')
@@ -76,6 +72,14 @@ export function NewFilterCard(props: Props) {
   }
   const addFilter = () => {
     props.addFilter(getCurrentFilter())
+    // sets the inputs to their default values.
+    setSelectedFilterOption(filterOptions[0])
+    setComparison(selectedFilterOption.possibleComparisons[0])
+    setMin(0)
+    setMax(1000)
+    setExclude(false)
+    setValues([])
+    setTypingValue('')
   }
   //todo: when the filter category changes, reset the values to []
   return (

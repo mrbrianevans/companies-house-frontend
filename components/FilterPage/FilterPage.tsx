@@ -7,12 +7,9 @@ import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
 import { ISavedFilter } from '../../types/ISavedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
-import ButtonLink from '../Inputs/ButtonLink'
 import { formatApproximation } from '../../helpers/numberFormatter'
 import { IFilterConfig } from '../../types/IFilterConfig'
 import { FilterCategory } from '../../types/FilterCategory'
-import { fetchCountResults } from '../../ajax/filter/countResults'
-import { fetchCacheFilter } from '../../ajax/filter/cacheFilter'
 import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
 const styles = require('./FilterPage.module.scss')
@@ -33,39 +30,40 @@ export const FilterPage = <ResultType extends object>({
   ResultsTable
 }: Props<ResultType>) => {
   const router = useRouter()
-  const [showNewFilterForm, setShowNewFilterForm] = useState<boolean>()
   const [filters, setFilters] = useState<IFilter[]>([])
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
-  const [newFilterId, setNewFilterId] = useState<string>()
-  const [newFilterIdUpToDate, setNewFilterIdUpToDate] = useState<boolean>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
   const [estimatedCount, setEstimatedCount] = useState<number>()
+  // this clears the current filter
+  // this is probably not the best way, but I have wasted enough time trying to get this to work
+  const [needsRedirect, setNeedsRedirect] = useState(false)
   //todo: async get if the user has already saved this filter on page load
   const [saveMessage, setSaveMessage] = useState<string>()
   useEffect(() => {
+    if (savedFilter?.appliedFilters !== undefined) {
+      setFilters(savedFilter?.appliedFilters)
+    }
+  }, [savedFilter?.appliedFilters])
+  useEffect(() => {
     if (!router.isFallback) {
-      setShowNewFilterForm(filterOptions?.length > 0) // this should always be true
       setFilterMatchesLoading(false)
       setFilters(savedFilter?.appliedFilters ?? [])
     }
   }, [router.isFallback, router.asPath])
   useEffect(() => {
-    console.log('effect used with filter length:', filters?.length, 'router fallback:', router.isFallback)
-    if (!router.isFallback) {
-      // this means the client is on the right page
+    if (!router.isFallback && needsRedirect) {
       // when a filter is added or removed, the new filter id is fetched, and then the client redirected to that filters page
       if (filters?.length > 0) {
         fetchGetFilterId({ filters: filters, category }).then((res) => {
+          // this means the client isn't on the right page
           if (res.id !== savedFilter?.metadata?.id)
             return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
-          else console.log('already on the right page. not redirecting')
         })
-      } else {
+      } else if (savedFilter?.metadata?.id) {
         router.push(config.redirectUrl, config.redirectUrl, { scroll: false })
       }
     }
   }, [filters])
-  let clearRequestResponseTimer: NodeJS.Timeout | undefined
   if (router.isFallback) {
     return (
       // todo: this needs to be a better loading page...
@@ -75,10 +73,15 @@ export const FilterPage = <ResultType extends object>({
     )
   }
   const addFilter = (filter: IFilter) => {
-    setFilters([filter, ...filters])
+    setNeedsRedirect(true)
+    setFilters([filter, ...(filters ?? [])])
+  }
+  const removeFilter = (i: number) => {
+    if (filters.length <= i) return
+    setNeedsRedirect(true)
+    setFilters((prevState) => prevState.filter((value, index) => index !== i))
   }
   const applyFilter = () => {
-    if (clearRequestResponseTimer) clearTimeout(clearRequestResponseTimer)
     setFilterMatchesLoading(true)
     fetchGetFilterId({ filters, category }).then((fi) => {
       if (!fi) return // failed to get id. Need an error message somewhere
@@ -104,14 +107,8 @@ export const FilterPage = <ResultType extends object>({
         {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
       </h1>
       <div className={styles.filterContainer}>
-        {showNewFilterForm && filterOptions !== undefined && (
-          <NewFilterCard
-            addFilter={addFilter}
-            filterOptions={filterOptions}
-            filteringLabel={config.labelPlural}
-            // this is not ideal, because it will reset if a filter is removed (not good). Should depend on AddFilter
-            resetWhenChanged={savedFilter?.metadata?.id}
-          />
+        {filterOptions !== undefined && (
+          <NewFilterCard addFilter={addFilter} filterOptions={filterOptions} filteringLabel={config.labelPlural} />
         )}
         {filters !== undefined &&
           filters instanceof Array &&
@@ -120,10 +117,7 @@ export const FilterPage = <ResultType extends object>({
               <p className={styles.appliedFilter}>
                 {filter.category} {filter.comparison}{' '}
                 {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
-                <IconButton
-                  label={'x'}
-                  onClick={() => setFilters((prevState) => prevState.filter((value, index) => index !== i))}
-                />
+                <IconButton label={'x'} onClick={() => removeFilter(i)} />
               </p>
             </div>
           ))}
@@ -132,11 +126,6 @@ export const FilterPage = <ResultType extends object>({
           {filters?.length ? (
             estimatedCount !== 0 ? (
               <>
-                {newFilterIdUpToDate ? (
-                  <ButtonLink href={newFilterId} scroll={false} label={'Run query'} />
-                ) : (
-                  <Button label={'Run query'} onClick={applyFilter} />
-                )}
                 {newCountUpToDate && (
                   <span className={styles.estimatedCount}>
                     {estimatedCount !== 1 && 'Approximately '}

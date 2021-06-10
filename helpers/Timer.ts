@@ -88,6 +88,17 @@ export class Timer {
     this.stop(this.mostRecentlyStartedLabel)
     this.start(label)
   }
+  //idea for improvement: [IMPLEMENTED]
+  // it would be great to not have to have 2 method calls right after each other
+  // this would only work if there were not overlapping timers
+  // for example:
+  // timer.start('label1')
+  // [logic]
+  // timer.next('label2')
+  // [logic]
+  // timer.next('label3')
+  // [logic]
+  // timer.stop()
 
   /**
    * stops the most recently started timer
@@ -118,16 +129,14 @@ export class Timer {
     console.log(JSON.stringify(printObject))
     return this.finishTime - this.startTime
   }
-}
 
-//todo: idea for improvement:
-// it would be great to not have to have 2 method calls right after each other
-// this would only work if there were not overlapping timers
-// for example:
-// timer.start('label1')
-// [logic]
-// timer.next('label2')
-// [logic]
-// timer.next('label3')
-// [logic]
-// timer.stop()
+  /**
+   * Adds a detail to the JSON of the log.
+   *
+   * @param key the key to log in the JSON
+   * @param value (optional) value for the key. Defaults to true
+   */
+  public addDetail(key: string, value: string | number | boolean = true) {
+    Object.assign(this.config.details, { key: value })
+  }
+}

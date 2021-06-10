@@ -7,6 +7,7 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
+import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 // input parameters for countResults - filters, category
 export interface CountResultsParams {
@@ -42,6 +43,7 @@ export async function countResults({ filters, category }: CountResultsParams): P
     return { count: savedFilterRows[0].result_count }
   }
   const { value: bigValue, query: bigQuery } = combineQueries({ filters, category })
+  console.log(prettyPrintSqlQuery(`WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;`, bigValue))
   const { rows } = await pool.query(
     `
   WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;
