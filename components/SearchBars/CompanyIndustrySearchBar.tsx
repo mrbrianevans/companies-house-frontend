@@ -2,6 +2,8 @@ import { IFilter } from '../../types/IFilters'
 import { companyFilterConfig } from '../../configuration/companyFilterConfig'
 import { useRouter } from 'next/router'
 import { GenericSearchBar } from './GenericSearchBar'
+import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
+import { FilterCategory } from '../../types/FilterCategory'
 
 export const CompanyIndustrySearchBar = () => {
   const router = useRouter()
@@ -17,17 +19,9 @@ export const CompanyIndustrySearchBar = () => {
           type: 'string',
           values: [query]
         }))
-        fetch(companyFilterConfig.getFilterIdApiUrl, {
-          method: 'POST',
-          body: JSON.stringify({ filters }),
-          headers: { 'Content-Type': 'application/json' }
-        })
-          .then((r) => {
-            if (r.status === 200) return r
-            else throw new Error(r.statusText)
-          })
-          .then((r) => r.json())
-          .then((j) => router.push(companyFilterConfig.redirectUrl + j.id))
+        fetchGetFilterId({ category: FilterCategory.COMPANY, filters }).then((j) =>
+          router.push(companyFilterConfig.redirectUrl + j.id)
+        )
       }}
     />
   )

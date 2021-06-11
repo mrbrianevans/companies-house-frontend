@@ -8,7 +8,11 @@ import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 
 // fetches a list of the filters saved by a user. authenticate user before calling this!
 export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDisplay[]> = async (id) => {
-  const timer = new Timer({ label: 'Get user account saved filters', details: { userFilterId: id } })
+  const timer = new Timer({
+    label: 'Get user account saved filters',
+    details: { userFilterId: id },
+    filename: '/interface/user/getUserSavedFilters.ts'
+  })
   const pool = await getDatabasePool()
   const { rows: filters }: { rows: ICombinedSavedFilter[] } = await pool.query(
     `

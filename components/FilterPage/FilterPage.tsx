@@ -12,6 +12,8 @@ import { IFilterConfig } from '../../types/IFilterConfig'
 import { FilterCategory } from '../../types/FilterCategory'
 import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
+import { fetchGetUserFilterId } from '../../ajax/user/getUserFilterId'
+import { fetchCacheResults } from '../../ajax/filter/cacheResults'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
@@ -32,18 +34,29 @@ export const FilterPage = <ResultType extends object>({
   const router = useRouter()
   const [filters, setFilters] = useState<IFilter[]>([])
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
+  const [filterMatches, setFilterMatches] = useState<ResultType[]>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
   const [estimatedCount, setEstimatedCount] = useState<number>()
   // this clears the current filter
   // this is probably not the best way, but I have wasted enough time trying to get this to work
   const [needsRedirect, setNeedsRedirect] = useState(false)
-  //todo: async get if the user has already saved this filter on page load
-  const [saveMessage, setSaveMessage] = useState<string>()
+  const [filterSaved, setFilterSaved] = useState(false)
   useEffect(() => {
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
     }
-  }, [savedFilter?.appliedFilters])
+    //async get if the user has already saved this filter on page load
+    fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((re) => setFilterSaved(re?.userFilterId))
+    if (savedFilter?.metadata?.id)
+      fetchCacheResults<ResultType>({
+        id: savedFilter.metadata.id,
+        category,
+        filters: savedFilter.appliedFilters ?? []
+      }).then((res) => {
+        console.debug('setFilterMatches after getting cahced filter results', res?.results?.length)
+        return setFilterMatches(res?.results)
+      })
+  }, [savedFilter])
   useEffect(() => {
     if (!router.isFallback) {
       setFilterMatchesLoading(false)
@@ -55,6 +68,7 @@ export const FilterPage = <ResultType extends object>({
       // when a filter is added or removed, the new filter id is fetched, and then the client redirected to that filters page
       if (filters?.length > 0) {
         fetchGetFilterId({ filters: filters, category }).then((res) => {
+          setNeedsRedirect(false)
           // this means the client isn't on the right page
           if (res.id !== savedFilter?.metadata?.id)
             return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
@@ -74,11 +88,13 @@ export const FilterPage = <ResultType extends object>({
   }
   const addFilter = (filter: IFilter) => {
     setNeedsRedirect(true)
+    setFilterMatches(undefined)
     setFilters([filter, ...(filters ?? [])])
   }
   const removeFilter = (i: number) => {
     if (filters.length <= i) return
     setNeedsRedirect(true)
+    setFilterMatches(undefined)
     setFilters((prevState) => prevState.filter((value, index) => index !== i))
   }
   const applyFilter = () => {
@@ -91,17 +107,18 @@ export const FilterPage = <ResultType extends object>({
     })
   }
   const saveFilterToAccount = () => {
-    fetchSaveUserFilter({ savedFilterId: savedFilter.metadata.id }).then((r) => {
-      if (r) setSaveMessage('Filter saved')
-      else setSaveMessage('Failed to save')
-    })
+    fetchSaveUserFilter({ savedFilterId: savedFilter.metadata.id }).then((r) => setFilterSaved(Boolean(r)))
   }
   return (
     <Page>
       <h1 className={styles.title}>
         Filter {config.labelPlural}
         <Button
-          label={saveMessage ?? String.fromCharCode(0x25bc) + ' Save this filter'}
+          label={
+            filterSaved
+              ? String.fromCharCode(0x2713) + ' Filter saved'
+              : String.fromCharCode(0x25bc) + ' Save this filter'
+          }
           onClick={saveFilterToAccount}
         />
         {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
@@ -148,10 +165,11 @@ export const FilterPage = <ResultType extends object>({
           </div>
         )}
 
-        {savedFilter?.results?.length > 0 && !filterMatchesLoading && (
+        {filterMatches && (
           <div style={{ width: '100%' }}>
-            <pre>Query executed in {savedFilter.metadata.lastRunTime}ms</pre>
-            <ResultsTable matchingResults={savedFilter.results} tableClassName={styles.resultsTable} />
+            <pre>Query executed in {savedFilter?.metadata?.lastRunTime ?? 'unknown '}ms</pre>
+            <pre>{JSON.stringify(filterMatches, null, 2)}</pre>
+            <ResultsTable matchingResults={filterMatches} tableClassName={styles.resultsTable} />
           </div>
         )}
       </div>

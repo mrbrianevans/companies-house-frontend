@@ -31,14 +31,19 @@ export interface GetFilterIdOutput {
  * @returns  GetFilterIdOutput id of the filter
  */
 export async function getFilterId({ filters, category }: GetFilterIdParams): Promise<GetFilterIdOutput> {
-  const timer = new Timer({ label: 'getFilterId() method call', filename: 'interface/filter/getFilterId.ts' })
+  const timer = new Timer({
+    label: `getFilterId(${filters?.length} ${category} filters) method call`,
+    details: { category },
+    filename: 'interface/filter/getFilterId.ts'
+  })
   const pool = getDatabasePool()
   const id = getFilterIdHelper(filters, category)
   const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
   const executeQueryTimer = timer.start('execute query')
-  const { rows }: { rows: { id: string; last_run?: Date }[] } = await pool.query(
-    `
+  const row = await pool
+    .query(
+      `
       INSERT INTO cached_filters 
           (id, category, query, filters, view_count, created) 
       VALUES ($1, $2, $3, $4, 0, CURRENT_TIMESTAMP)
@@ -47,11 +52,24 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
           DO UPDATE SET id=cached_filters.id
       RETURNING id, last_run
   `,
-    [id, category, prettyPrintedQuery, filters]
-  )
+      [id, category, prettyPrintedQuery, filters]
+    )
+    .then(({ rows }: { rows: { id: string; last_run?: Date }[] }) => {
+      if (rows.length !== 1) {
+        timer.customError('Get filter ID returned zero rows (from RETURNING query)')
+        return null
+      }
+      return rows[0]
+    })
+    .catch(timer.postgresError)
   executeQueryTimer.stop()
   await pool.end()
+  if (!row) {
+    return null
+  }
+  timer.addDetail('filterId', row.id)
+  timer.addDetail('lastRun', row.last_run?.toDateString() ?? null)
   timer.flush()
-  const output: GetFilterIdOutput = { id: rows[0]?.id, lastRun: rows[0]?.last_run?.valueOf() }
+  const output: GetFilterIdOutput = { id: row.id, lastRun: row.last_run?.valueOf() }
   return output
 }

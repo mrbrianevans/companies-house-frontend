@@ -24,7 +24,6 @@ async function getCachedFilterWithResults<FilterResultsType>({
     label: 'getCachedFilterWithResults() method call',
     details: { cachedFilterId }
   })
-  console.log('started getCachedFilterWithResults')
   const pool = await getDatabasePool()
   // get the filter metadata
   const metadataQueryTimer = timer.start('Query database for cached filter metadata')
@@ -39,7 +38,6 @@ async function getCachedFilterWithResults<FilterResultsType>({
     [cachedFilterId]
   )
   metadataQueryTimer.stop()
-  console.log('got rows getCachedFilterWithResults', rows.length)
   if (rows.length !== 1) {
     // filter has not been cached
     return null

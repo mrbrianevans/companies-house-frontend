@@ -1,3 +1,7 @@
+/**
+ * @deprecated in favour of Timer.postgresError
+ * @param e the error that postgres returns
+ */
 export const logPostgresError = (e: PostgresError) => {
   console.error(
     JSON.stringify({

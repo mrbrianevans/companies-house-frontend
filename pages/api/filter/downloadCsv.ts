@@ -2,12 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import { getDatabasePool } from '../../../helpers/connectToDatabase'
 import { IUserFilter } from '../../../types/IUserFilter'
-import { combineQueries } from '../../../interface/filterCompanies/combineQueries'
-
-const QueryStream = require('pg-query-stream')
 import * as csv from 'fast-csv'
 import { Timer } from '../../../helpers/Timer'
 import { Storage } from '@google-cloud/storage'
+import combineQueries from '../../../interface/filter/combineQueries'
+import { FilterCategory } from '../../../types/FilterCategory'
+
+const QueryStream = require('pg-query-stream')
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
@@ -68,10 +69,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     [user_filter_id]
   )
   const limit = 10_000_000 // temporary to allow testing large files
-  const { value: bigValue, query: bigQuery } = combineQueries(user_filter.filters, limit)
+  // todo: un hard-code COMPANY in here. should be generic
+  const { value: bigValue, query: bigQuery } = combineQueries({
+    filters: user_filter.filters,
+    category: FilterCategory.COMPANY
+  })
   const timer = new Timer({
     label: 'Stream query to CSV',
-    details: { class: 'download-csv', filterId: user_filter.cached_filter_fk ?? 'null' }
+    details: { class: 'download-csv', filterId: user_filter.cached_filter_fk ?? 'null' },
+    filename: '/pages/api/filter/downloadCsv.ts'
   })
   const storage = new Storage()
   const bucket = storage.bucket('csv-export-cache')

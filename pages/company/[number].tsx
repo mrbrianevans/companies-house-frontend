@@ -184,7 +184,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   const timer = new Timer({
     label: `Load company profile page details (company number:${companyNumber})`,
-    details: { class: 'company-profile' }
+    details: { class: 'company-profile' },
+    filename: '/pages/company/[number].tsx'
   })
   timer.start('Get company profile')
   const companyData = await getCompanyProfile(companyNumber)

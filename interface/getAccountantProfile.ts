@@ -3,7 +3,11 @@ import { getDatabasePool } from '../helpers/connectToDatabase'
 import { Timer } from '../helpers/Timer'
 
 const getAccountantProfile: (name: string) => Promise<IAccountant | null> = async (name) => {
-  const timer = new Timer({ label: 'Get accountant profile from DB', details: { class: 'get-accountant-profile' } })
+  const timer = new Timer({
+    label: 'Get accountant profile from DB',
+    details: { class: 'get-accountant-profile' },
+    filename: '/interface/getAccountantProfile.ts'
+  })
   const pool = getDatabasePool()
   const { rows: matchingAccountants, rowCount: foundMatchingAccountants } = await pool.query(
     `

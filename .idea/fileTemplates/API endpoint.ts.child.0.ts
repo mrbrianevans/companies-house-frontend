@@ -10,7 +10,7 @@
 import { ${Params}, ${Output}, $camelName } from '../../../interface/${sub_directory}/${camelName}'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { getUserProfile } from '../../../interface/user/getUserProfile'
+import { getUser } from '../../../interface/user/getUser'
 
 #if(${comma_seperated_params} == "")
     #set($params = "filters, category")
@@ -21,11 +21,11 @@ import { getUserProfile } from '../../../interface/user/getUserProfile'
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { body: { $params } }: { body: ${Params} } = req
   if([$comma_seperated_params].some(param=>param===undefined)){
-    res.status(400).send('Some params are undefined. Required: '+$comma_seperated_params)
+    res.status(400).send('Some params are undefined. Required: $comma_seperated_params')
     return
   }
   const session = await getSession({ req })
-  const user = await getUserProfile({ session })
+  const user = await getUser({ session })
   const output = await $camelName({ $params })
   if(output){
       const { $comma_seperated_output }: ${Output} = output

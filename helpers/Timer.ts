@@ -18,7 +18,7 @@ type Config = {
    */
   details?: { [key: string]: string | number }
   // filename of the typescript source file where the log is coming from. Soon to become mandatory
-  filename?: string
+  filename: string
 }
 export class Timer {
   private readonly startTime: number
@@ -34,6 +34,9 @@ export class Timer {
   constructor(config?: Config) {
     this.startTime = Date.now()
     this.config = config
+    this.config.details = config?.details ?? {}
+    // TODO: split filename by '/' and save each item as its own key:value in the log.
+    //  - such as ./interface/getCompanyProfile.ts becomes {level1:'interface', level2:'getCompanyProfile.ts'}
     this.savedTimes = {}
     if (this.config?.label !== undefined) this.start(this.config.label)
   }
@@ -53,7 +56,7 @@ export class Timer {
      * Stops the timer and saves the time taken
      */
     const _stop = () => {
-      this.stop(label)
+      return this.stop(label)
     }
     return {
       stop: _stop
@@ -137,6 +140,81 @@ export class Timer {
    * @param value (optional) value for the key. Defaults to true
    */
   public addDetail(key: string, value: string | number | boolean = true) {
-    Object.assign(this.config.details, { key: value })
+    Object.assign(this.config?.details, { [key]: value })
   }
+
+  /**
+   * Adds multiple details to the JSON of the log.
+   *
+   * @param details an object of key value pairs to log
+   */
+  public addDetails(details: { [key: string]: string | number | boolean }) {
+    Object.assign(this.config?.details, details)
+  }
+
+  /**
+   * Logs a custom error message in a separate log to the main Timer
+   * @param message the string to log
+   */
+  public customError(message: string) {
+    const errorLog = {
+      severity: 'ERROR',
+      message: message,
+      filename: this.config?.filename
+    }
+    console.log(JSON.stringify(errorLog))
+  }
+
+  /**
+   * Logs a postgres error message in a separate log to the main Timer.
+   *
+   * @param e the error object returned by postgres client
+   *
+   * @example
+   * const { rows } = await pool.query('SELECT NOW()',[])
+   *                            .catch(timer.postgresError)
+   */
+  public postgresError(e: PostgresError) {
+    const errorLog = {
+      severity: 'ERROR',
+      message: 'Psql Error: ' + e.message,
+      errno: e.errno,
+      code: e.code,
+      filename: this.config?.filename
+    }
+    console.log(JSON.stringify(errorLog))
+  }
+
+  /**
+   * Logs a generic error in a separate log to the main Timer.
+   *
+   * @param e the error that has been thrown
+   * This can be called after any catching any error, like this:
+   * @example
+   * try{
+   *   // code that could throw an error
+   * }catch(e){
+   *   timer.genericError(e)
+   * }
+   * @example
+   * await asynchronousFunction()
+   *        .then()
+   *        .catch(timer.genericError)
+   */
+  public genericError(e: Error) {
+    const errorLog = {
+      severity: 'ERROR',
+      message: e.message,
+      errorName: e.name,
+      stackTrace: e.stack,
+      filename: this.config?.filename
+    }
+    console.log(JSON.stringify(errorLog))
+  }
+}
+
+type PostgresError = {
+  message: string
+  errno: string
+  code: string
 }

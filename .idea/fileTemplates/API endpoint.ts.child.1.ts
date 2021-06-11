@@ -57,9 +57,13 @@ export async function $camelName({ $params }: $Params): Promise<$Output>{
     const id = getFilterId(filters, category)
     const config = getFilterConfig({ category })
     #end
-    const { rows } = await pool.query(`
+    const result = await pool.query(`
     SELECT * FROM companies LIMIT 10
     `)
+        .then(({rows})=>rows)
+        .catch(timer.postgresError)
+    if(!result || result?.length === 0) 
+        timer.customError('No results returned')
     await pool.end()
     timer.flush()
     const output: $Output = {$output}

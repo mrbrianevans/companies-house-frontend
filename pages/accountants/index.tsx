@@ -1,12 +1,14 @@
 import { Page } from '../../components/Page/Page'
 import * as React from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { AccountantSearchBar } from '../../components/SearchBars/AccountantSearchBar'
-import { useState } from 'react'
-import getAccountantFilters from '../../interface/filterAccountants/getFilterOptions'
 import { FeatureList } from '../../components/lists/FeatureList'
+import getFilterOptions from '../../interface/filter/getFilterOptions'
+import { FilterCategory } from '../../types/FilterCategory'
+
 const AccountantFilterPage = () => {
-  const [accountantFilters] = useState(getAccountantFilters())
+  const [accountantFilters] = useState(getFilterOptions({ category: FilterCategory.ACCOUNTANT }))
   return (
     <Page>
       <h1>Accountants</h1>

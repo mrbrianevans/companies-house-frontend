@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { IFilterOption } from '../../../types/IFilters'
 import { GetStaticProps } from 'next'
-import getAccountantFilters from '../../../interface/filterAccountants/getFilterOptions'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
 import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'

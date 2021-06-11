@@ -5,7 +5,7 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 
-type CacheResultsParams = {
+export type CacheResultsParams = {
   id: string
   filters: IFilter[]
   category: FilterCategory
@@ -13,12 +13,15 @@ type CacheResultsParams = {
   qty?: number
 }
 
+export interface CacheResultsOutput<FilterResultsType> {
+  results: FilterResultsType[]
+}
 export async function cacheResults<FilterResultsType>({
   filters,
   category,
   id,
   qty
-}: CacheResultsParams): Promise<{ results: FilterResultsType[] }> {
+}: CacheResultsParams): Promise<CacheResultsOutput<FilterResultsType>> {
   const timer = new Timer({
     label: `cacheResults(id: ${id})`,
     details: { id, category, qty, method: 'cacheResults' },
