@@ -53,6 +53,7 @@ export const companyFilterConfig: IFilterConfig = {
   labelPlural: 'companies',
   labelSingular: 'company',
   main_table: 'company_view',
+  operation_code: 'download_company_records',
   uniqueIdentifier: 'company_number',
   filters: [
     { filterOption: filterCompaniesByAgeMetadata, sqlGenerator: filterCompaniesByAge },

@@ -1,4 +1,5 @@
 import { IFilter } from './IFilters'
+import { FilterCategory } from './FilterCategory'
 
 export interface IUserFilter {
   id: number
@@ -10,7 +11,7 @@ export interface IUserFilter {
   created: string
   // references the user id in the users table
   user_id_fk: number
-  category: 'ACCOUNTANT' | 'COMPANY'
+  category: FilterCategory
   // (optional) the filter object of the applied filters
   filters: IFilter[]
 }
@@ -22,7 +23,7 @@ export interface IUserFilterDisplay {
   // timestamp of when the user saved the filter
   dateSaved: number
   cachedFilterId: string
-  category: 'ACCOUNTANT' | 'COMPANY'
+  category: FilterCategory
   // the relative url from root/ to the filter
   urlToFilter: string
   // the id in user_filters

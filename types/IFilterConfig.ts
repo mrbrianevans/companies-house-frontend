@@ -22,4 +22,7 @@ export interface IFilterConfig {
 
   // the prefix to view an item which will be followed by a unique identifier, such as /company/ or /accountant/
   viewItemUrl: string
+
+  // the operation code in the database that limits the number of downloads of these record types. eg download_company_records
+  operation_code: string
 }

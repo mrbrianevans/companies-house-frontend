@@ -153,6 +153,12 @@ export class Timer {
   }
 
   /**
+   * Returns the time elapsed since creating this timer in milliseconds
+   */
+  public getTimeUntilNow() {
+    return Date.now() - this.startTime
+  }
+  /**
    * Logs a custom error message in a separate log to the main Timer
    * @param message the string to log
    */
@@ -172,9 +178,9 @@ export class Timer {
    *
    * @example
    * const { rows } = await pool.query('SELECT NOW()',[])
-   *                            .catch(timer.postgresError)
+   *                            .catch(e=>timer.postgresError(e))
    */
-  public postgresError(e: PostgresError) {
+  public postgresError(e: PostgresError): void {
     const errorLog = {
       severity: 'ERROR',
       message: 'Postgres Error: ' + e.message,
@@ -190,6 +196,7 @@ export class Timer {
    * Logs a generic error in a separate log to the main Timer.
    *
    * @param e the error that has been thrown
+   * @param message an optional custom message giving context to the error
    * This can be called after any catching any error, like this:
    * @example
    * try{
@@ -202,10 +209,11 @@ export class Timer {
    *        .then()
    *        .catch(timer.genericError)
    */
-  public genericError(e: Error) {
+  public genericError(e: Error, message?: string) {
     const errorLog = {
       severity: 'ERROR',
-      message: e.message,
+      message,
+      errorMessage: e.message,
       errorName: e.name,
       stackTrace: e.stack,
       filename: this.config?.filename

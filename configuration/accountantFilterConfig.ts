@@ -20,6 +20,7 @@ export const accountantFilterConfig: IFilterConfig = {
   viewItemUrl: '/accountants/',
   labelPlural: 'accountants',
   labelSingular: 'accountant',
+  operation_code: 'download_accountant_records',
   filters: [
     { filterOption: filterAccountantBySoftwareMetadata, sqlGenerator: filterAccountantsBySoftware },
     {
