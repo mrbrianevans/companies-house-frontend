@@ -4,7 +4,7 @@ import * as React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
-import { ISavedFilter } from '../../../types/ISavedFilter'
+import { ICachedFilter } from '../../../types/ICachedFilter'
 import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
@@ -13,7 +13,7 @@ import getCachedFilterWithResults from '../../../interface/filter/getCachedFilte
 
 interface Props {
   filterOptions?: IFilterOption[]
-  savedFilter: ISavedFilter<IAccountant>
+  savedFilter: ICachedFilter<IAccountant>
 }
 const AccountantFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
@@ -36,6 +36,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
+  // accountant filters get the results before returning the page. this is because they usually execute really fast
   const savedFilter = await getCachedFilterWithResults<IAccountant>({
     cachedFilterId: id,
     category: FilterCategory.ACCOUNTANT

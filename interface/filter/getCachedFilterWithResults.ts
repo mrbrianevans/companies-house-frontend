@@ -1,5 +1,5 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { ISavedFilter } from '../../types/ISavedFilter'
+import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
@@ -18,7 +18,7 @@ interface getCachedFilterWithResultsOutput {}
  */
 async function getCachedFilterWithResults<FilterResultsType>({
   cachedFilterId
-}: getCachedFilterWithResultsParams): Promise<ISavedFilter<FilterResultsType> | null> {
+}: getCachedFilterWithResultsParams): Promise<ICachedFilter<FilterResultsType> | null> {
   const timer = new Timer({
     filename: '/interface/filter/getCachedFilterWithResults.ts',
     label: 'getCachedFilterWithResults() method call',
@@ -44,7 +44,7 @@ async function getCachedFilterWithResults<FilterResultsType>({
   }
   const { filters, category, time_to_run, view_count, last_run, created } = rows[0]
   const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
-  const cachedFilter: ISavedFilter<FilterResultsType> = {
+  const cachedFilter: ICachedFilter<FilterResultsType> = {
     appliedFilters: rows[0].filters,
     results: serialiseResultDates(results),
     metadata: {

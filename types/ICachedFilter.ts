@@ -1,7 +1,7 @@
 import { IFilter } from './IFilters'
 import { IAccountant } from './IAccountant'
 
-export interface ISavedFilter<ResultType> {
+export interface ICachedFilter<ResultType> {
   appliedFilters: IFilter[]
   results: ResultType[]
   metadata: FilterMetadata

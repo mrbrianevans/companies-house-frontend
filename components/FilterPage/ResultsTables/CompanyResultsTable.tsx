@@ -1,23 +1,22 @@
 import * as React from 'react'
 import Link from 'next/link'
-import { ICompanyProfile } from '../../../types/ICompany'
+import { ICompanyViewItem } from '../../../types/ICompanyViewItem'
 
-export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[]; tableClassName: any }> = ({
+export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyViewItem[]; tableClassName: any }> = ({
   matchingResults,
   tableClassName
 }) => {
-  // @ts-ignore
   return (
     <table className={tableClassName}>
       <thead>
         <tr>
           <th />
-          <th>Company number</th>
-          <th>Name</th>
-          <th>Age</th>
-          <th>Type of company</th>
-          <th>Balance sheet date</th>
-          <th>Officers</th>
+          <th style={{ minWidth: '5em' }}>Company number</th>
+          <th style={{ minWidth: '20em' }}>Name</th>
+          <th style={{ minWidth: '7em' }}>Location</th>
+          <th style={{ minWidth: '4em' }}>Age</th>
+          <th style={{ minWidth: '20em' }}>Officers</th>
+          <th style={{ minWidth: '5em' }}>Last accounts date</th>
         </tr>
       </thead>
       <tbody>
@@ -30,15 +29,17 @@ export const CompanyResultsTable: React.FC<{ matchingResults: ICompanyProfile[];
                   <a target={'_blank'}>{company.company_number}</a>
                 </Link>
               </td>
-              <td>{company.name}</td>
+              <td>
+                <Link href={'/company/' + company.company_number}>
+                  <a target={'_blank'}>{company.name}</a>
+                </Link>
+              </td>
+              <td>{company.area}</td>
               <td>
                 {Math.round((Date.now() - new Date(company.date_of_creation).valueOf()) / 86400 / 365 / 1000)} years
               </td>
-              <td>{company.category}</td>
-              {/*@ts-ignore */}
-              <td>{company.balance_sheet_date}</td>
-              {/*@ts-ignore */}
               <td>{company.officers?.join(' & ')}</td>
+              <td>{new Date(company.balance_sheet_date).toLocaleDateString()}</td>
             </tr>
           ))}
       </tbody>

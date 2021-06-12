@@ -17,6 +17,7 @@ export const accountantFilterConfig: IFilterConfig = {
   countResultsApiUrl: '/api/filter/countResults',
   getFilterIdApiUrl: '/api/filter/getFilterId',
   redirectUrl: '/accountants/filter/',
+  viewItemUrl: '/accountants/',
   labelPlural: 'accountants',
   labelSingular: 'accountant',
   filters: [

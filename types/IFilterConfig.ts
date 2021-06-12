@@ -4,10 +4,10 @@ import { IMinorQuery } from './IQueries'
 export interface IFilterConfig {
   // the url of the api endpoint which returns the estimated count for a filter
   countResultsApiUrl: string
-  // the url of the api endpoint which returns an ID for an array of filters
-  getFilterIdApiUrl: string
-  // a string to append the filter id to, and returns the frontend url to view it
-  redirectUrl: string
+  // @deprecated the url of the api endpoint which returns an ID for an array of filters
+  getFilterIdApiUrl?: string
+  // @deprecated  a string to append the filter id to, and returns the frontend url to view it
+  redirectUrl?: string
   // the things you are filtering for, eg: companies, accountants
   labelPlural: string
   // the thing you are filtering for, eg: company, accountant
@@ -19,4 +19,7 @@ export interface IFilterConfig {
   main_table: string
   // a uniquely identifying column in the database table such as a company number, accountant name, or person number
   uniqueIdentifier: string
+
+  // the prefix to view an item which will be followed by a unique identifier, such as /company/ or /accountant/
+  viewItemUrl: string
 }

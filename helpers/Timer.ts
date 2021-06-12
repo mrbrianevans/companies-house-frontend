@@ -24,14 +24,14 @@ export class Timer {
   private readonly startTime: number
   private finishTime: number
   private mostRecentlyStartedLabel: string
-  private config?: Config
+  private config: Config
   private readonly savedTimes: { [label: string]: { startTime: number; finishTime?: number; time?: number } }
   /**
    * Create a new Timer object. Can have multiple timers within this object.
    * Should only have one of these per file
    * @param config optional configuration object with message and severity
    */
-  constructor(config?: Config) {
+  constructor(config: Config) {
     this.startTime = Date.now()
     this.config = config
     this.config.details = config?.details ?? {}
@@ -177,10 +177,11 @@ export class Timer {
   public postgresError(e: PostgresError) {
     const errorLog = {
       severity: 'ERROR',
-      message: 'Psql Error: ' + e.message,
+      message: 'Postgres Error: ' + e.message,
       errno: e.errno,
       code: e.code,
-      filename: this.config?.filename
+      filename: this?.config?.filename,
+      characterPositionInQuery: e.position
     }
     console.log(JSON.stringify(errorLog))
   }
@@ -216,5 +217,22 @@ export class Timer {
 type PostgresError = {
   message: string
   errno: string
+  length: number
+  name: string
+  severity: string
   code: string
+  detail?: string
+  hint?: string
+  position: string
+  internalPosition?: string
+  internalQuery?: string
+  where?: string
+  schema?: string
+  table?: string
+  column?: string
+  dataType?: string
+  constraint?: string
+  file: string
+  line: string
+  routine: string
 }

@@ -5,7 +5,7 @@ import { CacheResultsParams, CacheResultsOutput } from '../../interface/filter/c
 /** Frontend AJAX call to cacheResults method on the backend
  *
  * @example
- * const {  } = await $END$fetchCacheResults({ filters, category })
+ * const { results, executionTime } = await fetchCacheResults({ filters, category })
  */
 export async function fetchCacheResults<FilterResultsType>({
   filters,

@@ -1,5 +1,5 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { ISavedFilter } from '../../types/ISavedFilter'
+import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
@@ -10,11 +10,12 @@ interface GetCachedFilterParams {
 }
 interface GetCachedFilterOutput {}
 /**
- * returns the results and some metadata about a previously cached filter
+ * returns the results and some metadata about a previously cached filter.
+ * does not return the results of the filter, unless they are already cached
  */
 async function getCachedFilter<FilterResultsType>({
   cachedFilterId
-}: GetCachedFilterParams): Promise<ISavedFilter<FilterResultsType> | null> {
+}: GetCachedFilterParams): Promise<ICachedFilter<FilterResultsType> | null> {
   const pool = await getDatabasePool()
   // get the filter metadata
   const { rows } = await pool.query(
@@ -31,20 +32,22 @@ async function getCachedFilter<FilterResultsType>({
     // filter has not been cached
     return null
   }
-  //join the cached filter on cached_filter_records returning the cached results
-  const filterConfig = getFilterConfig({ category: rows[0].category })
-  const { rows: results }: { rows: FilterResultsType[] } = await pool.query(
-    `
-      SELECT m.*
-      FROM cached_filter_results cfr 
-           LEFT JOIN ${filterConfig.main_table} m ON cfr.data_fk = m.${filterConfig.uniqueIdentifier}
-      WHERE cfr.filter_fk=$1;
-  `,
-    [cachedFilterId]
-  )
-  const cachedFilter: ISavedFilter<FilterResultsType> = {
+  // this is slowing down page loads too much. re-enable when the combineQueries function has been improved
+  // //join the cached filter on cached_filter_records returning the cached results
+  // const filterConfig = getFilterConfig({ category: rows[0].category })
+  // const { rows: results }: { rows: FilterResultsType[] } = await pool.query(
+  //   `
+  //     SELECT m.*
+  //     FROM cached_filter_results cfr
+  //          LEFT JOIN ${filterConfig.main_table} m ON cfr.data_fk = m.${filterConfig.uniqueIdentifier}
+  //     WHERE cfr.filter_fk=$1;
+  // `,
+  //   [cachedFilterId]
+  // )
+  const cachedFilter: ICachedFilter<FilterResultsType> = {
     appliedFilters: rows[0].filters,
-    results: serialiseResultDates(results),
+    // results: results.length ? serialiseResultDates(results) : null,
+    results: null,
     metadata: {
       id: cachedFilterId,
       lastRunTime: rows[0].time_to_run ? rows[0].time_to_run[rows[0].time_to_run.length - 1] : 0,

@@ -49,9 +49,10 @@ export const companyFilterConfig: IFilterConfig = {
   countResultsApiUrl: '/api/companies/countFilterResults',
   getFilterIdApiUrl: '/api/companies/filterRedirect',
   redirectUrl: '/company/filter/',
+  viewItemUrl: '/company/',
   labelPlural: 'companies',
   labelSingular: 'company',
-  main_table: 'wide_accounts_combined',
+  main_table: 'company_view',
   uniqueIdentifier: 'company_number',
   filters: [
     { filterOption: filterCompaniesByAgeMetadata, sqlGenerator: filterCompaniesByAge },

@@ -61,7 +61,7 @@ export async function $camelName({ $params }: $Params): Promise<$Output>{
     SELECT * FROM companies LIMIT 10
     `)
         .then(({rows})=>rows)
-        .catch(timer.postgresError)
+        .catch(e=>timer.postgresError(e))
     if(!result || result?.length === 0) 
         timer.customError('No results returned')
     await pool.end()

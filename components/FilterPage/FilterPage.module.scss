@@ -10,6 +10,11 @@
   padding: 0.5rem;
 }
 
+div.resultsScrollableContainer{
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
 table.resultsTable {
   border-collapse: collapse;
 }
@@ -23,11 +28,17 @@ table.resultsTable > tbody > tr > td:first-child {
 }
 table.resultsTable a {
   text-decoration: underline;
+  display: inline-block;
 }
 table.resultsTable a:hover {
   font-weight: bold;
 }
-
+table.resultsTable td {
+  padding: 0.4em 0.2em;
+}
+table.resultsTable>tbody>tr:hover {
+  background: #fff6;
+}
 h1.title {
   display: flex;
   justify-content: space-between;

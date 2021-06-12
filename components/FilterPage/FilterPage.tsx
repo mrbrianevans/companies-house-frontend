@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { NewFilterCard } from '../NewFilterCard/NewFilterCard'
 import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
-import { ISavedFilter } from '../../types/ISavedFilter'
+import { ICachedFilter } from '../../types/ICachedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
 import { formatApproximation } from '../../helpers/numberFormatter'
 import { IFilterConfig } from '../../types/IFilterConfig'
@@ -14,6 +14,9 @@ import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
 import { fetchGetUserFilterId } from '../../ajax/user/getUserFilterId'
 import { fetchCacheResults } from '../../ajax/filter/cacheResults'
+import { GenericSearchBar } from '../SearchBars/GenericSearchBar'
+import { GenericResultsTable } from './ResultsTables/GenericResultsTable'
+import { LoadingIcon } from '../LoadingIcon/LoadingIcon'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
@@ -21,7 +24,7 @@ interface Props<ResultType> {
   ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
   config: IFilterConfig
   category: FilterCategory
-  savedFilter?: ISavedFilter<ResultType>
+  savedFilter?: ICachedFilter<ResultType>
 }
 
 export const FilterPage = <ResultType extends object>({
@@ -37,6 +40,7 @@ export const FilterPage = <ResultType extends object>({
   const [filterMatches, setFilterMatches] = useState<ResultType[]>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
   const [estimatedCount, setEstimatedCount] = useState<number>()
+  const [executionTime, setExecutionTime] = useState<number>()
   // this clears the current filter
   // this is probably not the best way, but I have wasted enough time trying to get this to work
   const [needsRedirect, setNeedsRedirect] = useState(false)
@@ -45,17 +49,26 @@ export const FilterPage = <ResultType extends object>({
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
     }
-    //async get if the user has already saved this filter on page load
-    fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((re) => setFilterSaved(re?.userFilterId))
-    if (savedFilter?.metadata?.id)
-      fetchCacheResults<ResultType>({
-        id: savedFilter.metadata.id,
-        category,
-        filters: savedFilter.appliedFilters ?? []
-      }).then((res) => {
-        console.debug('setFilterMatches after getting cahced filter results', res?.results?.length)
-        return setFilterMatches(res?.results)
-      })
+    setExecutionTime(savedFilter?.metadata?.lastRunTime)
+    if (savedFilter?.metadata?.id) {
+      //async get if the user has already saved this filter on page load
+      fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((re) => setFilterSaved(re?.userFilterId))
+
+      if (savedFilter?.results) {
+        setFilterMatches(savedFilter.results)
+      } else {
+        setFilterMatchesLoading(true)
+        fetchCacheResults<ResultType>({
+          id: savedFilter.metadata.id,
+          category,
+          filters: savedFilter.appliedFilters ?? []
+        }).then((res) => {
+          if (res.executionTime) setExecutionTime(res.executionTime)
+          setFilterMatches(res?.results)
+          setFilterMatchesLoading(false)
+        })
+      }
+    }
   }, [savedFilter])
   useEffect(() => {
     if (!router.isFallback) {
@@ -161,15 +174,31 @@ export const FilterPage = <ResultType extends object>({
         </div>
         {filterMatchesLoading && (
           <div>
-            <h2>Loading...</h2>
+            <LoadingIcon />
           </div>
         )}
 
-        {filterMatches && (
+        {filterMatches !== undefined && filterMatches !== null && (
           <div style={{ width: '100%' }}>
-            <pre>Query executed in {savedFilter?.metadata?.lastRunTime ?? 'unknown '}ms</pre>
-            <pre>{JSON.stringify(filterMatches, null, 2)}</pre>
-            <ResultsTable matchingResults={filterMatches} tableClassName={styles.resultsTable} />
+            <pre>Query executed in {executionTime / 1000} seconds</pre>
+            {filterMatches?.length > 0 ? (
+              <div className={styles.resultsScrollableContainer}>
+                {ResultsTable ? (
+                  <ResultsTable matchingResults={filterMatches} tableClassName={styles.resultsTable} />
+                ) : (
+                  <GenericResultsTable<ResultType>
+                    matchingResults={filterMatches}
+                    tableClassName={styles.resultsTable}
+                    cachedFilter={savedFilter}
+                    filterConfig={config}
+                  />
+                )}
+              </div>
+            ) : (
+              <p>Zero results</p>
+            )}
+
+            {['role'] === ['developer'] && <pre>{JSON.stringify(filterMatches, null, 2)}</pre>}
           </div>
         )}
       </div>

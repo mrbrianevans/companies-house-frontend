@@ -2,8 +2,6 @@
 
 import { CacheResultsParams, CacheResultsOutput, cacheResults } from '../../../interface/filter/cacheResults'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/client'
-import { getUser } from '../../../interface/user/getUser'
 
 // api endpoint on /api/filter/cacheResults
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -21,8 +19,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     qty: 20 // only cache a max of 20 from calls from the API
   })
   if (output) {
-    const { results }: CacheResultsOutput<Object> = output
-    res.json({ results })
+    const { results, executionTime }: CacheResultsOutput<Object> = output
+    res.json({ results, executionTime })
     return
   } else {
     res.status(500).send('Failed')

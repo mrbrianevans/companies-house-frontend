@@ -15,9 +15,9 @@ export const fetchGetUserFilterId: (params: GetUserFilterIdParams) => Promise<Ge
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ cachedFilterId })
   })
-    .then((r) => {
+    .then(async (r) => {
       if (r.status === 200) return r.json()
-      console.error('Failed to call getUserFilterId API endpoint')
+      console.error('Failed to call getUserFilterId API endpoint. Code:', r.status, 'Response:', await r.text())
       return null
     })
     .catch(console.error)
