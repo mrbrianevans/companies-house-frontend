@@ -1,4 +1,5 @@
 import { IFilter } from './IFilters'
+import { FilterCategory } from './FilterCategory'
 
 // join user filter on saved filter
 export interface ICombinedSavedFilter {
@@ -8,7 +9,7 @@ export interface ICombinedSavedFilter {
   //timestamp in ms
   saved_date: number
   user_id: number
-  category: 'COMPANY' | 'ACCOUNTANT'
+  category: FilterCategory
   //timestamp in ms
   last_viewed: number
   view_count: number
