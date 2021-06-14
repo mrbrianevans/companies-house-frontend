@@ -8,6 +8,8 @@ import QueryStream from 'pg-query-stream'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { ServerResponse } from 'http'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { sqlNameToEnglish } from '../../helpers/sqlNameToEnglish'
+import { readableResultDates } from '../../helpers/serialiseResultDates'
 
 interface ExportResultsParams {
   user_filter: IUserFilter
@@ -62,7 +64,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
     console.assert(user_filter.category && user_filter.cached_filter_fk, 'referencing GCS file with undefined name')
     const fileHandle = bucket.file(user_filter.category + '/' + user_filter.cached_filter_fk)
     const [exists] = await fileHandle.exists()
-    if (exists) {
+    if (false && exists) {
       const pipeFromStorageTimer = timer.start('Piping CSV from Storage to API response')
       await new Promise((resolve, reject) =>
         fileHandle
@@ -78,15 +80,26 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
         filters: user_filter.filters,
         category: user_filter.category
       })
-      const query = new QueryStream(bigQuery, bigValue)
+      // add the limit to the end of the query and get the matching results from main_table
+      const limitedQuery = `
+  WITH results AS (${bigQuery}) 
+  SELECT * FROM results JOIN ${config.main_table} m 
+    ON results.${config.uniqueIdentifier} = m.${config.uniqueIdentifier}`
+      const query = new QueryStream(limitedQuery, bigValue)
       const storageStream = fileHandle.createWriteStream({ metadata: { contentType: 'text/csv' } })
       const pgStream = client.query(query)
-      const csvStream = csv.format()
+      const csvStream = csv.format({
+        headers: true,
+        transform: readableResultDates
+      })
       const queryDatabaseTimer = timer.start('Querying database, piping results to Storage and API response')
       await new Promise((resolve, reject) => {
         pgStream // query results
+          // to debug database output, uncomment this line:
+          // .on('data', (d: Buffer) => console.log(d))
           .pipe(csvStream) // convert JSON to CSV
           .on('data', (d: Buffer) => res.write(d)) // send to client
+          .on('error', reject)
           // split the pipe: one output to Storage, and one to res
           .pipe(storageStream) // save to file in Cloud Storage
           .on('error', reject)

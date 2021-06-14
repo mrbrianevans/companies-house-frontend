@@ -21,6 +21,8 @@ export const accountantFilterConfig: IFilterConfig = {
   labelPlural: 'accountants',
   labelSingular: 'accountant',
   operation_code: 'download_accountant_records',
+  main_table: 'accountant_view',
+  uniqueIdentifier: 'name_on_accounts',
   filters: [
     { filterOption: filterAccountantBySoftwareMetadata, sqlGenerator: filterAccountantsBySoftware },
     {
@@ -35,7 +37,5 @@ export const accountantFilterConfig: IFilterConfig = {
       filterOption: filterAccountantsByNumberOfClientsMetdata,
       sqlGenerator: filterAccountantsByNumberOfClients
     }
-  ],
-  main_table: 'accountants',
-  uniqueIdentifier: 'name_on_accounts'
+  ]
 }

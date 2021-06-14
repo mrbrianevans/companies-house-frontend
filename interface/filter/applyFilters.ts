@@ -50,7 +50,7 @@ SELECT * FROM results JOIN ${config.main_table} m
 LIMIT $${value.length + 1}`
   value.push(Number(limit))
   const prettyPrintedQuery = prettyPrintSqlQuery(limitedQuery, value)
-  console.log(prettyPrintedQuery)
+  // console.log(prettyPrintedQuery)
   const resultQueryTimer = timer.start('Query database for results of filters')
   const { rows: matches } = await pool.query(limitedQuery, value)
   const executionTime = resultQueryTimer.stop()

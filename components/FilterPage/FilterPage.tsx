@@ -17,6 +17,10 @@ import { fetchCacheResults } from '../../ajax/filter/cacheResults'
 import { GenericSearchBar } from '../SearchBars/GenericSearchBar'
 import { GenericResultsTable } from './ResultsTables/GenericResultsTable'
 import { LoadingIcon } from '../LoadingIcon/LoadingIcon'
+import { FormatterRow } from 'fast-csv'
+import FormRow from '../Inputs/FormRow'
+import ButtonLink from '../Inputs/ButtonLink'
+import { fetchCountResults } from '../../ajax/filter/countResults'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
@@ -41,18 +45,27 @@ export const FilterPage = <ResultType extends object>({
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
   const [estimatedCount, setEstimatedCount] = useState<number>()
   const [executionTime, setExecutionTime] = useState<number>()
+  const [userFilterId, setUserFilterId] = useState<number>()
   // this clears the current filter
   // this is probably not the best way, but I have wasted enough time trying to get this to work
   const [needsRedirect, setNeedsRedirect] = useState(false)
-  const [filterSaved, setFilterSaved] = useState(false)
   useEffect(() => {
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
+
+      setCountUpToDate(false)
+      fetchCountResults({ filters: savedFilter?.appliedFilters, category }).then((res) => {
+        if (!res?.count) return
+        setEstimatedCount(res.count)
+        setCountUpToDate(true)
+      })
     }
     setExecutionTime(savedFilter?.metadata?.lastRunTime)
     if (savedFilter?.metadata?.id) {
       //async get if the user has already saved this filter on page load
-      fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((re) => setFilterSaved(re?.userFilterId))
+      fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((r) => {
+        if (typeof r?.userFilterId === 'number') setUserFilterId(r.userFilterId)
+      })
 
       if (savedFilter?.results) {
         setFilterMatches(savedFilter.results)
@@ -78,10 +91,16 @@ export const FilterPage = <ResultType extends object>({
   }, [router.isFallback, router.asPath])
   useEffect(() => {
     if (!router.isFallback && needsRedirect) {
+      setNeedsRedirect(false)
       // when a filter is added or removed, the new filter id is fetched, and then the client redirected to that filters page
       if (filters?.length > 0) {
-        fetchGetFilterId({ filters: filters, category }).then((res) => {
-          setNeedsRedirect(false)
+        setCountUpToDate(false)
+        fetchCountResults({ filters, category }).then((res) => {
+          if (!res?.count) return
+          setEstimatedCount(res.count)
+          setCountUpToDate(true)
+        })
+        fetchGetFilterId({ filters, category }).then((res) => {
           // this means the client isn't on the right page
           if (res.id !== savedFilter?.metadata?.id)
             return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
@@ -110,30 +129,41 @@ export const FilterPage = <ResultType extends object>({
     setFilterMatches(undefined)
     setFilters((prevState) => prevState.filter((value, index) => index !== i))
   }
-  const applyFilter = () => {
-    setFilterMatchesLoading(true)
-    fetchGetFilterId({ filters, category }).then((fi) => {
-      if (!fi) return // failed to get id. Need an error message somewhere
-      if (fi.id !== savedFilter?.metadata.id)
-        return router.push(config.redirectUrl + fi.id, config.redirectUrl + fi.id, { scroll: false })
-      else setFilterMatchesLoading(false)
-    })
-  }
   const saveFilterToAccount = () => {
-    fetchSaveUserFilter({ savedFilterId: savedFilter.metadata.id }).then((r) => setFilterSaved(Boolean(r)))
+    if (!savedFilter) return
+    fetchSaveUserFilter({ savedFilterId: savedFilter.metadata.id }).then((r) => {
+      if (typeof r?.userFilterId === 'number') setUserFilterId(r.userFilterId)
+    })
   }
   return (
     <Page>
       <h1 className={styles.title}>
         Filter {config.labelPlural}
-        <Button
-          label={
-            filterSaved
-              ? String.fromCharCode(0x2713) + ' Filter saved'
-              : String.fromCharCode(0x25bc) + ' Save this filter'
-          }
-          onClick={saveFilterToAccount}
-        />
+        {savedFilter && (
+          <>
+            <Button
+              label={
+                userFilterId !== undefined
+                  ? String.fromCharCode(0x2713) + ' Filter saved'
+                  : String.fromCharCode(0x25bc) + ' Save this filter'
+              }
+              onClick={saveFilterToAccount}
+            />
+            {userFilterId !== undefined ? (
+              <ButtonLink
+                prefetch={false} // users are billed for these requests, so DO NOT prefetch
+                href={'/api/filter/downloadCsv?id=' + userFilterId}
+                aProps={{
+                  target: '_blank',
+                  download: 'companies-download.csv'
+                }}>
+                Download CSV
+              </ButtonLink>
+            ) : (
+              <Button label={'Save to download'} buttonProps={{ disabled: true }} onClick={saveFilterToAccount} />
+            )}
+          </>
+        )}
         {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
       </h1>
       <div className={styles.filterContainer}>
@@ -161,12 +191,14 @@ export const FilterPage = <ResultType extends object>({
                     {estimatedCount !== 1 && 'Approximately '}
                     {formatApproximation(estimatedCount)}{' '}
                     {estimatedCount === 1 ? config.labelSingular : config.labelPlural}{' '}
-                    {estimatedCount === 1 ? 'matches' : 'match'} your filter{filters.length !== 1 && 's'}
+                    {estimatedCount === 1 ? 'matches' : 'match'} your filter{filters?.length !== 1 && 's'}
                   </span>
                 )}
               </>
             ) : (
-              <span>No {config.labelPlural} match your filters</span>
+              <span>
+                No {config.labelPlural} match your filter{filters?.length !== 1 && 's'}
+              </span>
             )
           ) : (
             <p>Apply at least 1 filter to run the query</p>
@@ -180,7 +212,22 @@ export const FilterPage = <ResultType extends object>({
 
         {filterMatches !== undefined && filterMatches !== null && (
           <div style={{ width: '100%' }}>
-            <pre>Query executed in {executionTime / 1000} seconds</pre>
+            <FormRow>
+              <pre>Query executed in {executionTime / 1000} seconds</pre>
+              {userFilterId !== undefined ? (
+                <ButtonLink
+                  prefetch={false} // users are billed for these requests, so DO NOT prefetch
+                  href={'/api/filter/downloadCsv?id=' + userFilterId}
+                  aProps={{
+                    target: '_blank',
+                    download: 'companies-download.csv'
+                  }}>
+                  Download CSV
+                </ButtonLink>
+              ) : (
+                <Button label={'Save to download'} onClick={saveFilterToAccount} />
+              )}
+            </FormRow>
             {filterMatches?.length > 0 ? (
               <div className={styles.resultsScrollableContainer}>
                 {ResultsTable ? (

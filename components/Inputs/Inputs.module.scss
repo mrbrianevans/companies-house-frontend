@@ -7,7 +7,6 @@ a.primary {
   box-shadow: $shadow;
   background: rgba(255, 255, 255, 0.4);
   padding: 0 0.5rem;
-  cursor: pointer;
   border: 2px solid transparent;
   height: 2rem;
   transition: border-color 300ms ease 0s;
@@ -16,9 +15,13 @@ a.primary {
   display: inline-grid;
   place-content: center;
 }
-
-button.primary:hover,
+button.primary[disabled] {
+  box-shadow: $shadow;
+  background: rgba(139, 139, 139, 0.4);
+}
+button.primary:hover:not(button.primary[disabled]),
 a.primary:hover {
+  cursor: pointer;
   background: rgba(255, 255, 255, 0.6);
 }
 
