@@ -49,24 +49,26 @@ export async function cacheResults<FilterResultsType>({
     const { results, executionTime } = await applyFilters<FilterResultsType>({ filters, category, limit: qty ?? 20 })
 
     const saveResultsToCacheTimer = timer.start('Save results to cache')
-    await pool.query(
-      `
+    await pool
+      .query(
+        `
       INSERT INTO cached_filter_results (filter_fk, data_fk)
       SELECT $1 AS filter_fk, UNNEST($2::text[]) AS data_fk
       ON CONFLICT ON CONSTRAINT unique_cached_result DO NOTHING 
   `,
-      [
-        id,
-        results
-          .map((r) => {
-            if (r.hasOwnProperty(config.uniqueIdentifier)) {
-              // @ts-ignore i am manually checking that the key exists
-              return r[config.uniqueIdentifier]
-            } else console.log(r, 'does not have column', config.uniqueIdentifier)
-          })
-          .filter((r) => r)
-      ]
-    )
+        [
+          id,
+          results
+            .map((r) => {
+              if (r.hasOwnProperty(config.uniqueIdentifier)) {
+                // @ts-ignore i am manually checking that the key exists
+                return r[config.uniqueIdentifier]
+              } else console.log(r, 'does not have column', config.uniqueIdentifier)
+            })
+            .filter((r) => r)
+        ]
+      )
+      .catch((e) => timer.postgresError(e))
     saveResultsToCacheTimer.stop()
     timer.addDetail('Results qty', results.length)
     await pool.end()

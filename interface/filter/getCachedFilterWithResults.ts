@@ -27,7 +27,7 @@ async function getCachedFilterWithResults<FilterResultsType>({
   const pool = await getDatabasePool()
   // get the filter metadata
   const metadataQueryTimer = timer.start('Query database for cached filter metadata')
-  const { rows } = await pool.query(
+  const row = await pool.query(
     `
         UPDATE cached_filters
         SET last_viewed=CURRENT_TIMESTAMP,
@@ -36,24 +36,28 @@ async function getCachedFilterWithResults<FilterResultsType>({
         RETURNING view_count, created, filters, last_run, time_to_run, category, result_count
     `,
     [cachedFilterId]
-  )
+  ).then(({ rows }) => rows[0])
+    .catch((e) => timer.postgresError(e))
   metadataQueryTimer.stop()
-  if (rows.length !== 1) {
+  let cachedFilter: ICachedFilter<FilterResultsType>
+  if (!row) {
     // filter has not been cached
-    return null
-  }
-  const { filters, category, time_to_run, view_count, last_run, created, result_count } = rows[0]
-  const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
-  const cachedFilter: ICachedFilter<FilterResultsType> = {
-    appliedFilters: rows[0].filters,
-    results: serialiseResultDates(results),
-    metadata: {
-      id: cachedFilterId,
-      lastRunTime: time_to_run?.slice(-1)[0] ?? 0,
-      lastRun: new Date(last_run).valueOf(),
-      viewCount: view_count,
-      created: new Date(created).valueOf(),
-      resultCount: result_count
+    timer.customError('Cached filter is null')
+    cachedFilter = null
+  }else {
+    const { filters, category, time_to_run, view_count, last_run, created, result_count } = row
+    const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
+    cachedFilter = {
+      appliedFilters: filters,
+      results: serialiseResultDates(results),
+      metadata: {
+        id: cachedFilterId,
+        lastRunTime: time_to_run?.slice(-1)[0] ?? 0,
+        lastRun: new Date(last_run).valueOf(),
+        viewCount: view_count,
+        created: new Date(created).valueOf(),
+        resultCount: result_count
+      }
     }
   }
   timer.flush()

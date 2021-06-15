@@ -48,16 +48,22 @@ export async function countResults({ filters, category }: CountResultsParams): P
   }
   timer.addDetail('Count already cached', false)
   const { value: bigValue, query: bigQuery } = combineQueries({ filters, category })
-  const { rows } = await pool.query(
-    `
+  const count: number = await pool
+    .query(
+      `
   WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;
   `,
-    bigValue
-  )
-  const count: number = rows[0].count
+      bigValue
+    )
+    .then(({ rows }) => rows[0].count)
+    .catch((e) => timer.postgresError(e))
   timer.addDetail('Count returned from database', count)
-  timer.next(`Persist result size ${count} in DB`)
-  await pool.query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+  if (typeof count === 'number') {
+    timer.next(`Persist result size ${count} in DB`)
+    await pool.query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+  } else {
+    timer.customError('Count results returned null')
+  }
   timer.flush()
 
   await pool.end()

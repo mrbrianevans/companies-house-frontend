@@ -40,13 +40,14 @@ export async function cacheFilter<FilterCategoryType>({
   const id = getFilterId(filters, category)
   const client = await pool.connect()
   timer.start('Apply filters - Query database for results to cache')
-  // only saves the top 10 results in the database
+  // only saves the top 20 results in the database
   const { query, value } = combineQueries({ filters, category })
   const prettyPrintedQuery = prettyPrintSqlQuery(query, value)
   const timeToRun: number = timer.end()
 
-  await client.query(
-    `
+  await client
+    .query(
+      `
     INSERT INTO cached_filters
     (id, category, filters, time_to_run, last_run, query)
     VALUES 
@@ -56,8 +57,9 @@ export async function cacheFilter<FilterCategoryType>({
     time_to_run = array_append(cached_filters.time_to_run, $4::int),
     query=excluded.query
     `,
-    [id, category, filters, timeToRun, prettyPrintedQuery]
-  )
+      [id, category, filters, timeToRun, prettyPrintedQuery]
+    )
+    .catch((e) => timer.postgresError(e))
   await client.release()
   await pool.end()
   await cacheResults({ filters, category, id })
