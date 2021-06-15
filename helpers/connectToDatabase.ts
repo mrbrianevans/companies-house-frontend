@@ -8,6 +8,7 @@ export const getDatabasePool: () => Pool = () => {
     user: process.env.PGUSER,
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
-    port: Number(process.env.PGPORT)
+    port: Number(process.env.PGPORT),
+    statement_timeout: 60_000 // timeout statements after a while (milliseconds)
   })
 }

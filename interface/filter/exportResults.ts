@@ -10,6 +10,7 @@ import { ServerResponse } from 'http'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { sqlNameToEnglish } from '../../helpers/sqlNameToEnglish'
 import { readableResultDates } from '../../helpers/serialiseResultDates'
+import { countResults } from './countResults'
 
 interface ExportResultsParams {
   user_filter: IUserFilter
@@ -54,7 +55,14 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
     .then(({ rows }) => rows[0]['remaining_exports'])
     .catch((e) => timer.postgresError(e))
   remainingExportsTimer.stop()
-  console.log('The user has', remainingExports, 'remaining exports this month')
+  const { count } = await countResults({ filters: user_filter.filters, category: user_filter.category })
+  console.log(
+    'The user has',
+    remainingExports,
+    'remaining exports this month, and is attempting to download a result set of',
+    count,
+    'records'
+  )
   //todo: need to do something with this limit such as actually limit the number of results
   try {
     // stream the csv

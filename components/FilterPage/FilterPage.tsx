@@ -53,12 +53,18 @@ export const FilterPage = <ResultType extends object>({
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
 
-      setCountUpToDate(false)
-      fetchCountResults({ filters: savedFilter?.appliedFilters, category }).then((res) => {
-        if (!res?.count) return
-        setEstimatedCount(res.count)
+      if (typeof savedFilter?.metadata?.resultCount === 'number') {
+        setEstimatedCount(savedFilter?.metadata?.resultCount)
         setCountUpToDate(true)
-      })
+      } else {
+        // fetch count from server
+        setCountUpToDate(false)
+        fetchCountResults({ filters: savedFilter?.appliedFilters, category }).then((res) => {
+          if (!res?.count) return
+          setEstimatedCount(res.count)
+          setCountUpToDate(true)
+        })
+      }
     }
     setExecutionTime(savedFilter?.metadata?.lastRunTime)
     if (savedFilter?.metadata?.id) {
@@ -76,7 +82,7 @@ export const FilterPage = <ResultType extends object>({
           category,
           filters: savedFilter.appliedFilters ?? []
         }).then((res) => {
-          if (res.executionTime) setExecutionTime(res.executionTime)
+          if (res?.executionTime) setExecutionTime(res.executionTime)
           setFilterMatches(res?.results)
           setFilterMatchesLoading(false)
         })

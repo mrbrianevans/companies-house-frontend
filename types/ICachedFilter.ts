@@ -17,4 +17,5 @@ export interface FilterMetadata {
   // the time taken to query this filter (the most recent run)
   lastRunTime: number
   viewCount: number
+  resultCount: number
 }

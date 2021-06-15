@@ -24,7 +24,7 @@ async function getCachedFilter<FilterResultsType>({
         SET last_viewed=CURRENT_TIMESTAMP,
             view_count=view_count + 1
         WHERE id = $1
-        RETURNING view_count, created, filters, last_run, time_to_run, category
+        RETURNING view_count, created, filters, last_run, time_to_run, category, result_count
     `,
     [cachedFilterId]
   )
@@ -32,6 +32,7 @@ async function getCachedFilter<FilterResultsType>({
     // filter has not been cached
     return null
   }
+  // this section basically adds in previously cached results to the returned cacheFilter. Currently disabled
   // this is slowing down page loads too much. re-enable when the combineQueries function has been improved
   // //join the cached filter on cached_filter_records returning the cached results
   // const filterConfig = getFilterConfig({ category: rows[0].category })
@@ -53,7 +54,8 @@ async function getCachedFilter<FilterResultsType>({
       lastRunTime: rows[0].time_to_run ? rows[0].time_to_run[rows[0].time_to_run.length - 1] : 0,
       lastRun: new Date(rows[0].last_run).valueOf(),
       viewCount: rows[0].view_count,
-      created: new Date(rows[0].created).valueOf()
+      created: new Date(rows[0].created).valueOf(),
+      resultCount: rows[0].result_count
     }
   }
   return cachedFilter

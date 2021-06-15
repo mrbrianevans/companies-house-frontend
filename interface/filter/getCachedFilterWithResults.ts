@@ -33,7 +33,7 @@ async function getCachedFilterWithResults<FilterResultsType>({
         SET last_viewed=CURRENT_TIMESTAMP,
             view_count=view_count + 1
         WHERE id = $1
-        RETURNING view_count, created, filters, last_run, time_to_run, category
+        RETURNING view_count, created, filters, last_run, time_to_run, category, result_count
     `,
     [cachedFilterId]
   )
@@ -42,7 +42,7 @@ async function getCachedFilterWithResults<FilterResultsType>({
     // filter has not been cached
     return null
   }
-  const { filters, category, time_to_run, view_count, last_run, created } = rows[0]
+  const { filters, category, time_to_run, view_count, last_run, created, result_count } = rows[0]
   const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
   const cachedFilter: ICachedFilter<FilterResultsType> = {
     appliedFilters: rows[0].filters,
@@ -52,7 +52,8 @@ async function getCachedFilterWithResults<FilterResultsType>({
       lastRunTime: time_to_run?.slice(-1)[0] ?? 0,
       lastRun: new Date(last_run).valueOf(),
       viewCount: view_count,
-      created: new Date(created).valueOf()
+      created: new Date(created).valueOf(),
+      resultCount: result_count
     }
   }
   timer.flush()
