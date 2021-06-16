@@ -1,0 +1,14 @@
+language: node_js
+
+node_js:
+  - 16
+
+# uncomment to enable building the Dockerfile
+#services:
+#  - docker
+#
+#before_install:
+#  docker build -t mrbrianevans/filterfacility .
+
+script:
+  npm run test:browser
