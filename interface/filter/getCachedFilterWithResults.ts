@@ -27,16 +27,18 @@ async function getCachedFilterWithResults<FilterResultsType>({
   const pool = await getDatabasePool()
   // get the filter metadata
   const metadataQueryTimer = timer.start('Query database for cached filter metadata')
-  const row = await pool.query(
-    `
+  const row = await pool
+    .query(
+      `
         UPDATE cached_filters
         SET last_viewed=CURRENT_TIMESTAMP,
             view_count=view_count + 1
         WHERE id = $1
         RETURNING view_count, created, filters, last_run, time_to_run, category, result_count
     `,
-    [cachedFilterId]
-  ).then(({ rows }) => rows[0])
+      [cachedFilterId]
+    )
+    .then(({ rows }) => rows[0])
     .catch((e) => timer.postgresError(e))
   metadataQueryTimer.stop()
   let cachedFilter: ICachedFilter<FilterResultsType>
@@ -44,7 +46,7 @@ async function getCachedFilterWithResults<FilterResultsType>({
     // filter has not been cached
     timer.customError('Cached filter is null')
     cachedFilter = null
-  }else {
+  } else {
     const { filters, category, time_to_run, view_count, last_run, created, result_count } = row
     const { results } = await cacheResults<FilterResultsType>({ filters, category, id: cachedFilterId })
     cachedFilter = {

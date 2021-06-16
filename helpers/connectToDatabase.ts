@@ -1,6 +1,8 @@
 import { Pool } from 'pg'
-
-export const getDatabasePool: () => Pool = () => {
+type GetDatabasePoolParams = {
+  timeout_milliseconds?: number
+}
+export const getDatabasePool: (params?: GetDatabasePoolParams) => Pool = ({ timeout_milliseconds }) => {
   return new Pool({
     host: process.env.CLOUD_SQL_CONNECTION_NAME
       ? `${process.env.DB_SOCKET_PATH || '/cloudsql'}/${process.env.CLOUD_SQL_CONNECTION_NAME}`
@@ -9,6 +11,6 @@ export const getDatabasePool: () => Pool = () => {
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
     port: Number(process.env.PGPORT),
-    statement_timeout: 60_000 // timeout statements after a while (milliseconds)
+    statement_timeout: timeout_milliseconds ?? 60_000 // timeout statements after a while (milliseconds)
   })
 }
