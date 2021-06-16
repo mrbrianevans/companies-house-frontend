@@ -90,6 +90,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
       })
       // add the limit to the end of the query and get the matching results from main_table
       const limitedQuery = `
+SET statement_timeout 600000; -- wait 10 minutes to download a CSV
   WITH results AS (${bigQuery}) 
   SELECT * FROM results JOIN ${config.main_table} m 
     ON results.${config.uniqueIdentifier} = m.${config.uniqueIdentifier}`

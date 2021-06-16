@@ -83,7 +83,7 @@ export function NewFilterCard(props: Props) {
   }
   //todo: when the filter category changes, reset the values to []
   return (
-    <div className={styles.newFilterCard} style={{ width: '100%' }}>
+    <div className={styles.newFilterCard} style={{ width: '100%' }} data-test-id={'newFilterDiv'}>
       <h3>Add new filter</h3>
       <FormRow>
         {/*<label>*/}

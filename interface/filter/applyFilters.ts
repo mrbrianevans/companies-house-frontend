@@ -5,7 +5,6 @@ import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/getFilterId'
-import { logPostgresError } from '../../helpers/loggers/PostgresErrorLogger'
 import getFilterConfig from '../../helpers/getFilterConfig'
 
 type Params = {

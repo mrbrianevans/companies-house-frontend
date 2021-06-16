@@ -15,7 +15,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }
   const session = await getSession({ req })
   const user = await getUser({ session })
-  const output = await getUserFilterId({ cachedFilterId, userId: user.id })
+  let output: GetUserFilterIdOutput
+  if (!user) output = { userFilterId: null }
+  else output = await getUserFilterId({ cachedFilterId, userId: user.id })
   if (output) {
     const { userFilterId }: GetUserFilterIdOutput = output
     res.json({ userFilterId })

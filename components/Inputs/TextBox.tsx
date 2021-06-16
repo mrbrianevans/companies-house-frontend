@@ -27,6 +27,7 @@ const TextBox = (props: TextBoxProps) => {
   return (
     <>
       <input
+        type={'text'}
         list={props.suggestions ? id : undefined}
         className={styles.textBox}
         placeholder={props.placeholder}

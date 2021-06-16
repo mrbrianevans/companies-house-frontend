@@ -1,0 +1,230 @@
+{
+  "config": {
+    "forbidOnly": false,
+    "globalSetup": "C:\\Users\\bme\\projects\\companies-house-frontend\\tests\\browser\\globalSetup.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "maxFailures": 0,
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/bme/projects/companies-house-frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "name": "chromium",
+        "testDir": "C:/Users/bme/projects/companies-house-frontend/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/?(*.)+(spec|test).[jt]s"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "reporter": [
+      [
+        "json"
+      ],
+      [
+        "line"
+      ]
+    ],
+    "rootDir": "C:/Users/bme/projects/companies-house-frontend/tests/browser",
+    "quiet": false,
+    "shard": null,
+    "updateSnapshots": "missing",
+    "workers": 8
+  },
+  "suites": [
+    {
+      "title": "",
+      "file": "accountant/accountantProfile.spec.ts",
+      "line": 0,
+      "column": 0,
+      "specs": [
+        {
+          "title": "accountant profile loads without errors",
+          "ok": true,
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "status": "passed",
+                  "duration": 2886,
+                  "stdout": [
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Loaded env from C:\\Users\\bme\\projects\\companies-house-frontend\\.env.production.local\n"
+                    },
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Using webpack 5. Reason: future.webpack5 option enabled https://nextjs.org/docs/messages/webpack5\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0
+                }
+              ]
+            }
+          ],
+          "file": "accountant/accountantProfile.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "",
+      "file": "company/companyFilter.spec.ts",
+      "line": 0,
+      "column": 0,
+      "specs": [
+        {
+          "title": "company filter page root (no filter applied)",
+          "ok": true,
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "status": "passed",
+                  "duration": 2765,
+                  "stdout": [
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Loaded env from C:\\Users\\bme\\projects\\companies-house-frontend\\.env.production.local\n"
+                    },
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Using webpack 5. Reason: future.webpack5 option enabled https://nextjs.org/docs/messages/webpack5\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0
+                }
+              ]
+            }
+          ],
+          "file": "company/companyFilter.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "company filter page - apply filter from root",
+          "ok": true,
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "status": "passed",
+                  "duration": 1174,
+                  "stdout": [
+                    {
+                      "text": "{\"severity\":\"INFO\",\"message\":\"getFilterId(1 COMPANY filters) method call: 260ms\",\"filename\":\"interface/filter/getFilterId.ts\",\"execute query\":258,\"category\":\"COMPANY\",\"filterId\":\"fmwKm\",\"lastRun\":null}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0
+                }
+              ]
+            }
+          ],
+          "file": "company/companyFilter.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "",
+      "file": "company/companyProfile.spec.ts",
+      "line": 0,
+      "column": 0,
+      "specs": [
+        {
+          "title": "test companyProfile page",
+          "ok": true,
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "status": "passed",
+                  "duration": 2970,
+                  "stdout": [
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Loaded env from C:\\Users\\bme\\projects\\companies-house-frontend\\.env.production.local\n"
+                    },
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Using webpack 5. Reason: future.webpack5 option enabled https://nextjs.org/docs/messages/webpack5\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0
+                }
+              ]
+            }
+          ],
+          "file": "company/companyProfile.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "",
+      "file": "homepage/Homepage.spec.ts",
+      "line": 0,
+      "column": 0,
+      "specs": [
+        {
+          "title": "home page logo test",
+          "ok": true,
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "status": "passed",
+                  "duration": 2472,
+                  "stdout": [
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Loaded env from C:\\Users\\bme\\projects\\companies-house-frontend\\.env.production.local\n"
+                    },
+                    {
+                      "text": "\u001b[36minfo\u001b[39m  - Using webpack 5. Reason: future.webpack5 option enabled https://nextjs.org/docs/messages/webpack5\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0
+                }
+              ]
+            }
+          ],
+          "file": "homepage/Homepage.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

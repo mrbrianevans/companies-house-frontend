@@ -20,5 +20,5 @@ export const fetchGetUserFilterId: (params: GetUserFilterIdParams) => Promise<Ge
       console.error('Failed to call getUserFilterId API endpoint. Code:', r.status, 'Response:', await r.text())
       return null
     })
-    .catch(console.error)
+    .catch((e) => console.error('Failed to call getUserFilterId'))
 }

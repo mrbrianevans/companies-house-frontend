@@ -13,7 +13,8 @@ const test = base.extend<{
     async ({}: any, use: (arg0: string) => any) => {
       const app = next({
         dev: false,
-        dir: path.resolve(__dirname, '../..')
+        dir: path.resolve(__dirname, '../..'),
+        quiet: true
       })
       await app.prepare()
 
@@ -32,6 +33,8 @@ const test = base.extend<{
 
       // get the randomly assigned port from the server
       const port = String((server.address() as AddressInfo).port)
+      //set the next auth environment variable based on the port
+      process.env.NEXTAUTH_URL = 'http://localhost:' + port
       // provide port to tests
       await use(port)
     },
