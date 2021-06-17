@@ -9,6 +9,8 @@ RUN npm install
 COPY . ./
 
 RUN npm run build
+# run browser tests
+RUN npm run test:browser:skipbuild
 
 EXPOSE 8080
 

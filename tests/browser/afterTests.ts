@@ -9,17 +9,19 @@ const { execSync } = require('child_process')
  */
 export default async function globalTeardown() {
   if (process.env.SKIP_BROWSER_TESTS_TEARDOWN) return
-  const private_key = Buffer.from(process.env.GOOGLE_STORAGE_PRIVATE_KEY, 'base64').toString('utf8')
-  const client_email = Buffer.from(process.env.GOOGLE_STORAGE_EMAIL, 'base64').toString('utf8')
-  const client = new Storage({
-    // this authenticates the travis runner using environment variables
-    projectId: 'companies-house-data',
-    scopes: 'https://www.googleapis.com/auth/cloud-platform',
-    credentials: {
-      client_email,
-      private_key
-    }
-  })
+  // const private_key = Buffer.from(process.env.GOOGLE_STORAGE_PRIVATE_KEY, 'base64').toString('utf8')
+  // const client_email = Buffer.from(process.env.GOOGLE_STORAGE_EMAIL, 'base64').toString('utf8')
+  const client = new Storage(
+  //   {
+  //   // this authenticates the travis runner using environment variables
+  //   projectId: 'companies-house-data',
+  //   scopes: 'https://www.googleapis.com/auth/cloud-platform',
+  //   credentials: {
+  //     client_email,
+  //     private_key
+  //   }
+  // }
+  )
   const bucket = await client.bucket('filter-facility-screenshots')
   const tempOutputDir = process.env.BROWSER_TEST_OUTPUT_DIR
   if (!tempOutputDir) throw new Error('Could not find temporary output directory: ' + tempOutputDir)
