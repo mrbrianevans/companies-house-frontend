@@ -3,6 +3,7 @@ FROM mcr.microsoft.com/playwright:focal
 WORKDIR /usr/src/app
 
 # install node
+apt install curl
 curl -sL https://deb.nodesource.com/setup_16.x | bash
 apt install nodejs
 
