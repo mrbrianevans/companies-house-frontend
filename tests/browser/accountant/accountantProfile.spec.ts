@@ -8,5 +8,5 @@ test('accountant profile loads without errors', async ({ page, port }) => {
   await page.goto(testUrl.getUrl('accountants', requestedName))
   const responseName = await page.innerText('main h1')
   expect(responseName).toBe(requestedName)
-  await page.screenshot({ path: 'screenshots/accountantProfile.png' })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfile.png` })
 })

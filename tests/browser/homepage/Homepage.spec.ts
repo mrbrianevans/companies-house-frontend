@@ -7,5 +7,5 @@ test('home page logo test', async ({ page, port }) => {
   await page.goto(testUrl.getUrl())
   const logo = await page.innerText('h1')
   expect(logo).toBe('Filter Facility')
-  await page.screenshot({ path: 'screenshots/homepage.png' })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/homepage.png` })
 })

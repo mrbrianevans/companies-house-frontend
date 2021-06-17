@@ -7,5 +7,5 @@ test('test companyProfile page', async ({ page, port }) => {
   await page.goto(testUrl.getUrl('company', '12851415'))
   const companyName = await page.innerText('main h1')
   expect(companyName).toBeDefined()
-  await page.screenshot({ path: 'screenshots/companyProfile.png' })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/companyProfile.png` })
 })

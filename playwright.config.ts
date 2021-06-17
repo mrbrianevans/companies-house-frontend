@@ -2,7 +2,7 @@
 import { PlaywrightTestConfig, devices } from '@playwright/test'
 const config: PlaywrightTestConfig = {
   globalSetup: './tests/browser/globalSetup.ts',
-  // projects: [],
+  globalTeardown: './tests/browser/afterTests.ts',
   testDir: './tests/browser'
 }
 

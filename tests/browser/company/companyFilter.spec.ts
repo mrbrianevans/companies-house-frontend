@@ -7,7 +7,7 @@ test('company filter page root (no filter applied)', async ({ page, port }) => {
   await page.goto(testUrl.getUrl('company', 'filter'))
   const title = await page.innerText('main h1')
   expect(title).toMatch(/^Filter/)
-  await page.screenshot({ path: 'screenshots/companyFilterRoot.png' })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/companyFilterRoot.png` })
 })
 
 test('company filter page - apply filter from root', async ({ page, port }) => {
@@ -28,7 +28,7 @@ test('company filter page - apply filter from root', async ({ page, port }) => {
 
   // identifies the new filter div by a div containing a h3 that says 'new filter'
   const newFilterDiv = await page.$('div:has(h3:text-matches("new filter", "i"))')
-  await newFilterDiv.screenshot({ path: 'screenshots/newFilterCompanyDiv.png' })
+  await newFilterDiv.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/newFilterCompanyDiv.png` })
   const filterBy = await newFilterDiv.$(':nth-match(select, 1)')
   await filterBy.selectOption(testFilterBy)
   const filterOperator = await newFilterDiv.$(':nth-match(select, 2)')
@@ -37,7 +37,7 @@ test('company filter page - apply filter from root', async ({ page, port }) => {
   await filterValue.fill(testValue)
   const addFilterButton = await newFilterDiv.$('button:text-matches("add filter", "i")')
   await Promise.all([addFilterButton.click(), page.waitForNavigation()])
-  await page.screenshot({ path: 'screenshots/companyFilterApplyNew.png' })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/companyFilterApplyNew.png` })
 
   // check that filter was added and is showing an english representation
   const addedFilterDescription = await page.innerText('div:below(div:has(h3:text-matches("new filter", "i"))) p')
