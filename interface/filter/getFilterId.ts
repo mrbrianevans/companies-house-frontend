@@ -31,6 +31,7 @@ export interface GetFilterIdOutput {
  * @returns  GetFilterIdOutput id of the filter
  */
 export async function getFilterId({ filters, category }: GetFilterIdParams): Promise<GetFilterIdOutput> {
+  if (!(filters?.length > 0)) return null
   const timer = new Timer({
     label: `getFilterId(${filters?.length} ${category} filters) method call`,
     details: { category },

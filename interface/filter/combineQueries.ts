@@ -61,6 +61,10 @@ const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) 
       timer.customError('Filter not found: ' + filter.category)
       continue
     }
+    if (filter.type == 'number' && filter.min > filter.max) {
+      timer.customError('Minimum greater than maximum on numeric filter category: ' + filter.category)
+      return { query: `SELECT * FROM ${filterConfig.main_table}`, value: [] }
+    }
     //each type of filter has a function that returns a sql query
     const { query, value } = filterMap.get(filter.category)(filter)
     // updates the $1 references for the number of values

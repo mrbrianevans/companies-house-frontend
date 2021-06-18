@@ -1,25 +1,22 @@
  # Filter Facility #
 
-This is a nextjs website, which serves API endpoints under `/api` and a Graphical UI under `/`.
+Homepage: [filterfacility.co.uk](https://filterfacility.co.uk)
 
- ### Technology
+### Technology
 - Typescript
 - NodeJS
 - NextJS
 - PostgreSQL database
 
- ### API Endpoints
-| Endpoint | Parameters | Description |
-| --- | --- | --- |
-| `/api/` |  | API docs |
-| `/api/company` | company_number | Get details about a specific company |
-| `/api/search` | query&by | Search for companies based on a text query (by name etc) |
-| `/api/filter` | filters | Index a list of companies where `filters` is an array of conditions |
+ ### Scripts
+To run the server for development, run `npm run dev` in terminal. 
 
-### GUI Pages
-| URL | Description |
-| --- | --- |
-| `/`| Website docs |
-| `/company` | Get details about a specific company |
-| `/search` | Search for companies based on a text query (by name etc) |
-| `/filter` | Index a list of companies where `filters` is an array of conditions |
+For a production optimised build, run `npm run build` followed by `npm run start`.
+
+To run all tests, run `npm run test`.
+
+To only run unit tests, `npm run test:unit`
+
+To only run browser tests, `npm run test:browser`
+
+To format code style, `npm run format`
