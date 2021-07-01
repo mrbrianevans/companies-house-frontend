@@ -8,6 +8,7 @@ type TextBoxProps = {
   value: string
   onChange: (newValue: string) => void
   suggestions?: string[] //todo: give this the option of being [{value: "", label: ""}]
+  onEnter?: () => void
 }
 const TextBox = (props: TextBoxProps) => {
   const [id] = useState(
@@ -26,11 +27,17 @@ const TextBox = (props: TextBoxProps) => {
   return (
     <>
       <input
+        type={'text'}
         list={props.suggestions ? id : undefined}
         className={styles.textBox}
         placeholder={props.placeholder}
         value={props.value}
         onChange={(v) => props.onChange(v.target.value)}
+        onKeyPress={(kv) => {
+          if (kv.key == 'Enter') {
+            props.onEnter()
+          }
+        }}
       />
       {props.suggestions && (
         <datalist id={id}>

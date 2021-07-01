@@ -1,14 +1,15 @@
 import { Page } from '../../components/Page/Page'
 import * as React from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { CompanySearchBar } from '../../components/SearchBars/CompanySearchBar'
 import { CompanyIndustrySearchBar } from '../../components/SearchBars/CompanyIndustrySearchBar'
-import getCompanyFilters from '../../interface/filterCompanies/getFilterOptions'
-import { useState } from 'react'
 import { FeatureList } from '../../components/lists/FeatureList'
+import getFilterOptions from '../../interface/filter/getFilterOptions'
+import { FilterCategory } from '../../types/FilterCategory'
 
 const FilterCompaniesPage = () => {
-  const [companyFilters] = useState(getCompanyFilters())
+  const [companyFilters] = useState(getFilterOptions({ category: FilterCategory.COMPANY }))
   return (
     <Page>
       <h1>Companies</h1>
@@ -16,7 +17,7 @@ const FilterCompaniesPage = () => {
       <p>
         To search for a company by name or company number, visit{' '}
         <Link href={'/search'}>
-          <a>/filter</a>
+          <a>/search</a>
         </Link>
       </p>
       <CompanySearchBar />
@@ -24,7 +25,7 @@ const FilterCompaniesPage = () => {
       <p>
         To filter companies, visit{' '}
         <Link href={'/company/filter'}>
-          <a>/filter</a>
+          <a>/company/filter</a>
         </Link>
       </p>
       <p>Get started with a filter by industry:</p>

@@ -2,7 +2,7 @@
 -- some lines were too long to index
 -- This should never have to be run again, but this file serves as a historical record
 select length(label) + length(value) as strlen, label, value
-from accounts
+from company_accounts
 where length(label) + length(value) > 2000
 order by strlen desc
 limit 500;
@@ -26,7 +26,7 @@ create table very_long_accounts
 
 WITH moved_rows AS (
     SELECT *
-    FROM accounts a
+    FROM company_accounts a
     WHERE length(label) + length(value) >= 2000
     -- RETURNING a -- or specify columns
 )
@@ -35,15 +35,15 @@ INTO very_long_accounts --specify columns if necessary
         (SELECT DISTINCT * FROM moved_rows);
 
 DELETE
-FROM accounts
+FROM company_accounts
 where length(label) + length(value) = 2000;
-ALTER TABLE accounts
+ALTER TABLE company_accounts
     DROP CONSTRAINT IF EXISTS short_label_and_value;
 -- this constraint ensures that no long lines will ever be inserted again
-ALTER TABLE accounts
+ALTER TABLE company_accounts
     ADD CONSTRAINT short_label_and_value CHECK ( length(label) + length(value) < 2000 );
 -- if insertion fails, you should try insert into very_long_accounts (same schema as accounts)
 
 -- this is the index:
-CREATE INDEX ON accounts (value);
-CREATE INDEX ON accounts (label);
+CREATE INDEX ON company_accounts (value);
+CREATE INDEX ON company_accounts (label);

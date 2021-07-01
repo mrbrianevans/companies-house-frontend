@@ -14,7 +14,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).send('Invalid company number')
     return
   }
-  const timer = new Timer({ label: 'get filing history' })
+  const timer = new Timer({ label: 'get filing history', filename: '/pages/api/chApi/getFilingsList.ts' })
   const api = createApiClient(process.env.APIUSER)
   const apiTimer = timer.start('call gov api to fetch filing history')
   const apiResponse = await api.companyFilingHistory.getCompanyFilingHistory(company_number)

@@ -85,7 +85,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   // console.log('Requested accountant with name:', name)
   const accountantProfile = await getAccountantProfile(name)
   const returnProps: props = { accountantProfile }
-  if (accountantProfile.company_number) {
+  if (accountantProfile?.company_number) {
     returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
     return { notFound: true }

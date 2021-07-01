@@ -115,9 +115,8 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
                       {filingEvents
                         ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
                         ?.map((filingEvent) => {
-                          const [, descriptionHeading, descriptionBody] = filingEvent.description_html.match(
-                            /^<b>(.*)<\/b>(.*)$/
-                          )
+                          const [, descriptionHeading, descriptionBody] =
+                            filingEvent.description_html.match(/^<b>(.*)<\/b>(.*)$/)
                           return (
                             <li key={filingEvent.id}>
                               {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>
@@ -185,7 +184,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   const timer = new Timer({
     label: `Load company profile page details (company number:${companyNumber})`,
-    details: { class: 'company-profile' }
+    details: { class: 'company-profile' },
+    filename: '/pages/company/[number].tsx'
   })
   timer.start('Get company profile')
   const companyData = await getCompanyProfile(companyNumber)

@@ -9,9 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     console.time('Query database SELECT')
     const pool = getDatabasePool()
     const { rows: company } = await pool.query('SELECT * FROM companies WHERE number=$1;', [number])
-    const {
-      rows: sics
-    } = await pool.query(
+    const { rows: sics } = await pool.query(
       'SELECT description as sic_code FROM sic, sic_map WHERE company_number=$1 AND code=sic_code;',
       [number]
     )

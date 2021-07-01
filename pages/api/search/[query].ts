@@ -61,9 +61,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const uniqueResults = [...new Set(combinedResults)]
   combinedResults = uniqueResults
   console.time('Get SIC codes for all queries')
-  const {
-    rows: sics
-  } = await client.query(
+  const { rows: sics } = await client.query(
     'SELECT company_number, description AS sic_code FROM sic, sic_map WHERE company_number=ANY($1) AND sic.sic_code=sic_map.code',
     [combinedResults.map((result) => result.number)]
   )

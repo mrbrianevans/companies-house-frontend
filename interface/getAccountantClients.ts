@@ -1,9 +1,15 @@
 import { getDatabasePool } from '../helpers/connectToDatabase'
 import { ICompanyProfile } from '../types/ICompany'
+import { Timer } from '../helpers/Timer'
 
 const getAccountantClients: (name: string) => Promise<ICompanyProfile[]> = async (name) => {
-  console.time('Querying database for accountants clients')
+  const timer = new Timer({
+    filename: '/interface/getAccountantClients.ts',
+    label: 'Get the clients of an accountant',
+    details: { accountantName: name }
+  })
   const pool = getDatabasePool()
+  //todo: this should be calling company_view, or better yet, an accountant filter WHERE client_company_number IN (...)
   const { rows: matchingClients } = await pool.query(
     `
         SELECT DISTINCT name,
@@ -34,7 +40,7 @@ const getAccountantClients: (name: string) => Promise<ICompanyProfile[]> = async
     [name]
   )
   await pool.end()
-  console.timeEnd('Querying database for accountants clients')
+  timer.flush()
   return matchingClients
 }
 

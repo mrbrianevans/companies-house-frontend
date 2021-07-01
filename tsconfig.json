@@ -1,9 +1,10 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "esnext",
     "allowJs": true,
     "jsx": "preserve",
     "lib": [
@@ -20,10 +21,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true
   },
-  "include": [
-    "src"
-  ],
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }

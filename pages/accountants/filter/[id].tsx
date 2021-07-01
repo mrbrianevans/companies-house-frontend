@@ -2,23 +2,25 @@ import { IFilterOption } from '../../../types/IFilters'
 import { IAccountant } from '../../../types/IAccountant'
 import * as React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { getSavedFilter } from '../../../interface/filterAccountants/getSavedFilter'
-import getAccountantFilters from '../../../interface/filterAccountants/getFilterOptions'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { AccountantResultsTable } from '../../../components/FilterPage/ResultsTables/AccountantResultsTable'
-import { ISavedFilter } from '../../../types/ISavedFilter'
+import { ICachedFilter } from '../../../types/ICachedFilter'
 import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
-import { saveNewFilter } from '../../../interface/filterAccountants/saveNewFilter'
+import { FilterCategory } from '../../../types/FilterCategory'
+import getFilterOptions from '../../../interface/filter/getFilterOptions'
+import getCachedFilter from '../../../interface/filter/getCachedFilter'
+import getCachedFilterWithResults from '../../../interface/filter/getCachedFilterWithResults'
 
 interface Props {
   filterOptions?: IFilterOption[]
-  savedFilter: ISavedFilter<IAccountant>
+  savedFilter: ICachedFilter<IAccountant>
 }
 const AccountantFilterPage = ({ savedFilter, filterOptions }: Props) => {
   return (
     <FilterPage
       ResultsTable={AccountantResultsTable}
       config={accountantFilterConfig}
+      category={FilterCategory.ACCOUNTANT}
       filterOptions={filterOptions}
       savedFilter={savedFilter}
     />
@@ -34,7 +36,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getSavedFilter(id)
+  // accountant filters get the results before returning the page. this is because they usually execute really fast
+  const savedFilter = await getCachedFilterWithResults<IAccountant>({
+    cachedFilterId: id,
+    category: FilterCategory.ACCOUNTANT
+  })
   if (savedFilter === null) {
     return {
       notFound: true
@@ -42,7 +48,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   //todo: if the saved filter was run a long time ago, revalidate it in the background
   const returnProps: Props = {
-    filterOptions: getAccountantFilters(),
+    filterOptions: getFilterOptions({ category: FilterCategory.ACCOUNTANT }),
     savedFilter: savedFilter
   }
   return {

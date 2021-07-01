@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IFilter, IFilterOption } from '../../types/IFilters'
 import DropDown from '../Inputs/DropDown'
 import FormRow from '../Inputs/FormRow'
@@ -14,6 +14,9 @@ type Props = {
   addFilter: (filter: IFilter) => void
   filteringLabel: string
   filterOptions: IFilterOption[]
+  onChange?: (filter: IFilter) => void
+  // only calls once per filter change
+  onHoverAdd?: ((filter: IFilter) => void) | ((filter: IFilter) => Promise<void>)
 }
 
 export function NewFilterCard(props: Props) {
@@ -25,7 +28,34 @@ export function NewFilterCard(props: Props) {
   const [exclude, setExclude] = useState(false)
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
-
+  const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
+  // @ts-ignore this is very bad type design
+  const getCurrentFilter: () => IFilter = () => {
+    if (selectedFilterOption.valueType === 'number')
+      return {
+        category: selectedFilterOption.category,
+        comparison: 'is between',
+        type: 'number',
+        min,
+        max,
+        exclude
+      }
+    else if (selectedFilterOption.valueType === 'string') {
+      // @ts-ignore i'm sorry, i'm checking this manually
+      return {
+        category: selectedFilterOption.category,
+        comparison: comparison,
+        type: 'string',
+        values: [...values, typingValue].filter((v) => v),
+        exclude
+      }
+    }
+  }
+  // listen for changes to the filter and call onChange()
+  useEffect(() => {
+    setHasCalledOnHover(false)
+    if (props.onChange !== undefined) props.onChange(getCurrentFilter())
+  }, [min, max, exclude, values, typingValue, selectedFilterOption, comparison])
   const validateSelectedFilterCriteria = (
     selectedFilterOption: IFilterOption,
     selectedFilterCriteria: IFilter['comparison']
@@ -41,29 +71,19 @@ export function NewFilterCard(props: Props) {
     if (value.length) setValues((prevState) => [...prevState, value])
   }
   const addFilter = () => {
-    if (selectedFilterOption.valueType === 'number')
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: 'is between',
-        type: 'number',
-        min,
-        max,
-        exclude
-      })
-    else if (selectedFilterOption.valueType === 'string') {
-      // @ts-ignore i'm sorry, i'm checking this manually
-      props.addFilter({
-        category: selectedFilterOption.category,
-        comparison: comparison,
-        type: 'string',
-        values: [...values, typingValue].filter((v) => v),
-        exclude
-      })
-    }
+    props.addFilter(getCurrentFilter())
+    // sets the inputs to their default values.
+    setSelectedFilterOption(filterOptions[0])
+    setComparison(selectedFilterOption.possibleComparisons[0])
+    setMin(0)
+    setMax(1000)
+    setExclude(false)
+    setValues([])
+    setTypingValue('')
   }
   //todo: when the filter category changes, reset the values to []
   return (
-    <div className={styles.newFilterCard} style={{ width: '100%' }}>
+    <div className={styles.newFilterCard} style={{ width: '100%' }} data-test-id={'newFilterDiv'}>
       <h3>Add new filter</h3>
       <FormRow>
         {/*<label>*/}
@@ -74,18 +94,6 @@ export function NewFilterCard(props: Props) {
         {/*    onChange={(v) => setExclude(v.target.checked)}*/}
         {/*  />*/}
         {/*</label>*/}
-        {/*<select*/}
-        {/*  className={formStyles.standard}*/}
-        {/*  value={selectedFilterOption.category}*/}
-        {/*  onChange={(e) => {*/}
-        {/*    const selectedOption = filterOptions.find((option) => option.category === e.target.value)*/}
-        {/*    setSelectedFilterOption(selectedOption)*/}
-        {/*    setComparison(validateSelectedFilterCriteria(selectedOption, comparison))*/}
-        {/*  }}>*/}
-        {/*  {filterOptions.map((filterOption) => (*/}
-        {/*    <option key={filterOption.category}>{filterOption.category}</option>*/}
-        {/*  ))}*/}
-        {/*</select>*/}
         <DropDown
           options={filterOptions.map((filterOption) => ({ value: filterOption.category }))}
           value={selectedFilterOption.category}
@@ -95,25 +103,6 @@ export function NewFilterCard(props: Props) {
             setComparison(validateSelectedFilterCriteria(selectedOption, comparison))
           }}
         />
-        {/*<select*/}
-        {/*  className={formStyles.standard}*/}
-        {/*  value={comparison}*/}
-        {/*  onChange={(v) => {*/}
-        {/*    if (*/}
-        {/*      'begins with' == v.target.value ||*/}
-        {/*      v.target.value === 'includes' ||*/}
-        {/*      v.target.value === 'is exactly' ||*/}
-        {/*      v.target.value === 'ends with'*/}
-        {/*    )*/}
-        {/*      setComparison(v.target.value)*/}
-        {/*  }}>*/}
-        {/*  {*/}
-        {/*    // @ts-ignore*/}
-        {/*    selectedFilterOption.possibleComparisons.map((criterion: IFilter['comparison']) => (*/}
-        {/*      <option key={criterion}>{criterion}</option>*/}
-        {/*    ))*/}
-        {/*  }*/}
-        {/*</select>*/}
         <DropDown
           // @ts-ignore
           options={selectedFilterOption.possibleComparisons.map((value: any) => ({ value }))}
@@ -130,7 +119,15 @@ export function NewFilterCard(props: Props) {
           </>
         ) : (
           <>
-            <TextBox value={typingValue} onChange={setTypingValue} suggestions={selectedFilterOption.suggestions} />
+            <TextBox
+              value={typingValue}
+              onChange={setTypingValue}
+              suggestions={selectedFilterOption.suggestions}
+              onEnter={() => {
+                addValue(typingValue.trim())
+                setTypingValue('')
+              }}
+            />
             <IconButton
               label={'+'}
               onClick={() => {
@@ -150,7 +147,16 @@ export function NewFilterCard(props: Props) {
           : typingValue}
       </p>
 
-      <Button onClick={addFilter} label={'Add filter'} />
+      <Button
+        onClick={addFilter}
+        label={'Add filter'}
+        onHover={() => {
+          if (!hasCalledOnHover) {
+            if (props.onHoverAdd !== undefined) props.onHoverAdd(getCurrentFilter())
+            setHasCalledOnHover(true)
+          }
+        }}
+      />
     </div>
   )
 }

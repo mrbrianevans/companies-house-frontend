@@ -43,7 +43,8 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyProf
   } else {
     const timer = new Timer({
       details: { companyNumber: company_number, class: 'company-profile' },
-      label: 'Fetch company profile from Companies House API'
+      label: 'Fetch company profile from Companies House API',
+      filename: '/interface/getCompanyProfile.ts'
     })
     timer.start('API call')
     const apiUrl = 'https://api.company-information.service.gov.uk/company/' + company_number

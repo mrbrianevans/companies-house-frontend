@@ -1,4 +1,4 @@
- # Companies House #
+ # Filter Facility #
 
 This is a nextjs website, which serves API endpoints under `/api` and a Graphical UI under `/`.
 

@@ -1,4 +1,4 @@
-import { INumberFilter } from '../../../types/IFilters'
+import { INumberFilter, INumberFilterOption } from '../../../types/IFilters'
 import { IMinorQuery } from '../../../types/IQueries'
 
 export const filterAccountantsByNumberOfClients: (filter: INumberFilter) => IMinorQuery = (filter) => {
@@ -11,7 +11,7 @@ export const filterAccountantsByNumberOfClients: (filter: INumberFilter) => IMin
   return { query, value }
 }
 
-export const filterAccountantsByNumberOfClientsMetdata = {
+export const filterAccountantsByNumberOfClientsMetdata: INumberFilterOption = {
   category: 'number of clients',
   possibleComparisons: ['is between'],
   valueType: 'number'
