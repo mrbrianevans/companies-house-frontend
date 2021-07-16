@@ -59,10 +59,10 @@ export async function countResults({ filters, category }: CountResultsParams): P
     .catch((e) => timer.postgresError(e))
   timer.addDetail('Count returned from database', count)
   if (count === null) {
+    timer.customError('Count results returned null')
+  } else {
     timer.next(`Persist result size ${count} in DB`)
     await pool.query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
-  } else {
-    timer.customError('Count results returned null')
   }
   timer.flush()
 

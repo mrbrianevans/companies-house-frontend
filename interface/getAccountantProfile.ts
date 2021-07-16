@@ -2,6 +2,12 @@ import { IAccountant } from '../types/IAccountant'
 import { getDatabasePool } from '../helpers/connectToDatabase'
 import { Timer } from '../helpers/Timer'
 
+/**
+ * Gets an accountants profile from the database by its name
+ * @param name the exact name of the accountant (as it appears on accounts)
+ *
+ * @return IAccountant accountant profile if found, otherwise null
+ */
 const getAccountantProfile: (name: string) => Promise<IAccountant | null> = async (name) => {
   const timer = new Timer({
     label: 'Get accountant profile from DB',
