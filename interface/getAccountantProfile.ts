@@ -5,7 +5,7 @@ import { Timer } from '../helpers/Timer'
 const getAccountantProfile: (name: string) => Promise<IAccountant | null> = async (name) => {
   const timer = new Timer({
     label: 'Get accountant profile from DB',
-    details: { class: 'get-accountant-profile' },
+    details: { class: 'get-accountant-profile', name },
     filename: '/interface/getAccountantProfile.ts'
   })
   const pool = getDatabasePool()
@@ -18,6 +18,7 @@ const getAccountantProfile: (name: string) => Promise<IAccountant | null> = asyn
     [name]
   )
   await pool.end()
+  timer.addDetail('number of matching accountants', matchingAccountants.length)
   timer.flush()
   if (foundMatchingAccountants) return matchingAccountants[0]
   return null

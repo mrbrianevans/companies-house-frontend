@@ -15,7 +15,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run test:browser",
+      "pre-commit": "npm run test",
       "post-commit": "set SKIP_BUILD=1 && set UPLOAD_TESTS=1 && npm run test:browser"
     }
   },

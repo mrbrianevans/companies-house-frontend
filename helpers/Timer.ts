@@ -160,12 +160,12 @@ export class Timer {
   }
   /**
    * Logs a custom error message in a separate log to the main Timer
-   * @param message the string to log
+   * @param message an array of anything to log (logs the .toString())
    */
-  public customError(message: string) {
+  public customError(...message: any[]) {
     const errorLog = {
       severity: 'ERROR',
-      message: message,
+      message: message.map((m) => m?.toString() ?? 'null/undefined').join(' '),
       filename: this.config?.filename
     }
     console.log(JSON.stringify(errorLog))
@@ -180,7 +180,7 @@ export class Timer {
    * const { rows } = await pool.query('SELECT NOW()',[])
    *                            .catch(e=>timer.postgresError(e))
    */
-  public postgresError(e: PostgresError): void {
+  public postgresError(e: PostgresError): null {
     const errorLog = {
       severity: 'ERROR',
       message: 'Postgres Error: ' + e.message,
@@ -190,6 +190,7 @@ export class Timer {
       characterPositionInQuery: e.position
     }
     console.log(JSON.stringify(errorLog))
+    return null
   }
 
   /**
@@ -219,6 +220,10 @@ export class Timer {
       filename: this.config?.filename
     }
     console.log(JSON.stringify(errorLog))
+  }
+
+  public genericErrorCustomMessage(message: string) {
+    return (e: Error) => this.genericError(e, message)
   }
 }
 
