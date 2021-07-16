@@ -62,8 +62,8 @@ const combineQueries: (params: Params) => IMinorQuery = ({ filters, category }) 
       continue
     }
     if (filter.type == 'number' && filter.min > filter.max) {
-      timer.customError('Minimum greater than maximum on numeric filter category: ' + filter.category)
-      return { query: `SELECT * FROM ${filterConfig.main_table}`, value: [] }
+      // I think this mutates the filter object, which is a side effect
+      ;[filter.max, filter.min] = [filter.min, filter.max]
     }
     //each type of filter has a function that returns a sql query
     const { query, value } = filterMap.get(filter.category)(filter)
