@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { getCompanyProfile } from '../../interface/getCompanyProfile'
 import ClientCard from '../../components/Client/ClientCard'
 import { useRouter } from 'next/router'
+import { getFirstCompanyMatchByName } from '../../interface/api/getFirstCompanyMatchByName'
 
 const styles = require('../../styles/AccountantIndividual.module.sass')
 
@@ -43,8 +44,8 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
           <div className={styles.mainContainer}>
             <div>
               View regular company page:{' '}
-              <Link href={`/company/${accountantProfile.company_number}`}>
-                <a>{accountantProfile.company_number}</a>
+              <Link href={`/company/${companyProfile?.company_number}`}>
+                <a>{companyProfile?.company_number}</a>
               </Link>
             </div>
             <div>Software: {accountantProfile.software}</div>
@@ -88,8 +89,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
   if (accountantProfile?.company_number) {
     returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
-    return { notFound: true }
-    //todo: get possible matches from companies house search API
+    // get possible matches from companies house search API
+    returnProps.companyProfile = await getFirstCompanyMatchByName({ name })
   }
 
   return {
