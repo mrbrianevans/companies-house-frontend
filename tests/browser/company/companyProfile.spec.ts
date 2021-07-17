@@ -4,7 +4,8 @@ import { expect } from '@playwright/test'
 
 test('test companyProfile page loading screen', async ({ page, port }) => {
   const testUrl = new TestUrl({ port })
-  const companyNumber = '13467944'
+  // random number needed to avoid hitting the cache
+  const companyNumber = Math.round(Math.random() * 13467944).toString()
   await page.goto(testUrl.getUrl('company', companyNumber))
   const text = await page.innerText('main')
   expect(text).toMatch(/loading/i)
