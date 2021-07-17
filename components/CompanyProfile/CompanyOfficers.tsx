@@ -13,8 +13,8 @@ export const CompanyOfficers: (props: CompanyOfficersProps) => JSX.Element = ({ 
     <div className={styles.container}>
       <p>{loading ? 'loading' : officers?.length ?? "Can't find "} officers</p>
       <div className={styles.officerContainer}>
-        {(loading ? loadingOfficers : officers)?.map((officer) => (
-          <div className={loading ? styles.loading : styles.notLoading}>
+        {(loading ? loadingOfficers : officers)?.map((officer, index) => (
+          <div className={loading ? styles.loading : styles.notLoading} key={index}>
             <span>{officer.name}</span>
             <Person />
           </div>

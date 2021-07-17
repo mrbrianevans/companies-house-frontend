@@ -14,8 +14,8 @@ export const CompanyEmployees: (props: CompanyEmployeesProps) => JSX.Element = (
       <div className={loading ? styles.loading : styles.notLoading}>
         {Array(loading ? 3 : employees || employees == 0 ? Number(employees) : 3)
           .fill(null)
-          .map(() => (
-            <Person />
+          .map((v, i) => (
+            <Person key={i} />
           ))}
       </div>
     </div>

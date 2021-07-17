@@ -108,8 +108,8 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
         {financials && (
           <section className={styles.accounts}>
             <h4>Accounts</h4>
-            {Object.entries(financials).map(([financial, value]) => (
-              <p>
+            {Object.entries(financials).map(([financial, value], index) => (
+              <p key={index}>
                 {capitalizeEveryWord(financial.replaceAll('_', ' '))}: {value}
               </p>
             ))}
