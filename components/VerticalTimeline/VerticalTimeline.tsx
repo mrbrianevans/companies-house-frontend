@@ -1,4 +1,5 @@
 import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { splitDate } from '../../helpers/splitDate'
 
 const styles = require('./VerticalTimeline.module.scss')
 
@@ -30,7 +31,7 @@ const TimelineEvent = (event: ITimelineEvent) => {
     <div className={styles.timelineEvent}>
       <div className={styles.date}>
         <div className={styles.dateBlock}>
-          <span className={styles.month}>{month}</span>
+          <span className={styles.month}>{month.slice(0, 3)}</span>
           <span className={styles.year}>{year}</span>
         </div>
       </div>
@@ -39,17 +40,10 @@ const TimelineEvent = (event: ITimelineEvent) => {
     </div>
   )
 }
-const splitDate = (timestamp: number) => {
-  const monthIndex = new Date(timestamp).getUTCMonth()
-  const month = months[monthIndex]
-  const year = new Date(timestamp).getUTCFullYear()
-  const day = new Date(timestamp).getUTCDate()
-  return { day, month, year }
-}
+
 export interface ITimelineEvent {
   // milliseconds since epoch
   timestamp: number
   title: string
   description: string
 }
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
