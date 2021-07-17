@@ -7,19 +7,23 @@ import getCompanyEvents from '../../interface/getCompanyEvents'
 import { ICompanyAccounts } from '../../types/ICompanyAccounts'
 import getCompanyAccounts from '../../interface/getCompanyAccounts'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import {
-  CompanyFilingHistory,
-  FilingHistoryItem
-} from '@companieshouse/api-sdk-node/dist/services/company-filing-history'
-import { formatFilingDescription } from '../../interface/formatFilingDescription'
 import { GetFilingsListResponse } from '../api/chApi/getFilingsList'
-import { FilingItem } from '../../components/CompanyProfile/FilingItem'
-import Button from '../../components/Inputs/Button'
-import FormRow from '../../components/Inputs/FormRow'
 import { Timer } from '../../helpers/Timer'
-const styles = require('../../styles/Home.module.css')
+import { CompanyName } from '../../components/CompanyProfile/CompanyName'
+import { CountryFlag } from '../../components/Locations/CountryFlag'
+import { CompanyNumber } from '../../components/CompanyProfile/CompanyNumber'
+import { CompanyStatusTrafficLight } from '../../components/CompanyProfile/CompanyStatusTrafficLight'
+import { LocationMap } from '../../components/Locations/LocationMap'
+import { CompanyEmployees } from '../../components/CompanyProfile/CompanyEmployees'
+import { CompanyOfficers } from '../../components/CompanyProfile/CompanyOfficers'
+import { VerticalTimeline } from '../../components/VerticalTimeline/VerticalTimeline'
+import { ShareCode } from '../../components/ShareCode/ShareCode'
+import { AddressWithMapAndFlag } from '../../components/Locations/AddressWithMapAndFlag'
+import ButtonLink from '../../components/Inputs/ButtonLink'
+import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+
+const styles = require('./CompanyProfile.module.scss')
 
 interface props {
   companyData: ICompanyProfile
@@ -32,7 +36,6 @@ interface props {
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   const router = useRouter()
   const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
-  const [filingHistoryDisplayLimit, setFilingHistoryDisplayLimit] = useState(5)
   useEffect(() => {
     if (!companyData?.company_number) return
     fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company_number)
@@ -42,131 +45,77 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
   }, [companyData])
   return (
     <Page>
-      {router.isFallback ? (
-        <p>Loading company details...</p>
-      ) : (
-        <>
-          <h1>{companyData.name}</h1>
-          <div className={styles.card + ' ' + styles.full}>
-            <h4>
-              {companyData.status} - {companyData.category}
-            </h4>
-            <h3>Company number {companyData.company_number}</h3>
-            <div className={styles.addressBlock}>
-              <p>{companyData.streetaddress}</p>
+      <article className={styles.layout}>
+        <section className={styles.name}>
+          <CompanyName name={companyData?.name} loading={router.isFallback} />
+        </section>
+        <section className={styles.number}>
+          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company_number} />
+        </section>
+        <section className={styles.sharecode}>
+          <p>
+            This page: <ButtonLink href={router.asPath.toString()} />
+          </p>
+          {/*<ShareCode text={`filfa.co/v/${companyData?.company_number}`} />*/}
+        </section>
+        <section className={styles.status}>
+          <CompanyStatusTrafficLight status={companyData?.status} loading={router.isFallback} />
+        </section>
+        <section className={styles.location}>
+          <AddressWithMapAndFlag
+            address={
+              companyData && {
+                streetAddress: companyData.streetaddress,
+                country: companyData.country,
+                city: companyData.built_up_area,
+                county: companyData.county,
+                lat: 0,
+                long: 0,
+                postCode: companyData.postcode
+              }
+            }
+            loading={router.isFallback}
+          />
+        </section>
+        <section className={styles.employees}>
+          <CompanyEmployees employees={financials?.employees} loading={router.isFallback} />
+        </section>
+        <section className={styles.officers}>
+          <CompanyOfficers officers={financials?.officers.map((o) => ({ name: o }))} loading={router.isFallback} />
+        </section>
+        <section className={styles.timeline}>
+          <VerticalTimeline
+            events={
+              filingHistory?.items.map((event) => ({
+                timestamp: new Date(event.date).valueOf(),
+                title: event.category,
+                description: event.description
+              })) ??
+              filingEvents?.map((event) => ({
+                timestamp: new Date(event.published).valueOf(),
+                title: event.category,
+                description: event.description_html
+              }))
+            }
+            loading={router.isFallback}
+          />
+        </section>
+        {apiResponseTime && (
+          <section className={styles.responseTime}>
+            <p>Page loaded in {apiResponseTime / 1000} seconds</p>
+          </section>
+        )}
+        {financials && (
+          <section className={styles.accounts}>
+            <h4>Accounts</h4>
+            {Object.entries(financials).map(([financial, value]) => (
               <p>
-                {companyData.parish}
-                {companyData.parish && companyData.county && ', '}
-                {companyData.county}
+                {capitalizeEveryWord(financial.replaceAll('_', ' '))}: {value}
               </p>
-              <p>
-                {companyData?.region?.includes(companyData.country)
-                  ? companyData.region
-                  : companyData.region + (companyData.region && companyData.country && ', ') + companyData.country}
-              </p>
-            </div>
-            <div>
-              <h3>Industry classification:</h3>
-              <ul>
-                {companyData?.sic_codes?.map((sicCode, i) => (
-                  <li key={i}>{sicCode}</li>
-                ))}
-              </ul>
-            </div>
-            {filingHistory ? (
-              <div>
-                <h3>Filing history:</h3>
-                <ul>
-                  {filingHistory?.items?.slice(0, filingHistoryDisplayLimit)?.map((item) => {
-                    return <FilingItem item={item} />
-                  })}
-                </ul>
-                {filingHistory.totalCount > 5 && (
-                  <FormRow>
-                    {filingHistoryDisplayLimit < filingHistory.totalCount ? (
-                      <>
-                        <Button
-                          label={'Show more'}
-                          onClick={() => setFilingHistoryDisplayLimit((prevState) => prevState + 5)}
-                        />
-                        <Button
-                          label={'Show all'}
-                          onClick={() => setFilingHistoryDisplayLimit(filingHistory.totalCount)}
-                        />
-                      </>
-                    ) : (
-                      <span>Showing all available filings on record</span>
-                    )}
-                    {filingHistoryDisplayLimit > 5 && (
-                      <Button
-                        onClick={() => setFilingHistoryDisplayLimit((prevState) => prevState - 5)}
-                        label={'Show less'}
-                      />
-                    )}
-                  </FormRow>
-                )}
-              </div>
-            ) : (
-              <>
-                {filingEvents?.length + companyEvents?.length !== 0 && (
-                  <div>
-                    <h3>Recent filing history</h3>
-                    <ul>
-                      {filingEvents
-                        ?.sort((a, b) => new Date(a.published).valueOf() - new Date(b.published).valueOf())
-                        ?.map((filingEvent) => {
-                          const [, , descriptionHeading, descriptionBody] =
-                            filingEvent.description_html.match(/^(\*\*(.*)\*\*)?(.*)$/)
-                          return (
-                            <li key={filingEvent.id}>
-                              {new Date(filingEvent.filing_date).toDateString()}: <b>{descriptionHeading}</b>
-                              {descriptionBody}
-                            </li>
-                          )
-                        })}
-                      {companyEvents?.map((companyEvent) => (
-                        <li key={companyEvent.id}>
-                          {`Company profile: ${
-                            Object.keys(companyEvent.fields_changed ?? {}).length
-                          } items changed on ${new Date(companyEvent.published).toDateString()}`}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
-            )}
-            <div style={{ maxWidth: 800 }}>
-              {financials && (
-                <>
-                  <h3>Accounts</h3>
-                  <p>
-                    Balance sheet date: <b>{financials.balance_sheet_date}</b>
-                  </p>
-                  <p>
-                    Accountants:{' '}
-                    <b>
-                      <Link href={'/accountants/' + financials.accountants}>
-                        <a>{financials.accountants}</a>
-                      </Link>
-                    </b>
-                  </p>
-                  <p>
-                    Accounting software: <b>{financials.accounting_software}</b>
-                  </p>
-                  <p>
-                    Number of employees: <b>{financials.employees}</b>
-                  </p>
-                  <p>
-                    Profit: <b>{financials.profit}</b>
-                  </p>
-                </>
-              )}
-            </div>
-          </div>
-          <div className={styles.apiResponseTime}>API response time: {apiResponseTime}ms</div>
-        </>
-      )}
+            ))}
+          </section>
+        )}
+      </article>
     </Page>
   )
 }
@@ -174,6 +123,7 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
 export default CompanyDetails
 
 export const getStaticProps: GetStaticProps = async (context) => {
+  await new Promise((r) => setTimeout(r, 3000))
   const companyNumber = context.params.number.toString()
   if (!companyNumber.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/))
     return {

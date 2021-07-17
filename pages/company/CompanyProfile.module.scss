@@ -1,0 +1,55 @@
+article.layout {
+  display: grid;
+  grid-template-areas:
+    'name name'
+    'number sharecode'
+    'status location'
+    'timeline location'
+    'timeline officers'
+    'timeline employees'
+    'timeline accounts'
+    'timeline .'
+    'responseTime responseTime';
+  gap: 1rem;
+  grid-auto-columns: 1fr 1fr;
+  section {
+    display: inline-grid;
+    align-items: center;
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+  }
+  .name {
+    grid-area: name;
+  }
+  .number {
+    grid-area: number;
+  }
+  .sharecode {
+    grid-area: sharecode;
+    justify-items: end;
+  }
+  .status {
+    grid-area: status;
+  }
+  .location {
+    align-self: start;
+    grid-area: location;
+  }
+  .employees {
+    grid-area: employees;
+  }
+  .officers {
+    grid-area: officers;
+  }
+  .timeline {
+    grid-area: timeline;
+    align-items: start;
+  }
+  .responseTime {
+    grid-area: responseTime;
+  }
+  .accounts {
+    grid-area: accounts;
+  }
+}

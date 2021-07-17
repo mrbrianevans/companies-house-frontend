@@ -1,3 +1,40 @@
 div.container {
+  display: grid;
+  gap: 0.5rem;
+}
 
+div.timelineEvent {
+  display: grid;
+  grid-template-areas: 'date title' 'date description';
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.2);
+  justify-content: start;
+  .date {
+    grid-area: date;
+    display: grid;
+    place-items: start;
+    .dateBlock {
+      display: inline-grid;
+      width: 5rem;
+      height: 5rem;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 0.5rem;
+      justify-content: center;
+      text-align: center;
+      .month {
+      }
+      .year {
+      }
+    }
+  }
+  .title {
+    grid-area: title;
+    margin: 0;
+    font-size: 1rem;
+  }
+  .description {
+    grid-area: description;
+    margin: 0;
+  }
 }

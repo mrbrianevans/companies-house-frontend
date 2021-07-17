@@ -1,3 +1,11 @@
 div.container {
+  padding: 0.5rem;
+}
 
+div.loading svg {
+  opacity: 0.2;
+}
+
+div.notLoading svg {
+  opacity: 1;
 }

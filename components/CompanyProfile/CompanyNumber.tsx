@@ -8,7 +8,7 @@ type CompanyNumberProps = {
 export const CompanyNumber: (props: CompanyNumberProps) => JSX.Element = ({ loading, companyNumber }) => {
   return (
     <div className={styles.container}>
-      {loading ? 'loading data for CompanyNumber' : 'CompanyNumber data has loaded: ' + companyNumber}
+      {loading ? 'Loading company number' : 'Registered company number: ' + companyNumber}
     </div>
   )
 }
