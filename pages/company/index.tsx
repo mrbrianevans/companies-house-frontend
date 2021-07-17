@@ -7,6 +7,7 @@ import { CompanyIndustrySearchBar } from '../../components/SearchBars/CompanyInd
 import { FeatureList } from '../../components/lists/FeatureList'
 import getFilterOptions from '../../interface/filter/getFilterOptions'
 import { FilterCategory } from '../../types/FilterCategory'
+import ButtonLink from '../../components/Inputs/ButtonLink'
 
 const FilterCompaniesPage = () => {
   const [companyFilters] = useState(getFilterOptions({ category: FilterCategory.COMPANY }))
@@ -18,15 +19,13 @@ const FilterCompaniesPage = () => {
         To search for a company by name or company number, visit{' '}
         <Link href={'/search'}>
           <a>/search</a>
-        </Link>
+        </Link>{' '}
+        or type your query right here.
       </p>
       <CompanySearchBar />
       <h2>Filter</h2>
       <p>
-        To filter companies, visit{' '}
-        <Link href={'/company/filter'}>
-          <a>/company/filter</a>
-        </Link>
+        To filter companies, visit <ButtonLink href={'/company/filter'} />
       </p>
       <p>Get started with a filter by industry:</p>
       <CompanyIndustrySearchBar />

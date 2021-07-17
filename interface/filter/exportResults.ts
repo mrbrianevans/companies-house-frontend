@@ -32,7 +32,6 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
   })
   const remainingExportsTimer = timer.start('Calculate remaining exports for this user')
   //get the download limit remaining on the users account
-  //todo: this is not working because the COUNT results function is not being called, so they all have count 0
   const remainingExports: number = await client
     .query(
       `
@@ -52,7 +51,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
   `,
       [userId, config.operation_code]
     )
-    .then(({ rows }) => rows[0]['remaining_exports'])
+    .then(({ rows }) => Number(rows[0]['remaining_exports']))
     .catch((e) => timer.postgresError(e))
   remainingExportsTimer.stop()
   const { count } = await countResults({ filters: user_filter.filters, category: user_filter.category })

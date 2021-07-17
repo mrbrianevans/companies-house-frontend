@@ -3,6 +3,7 @@ import { IMinorQuery } from '../../../types/IQueries'
 import { getSqlLikeValues } from '../../../helpers/getSqlLikeValues'
 
 export const filterCompaniesByLocation: (filter: IStringFilter) => IMinorQuery = (filter) => {
+  // todo: this has a bug: some post code prefixes are only a single letter long, which includes unwanted results
   const query = `
       SELECT c.number AS company_number
       FROM companies c,

@@ -15,7 +15,7 @@ type SearchResultsProps = {
 const SearchResults = ({ query, results, responseTime }: SearchResultsProps) => {
   return (
     <Page>
-      <h1>Search results</h1>
+      <h1>Company search results</h1>
       <div className={styles.searchRow}>
         <p className={styles.inputLabel}>
           <label htmlFor={'companyNumberSearchBox'}>Search by company number or name</label>

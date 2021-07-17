@@ -19,7 +19,8 @@ export const CompanyIndustrySearchBar = () => {
           type: 'string',
           values: [query]
         }))
-        fetchGetFilterId({ category: FilterCategory.COMPANY, filters }).then((j) =>
+        // return the promise to show 'loading' until resolved
+        return fetchGetFilterId({ category: FilterCategory.COMPANY, filters }).then((j) =>
           router.push(companyFilterConfig.redirectUrl + j.id)
         )
       }}

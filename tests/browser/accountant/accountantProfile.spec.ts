@@ -17,7 +17,7 @@ test('accountant profile without company number loads without errors', async ({ 
   await page.goto(testUrl.getUrl('accountants', requestedName))
   const responseName = await page.innerText('main h1')
   expect(responseName).toBe(requestedName)
-  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfile.png` })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfileWithoutCompanyNumber.png` })
 })
 
 test('accountant profile with company number loads without errors', async ({ page, port }) => {
@@ -26,7 +26,7 @@ test('accountant profile with company number loads without errors', async ({ pag
   await page.goto(testUrl.getUrl('accountants', requestedName))
   const responseName = await page.innerText('main h1')
   expect(responseName).toBe(requestedName)
-  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfile.png` })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfileWithCompanyNumber.png` })
 })
 
 test('non existent accountant returns a 404', async ({ page, port }) => {
@@ -38,5 +38,5 @@ test('non existent accountant returns a 404', async ({ page, port }) => {
   expect(allPageText).toMatch(/not found/i)
   expect(allPageText).toMatch(/404/i)
 
-  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfile.png` })
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/accountantProfileNotFound.png` })
 })

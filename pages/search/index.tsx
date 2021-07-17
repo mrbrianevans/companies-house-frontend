@@ -7,7 +7,7 @@ const styles = require('../../styles/Search.module.sass')
 const SearchPage = () => {
   return (
     <Page>
-      <h1>Search</h1>
+      <h1>Company search</h1>
       <div className={styles.searchRow}>
         <p className={styles.inputLabel}>
           <label htmlFor={'companyNumberSearchBox'}>Search by company number or name</label>

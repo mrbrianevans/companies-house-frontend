@@ -18,8 +18,11 @@ export const fetchGetFilterId: (params: GetFilterIdParams) => Promise<GetFilterI
   })
     .then((r) => {
       if (r.status === 200) return r.json()
-      console.error('Failed to call getFilterId API endpoint')
+      console.error('Failed to call getFilterId API endpoint, status', r.status)
       return null
     })
-    .catch(console.error)
+    .catch((e) => {
+      console.error(e)
+      return null
+    })
 }

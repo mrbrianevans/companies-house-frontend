@@ -22,19 +22,31 @@ export default function Home() {
           />
           {!loading && !session && <ButtonLink href={'/auth/signin'} label={'Sign in!'} />}
         </div>
-        <Link href={'/accountants'}>
+        <Link href={'/accountants/filter'}>
           <a draggable={'false'}>
             <h3>Filter accountants</h3>
             <p>
-              This aggregates accountants discolsure on accounts to build a picture of how many clients an accountant
+              This aggregates accountants disclosure on accounts to build a picture of how many clients an accountant
               has
             </p>
           </a>
         </Link>
-        <Link href={'/company'}>
+        <Link href={'/company/filter'}>
           <a draggable={'false'}>
             <h3>Filter companies</h3>
             <p>Filter all UK companies by parameters such as location, SIC code and name</p>
+          </a>
+        </Link>
+        <Link href={'/search'}>
+          <a draggable={'false'}>
+            <h3>Search companies</h3>
+            <p>Search for a company by name or company number</p>
+          </a>
+        </Link>
+        <Link href={'/accountants'}>
+          <a draggable={'false'}>
+            <h3>Search accountants</h3>
+            <p>Search for an accounting practice by name</p>
           </a>
         </Link>
         <div className={styles.aboutCard}>

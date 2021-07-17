@@ -9,8 +9,10 @@ export const AccountantSearchBar = () => {
   const router = useRouter()
   return (
     <GenericSearchBar
-      textBoxPlaceholder={'Albert Goodman or Haines Watts'}
-      buttonOnClick={(q) => {
+      textBoxPlaceholder={'Accountant name'}
+      buttonOnClick={async (q) => {
+        // this splits a search query into words and joins them with a logical AND
+        // eg "crates wool" filters by name includes "crates" AND name includes "wool"
         const filters: IFilter[] = q.split(' ').map((query) => ({
           category: 'name',
           comparison: 'includes',
@@ -18,7 +20,8 @@ export const AccountantSearchBar = () => {
           type: 'string',
           values: [query]
         }))
-        fetchGetFilterId({ category: FilterCategory.ACCOUNTANT, filters }).then((j) =>
+        // await the promise to show 'loading' until resolved
+        await fetchGetFilterId({ category: FilterCategory.ACCOUNTANT, filters }).then((j) =>
           router.push(accountantFilterConfig.redirectUrl + j.id)
         )
       }}

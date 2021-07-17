@@ -11,6 +11,8 @@
     "test": "npm run test:unit && npm run test:browser",
     "test:unit": "mocha -r ts-node/register tests/unit/**/*.spec.ts",
     "test:browser:skipbuild:upload": "set SKIP_BUILD=1 && set UPLOAD_TESTS=1 && npm run test:browser",
+    "test:browser:skipbuild": "set SKIP_BUILD=1 && npm run test:browser",
+    "test:browser:upload": "set UPLOAD_TESTS=1 && playwright test --reporter=json,line",
     "test:browser": "playwright test --reporter=json,line"
   },
   "husky": {

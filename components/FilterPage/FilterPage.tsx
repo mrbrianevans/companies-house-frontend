@@ -50,6 +50,7 @@ export const FilterPage = <ResultType extends object>({
   // this is probably not the best way, but I have wasted enough time trying to get this to work
   const [needsRedirect, setNeedsRedirect] = useState(false)
   useEffect(() => {
+    // called when the saved filter (page prop) changes
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
 
@@ -67,6 +68,7 @@ export const FilterPage = <ResultType extends object>({
       }
     }
     setExecutionTime(savedFilter?.metadata?.lastRunTime)
+    setUserFilterId(undefined)
     if (savedFilter?.metadata?.id) {
       //async get if the user has already saved this filter on page load
       fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((r) => {
