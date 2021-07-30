@@ -49,6 +49,18 @@ export default function Home() {
             <p>Search for an accounting practice by name</p>
           </a>
         </Link>
+        <Link href={'/officers/search'}>
+          <a draggable={'false'}>
+            <h3>Search officers</h3>
+            <p>Search for an officer by name</p>
+          </a>
+        </Link>
+        <Link href={'#'}>
+          <a draggable={'false'}>
+            <h3>Filter officers</h3>
+            <p>Feature coming soon to filter officers by age</p>
+          </a>
+        </Link>
         <div className={styles.aboutCard}>
           <h3>About</h3>
           <p>

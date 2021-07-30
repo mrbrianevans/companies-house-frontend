@@ -5,14 +5,13 @@ ALTER TABLE person_officers
 
 CREATE INDEX officer_name_index ON person_officers USING GIN (officer_name_vector);
 
-SELECT *, ts_rank_cd(officer_name_vector, to_tsquery('brian')) AS rank
+SELECT *, ts_rank_cd(officer_name_vector, to_tsquery('brian & evans')) AS rank
 FROM person_officers
-WHERE officer_name_vector @@ to_tsquery('brian')
+WHERE officer_name_vector @@ to_tsquery('brian & evans')
 ORDER BY rank DESC
 LIMIT 10;
 
 SELECT *
 FROM person_officers JOIN detailed_postcodes dp on person_officers.post_code = dp.postcode
-WHERE officer_name_vector @@ to_tsquery('bruce & evans')
-LIMIT 10;
+WHERE officer_name_vector @@ to_tsquery('bruce & evans & david');
 

@@ -22,8 +22,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const user = await getUser({ session })
   const output = await searchOfficersByName({ query })
   if (output) {
-    const { officers }: SearchOfficersByNameOutput = output
-    res.json({ officers })
+    const { results }: SearchOfficersByNameOutput = output
+    res.json({ results: results })
     return
   } else {
     res.status(500).send('Failed')
