@@ -1,5 +1,5 @@
 import { Page } from '../Page/Page'
-import { IFilter, IFilterOption } from '../../types/IFilters'
+import { IFilterValue, IFilterOption } from '../../types/IFilters'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { NewFilterCard } from '../NewFilterCard/NewFilterCard'
@@ -21,6 +21,7 @@ import { FormatterRow } from 'fast-csv'
 import FormRow from '../Inputs/FormRow'
 import ButtonLink from '../Inputs/ButtonLink'
 import { fetchCountResults } from '../../ajax/filter/countResults'
+import { translateFiltersToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
@@ -39,7 +40,7 @@ export const FilterPage = <ResultType extends object>({
   ResultsTable
 }: Props<ResultType>) => {
   const router = useRouter()
-  const [filters, setFilters] = useState<IFilter[]>([])
+  const [filters, setFilters] = useState<IFilterValue[]>([])
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
   const [filterMatches, setFilterMatches] = useState<ResultType[]>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
@@ -110,11 +111,13 @@ export const FilterPage = <ResultType extends object>({
         })
         fetchGetFilterId({ filters, category }).then((res) => {
           // this means the client isn't on the right page
-          if (res.id !== savedFilter?.metadata?.id)
-            return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
+          if (res && res.id !== savedFilter?.metadata?.id)
+            return router.push(`/${config.urlPath}/filter/` + res.id, `/${config.urlPath}/filter/` + res.id, {
+              scroll: false
+            })
         })
       } else if (savedFilter?.metadata?.id) {
-        router.push(config.redirectUrl, config.redirectUrl, { scroll: false })
+        router.push(`/${config.urlPath}/filter/`, `/${config.urlPath}/filter/`, { scroll: false })
       }
     }
   }, [filters])
@@ -126,7 +129,7 @@ export const FilterPage = <ResultType extends object>({
       </Page>
     )
   }
-  const addFilter = (filter: IFilter) => {
+  const addFilter = (filter: IFilterValue) => {
     setNeedsRedirect(true)
     setFilterMatches(undefined)
     setFilters([filter, ...(filters ?? [])])
@@ -180,11 +183,10 @@ export const FilterPage = <ResultType extends object>({
         )}
         {filters !== undefined &&
           filters instanceof Array &&
-          filters?.map((filter: IFilter, i) => (
+          filters?.map((filter: IFilterValue, i) => (
             <div style={{ width: '100%' }} key={i}>
               <p className={styles.appliedFilter}>
-                {filter.category} {filter.comparison}{' '}
-                {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
+                {translateFiltersToEnglish([filter])}
                 <IconButton label={'x'} onClick={() => removeFilter(i)} />
               </p>
             </div>

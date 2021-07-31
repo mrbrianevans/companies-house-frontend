@@ -33,7 +33,7 @@ const OfficerAboutPage = () => {
         To filter {config.labelPlural}, visit <ButtonLink href={'/' + config.urlPath + '/filter'} />
       </p>
       <h3>Available filters:</h3>
-      <FeatureList list={filters.map((filter) => filter.category)} />
+      <FeatureList list={filters.map((filter) => filter.field)} />
     </Page>
   )
 }

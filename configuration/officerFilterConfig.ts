@@ -1,21 +1,32 @@
 import { IFilterConfig } from '../types/IFilterConfig'
+import { FilterComparison } from './filterComparisons'
 
 export const officerFilterConfig: IFilterConfig = {
   urlPath: 'officer',
   filters: [
     {
-      filterOption: { category: 'age', possibleComparisons: ['is between'], valueType: 'number' },
-      sqlGenerator: (filter) => ({
-        value: filter.type === 'number' ? [filter.min, filter.max] : [],
-        query: `SELECT * FROM person_officers WHERE EXTRACT(YEAR FROM current_date) - EXTRACT(YEAR FROM birth_date) BETWEEN ? AND ?`
-      })
+      columnName: 'birth_date',
+      dataType: 'date',
+      field: 'date of birth',
+      possibleComparisons: [FilterComparison.AFTER, FilterComparison.BEFORE, FilterComparison.IS_BETWEEN]
+    },
+    {
+      columnName: 'forenames',
+      dataType: 'string',
+      field: 'first name',
+      possibleComparisons: [FilterComparison.MATCHES]
+    },
+    {
+      columnName: 'height',
+      dataType: 'number',
+      field: 'height in cm',
+      possibleComparisons: [FilterComparison.GREATER_THAN, FilterComparison.LESS_THAN, FilterComparison.IS_BETWEEN]
     }
   ],
   labelPlural: 'officers',
   labelSingular: 'officer',
   main_table: 'person_officers',
   operation_code: 'download_officer_records',
-  redirectUrl: '/officer/filter/',
   uniqueIdentifier: 'person_number',
   viewItemUrl: '/officer/'
 }

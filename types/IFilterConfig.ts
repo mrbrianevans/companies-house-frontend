@@ -1,4 +1,4 @@
-import { IFilter, IFilterOption } from './IFilters'
+import { IFilterValue, IFilterOption } from './IFilters'
 import { IMinorQuery } from './IQueries'
 
 export interface IFilterConfig {
@@ -19,21 +19,15 @@ export interface IFilterConfig {
    * 'officers'
    */
   urlPath: string
-  /**
-   * The url path to view a saved filter for this category.
-   * @deprecated Deprecated in favour of using `urlPath`
-   * @description
-   * Must have a leading and trailing slash.
-   * @example
-   * `/officers/filter/`
-   */
-  redirectUrl: string
   // the things you are filtering for, eg: companies, accountants
   labelPlural: string
   // the thing you are filtering for, eg: company, accountant
   labelSingular: string
 
-  filters: { sqlGenerator: (filter: IFilter) => IMinorQuery; filterOption: IFilterOption }[]
+  /**
+   * A list of the filters which can be used on this category of data. Should be mostly generated from groovy script.
+   */
+  filters: IFilterOption[]
 
   // the filters primary table from where results are returned
   main_table: string

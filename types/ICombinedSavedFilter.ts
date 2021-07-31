@@ -1,4 +1,4 @@
-import { IFilter } from './IFilters'
+import { IFilterValue } from './IFilters'
 import { FilterCategory } from './FilterCategory'
 
 // join user filter on saved filter
@@ -16,7 +16,7 @@ export interface ICombinedSavedFilter {
   //timestamp in ms
   last_run: number
   time_to_run: number[]
-  filters: IFilter[]
+  filters: IFilterValue[]
   query: string
   result_count: number
 }

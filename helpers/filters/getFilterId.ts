@@ -1,5 +1,5 @@
-import { IFilter } from '../types/IFilters'
-import { FilterCategory } from '../types/FilterCategory'
+import { IFilterValue } from '../../types/IFilters'
+import { FilterCategory } from '../../types/FilterCategory'
 const hash = require('object-hash')
 
 /**
@@ -10,8 +10,8 @@ const hash = require('object-hash')
  * @param filters the filters to hash for ID
  * @param category the filter category such as COMPANY or ACCOUNTANT
  */
-export const getFilterId = (filters: IFilter[], category: FilterCategory) => {
-  // sorts the filters so that a different order doesn't give a different filter
+export const getFilterId = (filters: IFilterValue[], category: FilterCategory) => {
+  // uses unordered settings in hashing algorithm so that differently ordered filters don't produce different hashes
   const hashString: string = hash(
     { filters, category },
     {

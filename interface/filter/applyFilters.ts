@@ -1,14 +1,14 @@
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import getFilterConfig from '../../helpers/getFilterConfig'
 
 type Params = {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
   limit: number
   sort?: string[]

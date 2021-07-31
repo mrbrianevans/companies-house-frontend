@@ -1,10 +1,10 @@
 // this file is located in: /interface/filter/getFilterId.ts
 // to import from this file, use: import { GetFilterIdParams, GetFilterIdOutput, getFilterId } from '../../interface/filter/getFilterId'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId as getFilterIdHelper } from '../../helpers/getFilterId'
+import { getFilterId as getFilterIdHelper } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import combineQueries from './combineQueries'
@@ -12,7 +12,7 @@ import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 // input parameters for getFilterId - filters, category
 export interface GetFilterIdParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 

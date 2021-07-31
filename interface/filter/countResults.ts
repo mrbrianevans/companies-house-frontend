@@ -1,17 +1,17 @@
 // this file is located in: /interface/filter/countResults.ts
 // to import from this file, use: import { CountResultsParams, CountResultsOutput, countResults } from '../../interface/filter/countResults'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 // input parameters for countResults - filters, category
 export interface CountResultsParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 

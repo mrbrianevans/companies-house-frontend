@@ -19,7 +19,7 @@ const AccountantFilterPage = () => {
       <p>Start off a filter searching by name:</p>
       <AccountantSearchBar />
       <h3>Available filters</h3>
-      <FeatureList list={accountantFilters.map((filter) => filter.category)} />
+      <FeatureList list={accountantFilters.map((filter) => filter.field)} />
       <h3>About this service</h3>
       <p>
         When companies file their annual accounts with Companies House, many include their accountants name and

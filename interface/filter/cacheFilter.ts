@@ -1,21 +1,18 @@
 // this file is located in: /interface/filter/cacheFilter.ts
 // to import from this file, use: import { CacheFilterParams, CacheFilterOutput, cacheFilter } from '../../interface/filter/cacheFilter'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
-import applyFilters from './applyFilters'
-import { logPostgresError } from '../../helpers/loggers/PostgresErrorLogger'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { cacheResults } from './cacheResults'
 
 // input parameters for cacheFilter
 export interface CacheFilterParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 

@@ -33,7 +33,7 @@ const FilterCompaniesPage = () => {
       <p>Get started with a filter by industry:</p>
       <CompanyIndustrySearchBar />
       <h3>Available filters:</h3>
-      <FeatureList list={companyFilters.map((filter) => filter.category)} />
+      <FeatureList list={companyFilters.map((filter) => filter.field)} />
     </Page>
   )
 }

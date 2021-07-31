@@ -1,4 +1,4 @@
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import applyFilters from './applyFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
@@ -8,7 +8,7 @@ import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 export type CacheResultsParams = {
   id: string
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
   // how many results to cache. defaults to 20
   qty?: number

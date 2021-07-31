@@ -5,6 +5,7 @@ const styles = require('./Inputs.module.scss')
 type TextBoxProps = {
   placeholder?: string
   value: number
+  onEnter?: () => void
   onChange: (newValue: number) => void
 }
 const TextBoxNumber = (props: TextBoxProps) => {
@@ -15,6 +16,11 @@ const TextBoxNumber = (props: TextBoxProps) => {
       placeholder={props.placeholder}
       value={props.value}
       onChange={(v) => props.onChange(Number(v.target.value))}
+      onKeyPress={(kv) => {
+        if (kv.key == 'Enter') {
+          props.onEnter()
+        }
+      }}
     />
   )
 }

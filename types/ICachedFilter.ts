@@ -1,8 +1,8 @@
-import { IFilter } from './IFilters'
+import { IFilterValue } from './IFilters'
 import { IAccountant } from './IAccountant'
 
 export interface ICachedFilter<ResultType> {
-  appliedFilters: IFilter[]
+  appliedFilters: IFilterValue[]
   results: ResultType[]
   metadata: FilterMetadata
 }

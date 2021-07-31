@@ -1,7 +1,7 @@
 import { getSqlLikeValues } from '../../helpers/getSqlLikeValues'
 
 const testOutput = getSqlLikeValues(
-  { values: ['A', 'a', 'B', 'b'], category: 'test', comparison: 'is exactly', exclude: false, type: 'string' },
+  { values: ['A', 'a', 'B', 'b'], field: 'test', comparison: 'is exactly', exclude: false, dataType: 'string' },
   false
 )
 

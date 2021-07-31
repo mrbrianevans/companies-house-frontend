@@ -1,7 +1,9 @@
+import { capitalizeEveryWord } from './StringManipulation'
+
 /**
  * Convert a SQL column name or table name into a human readable english name.
  *
- * Replaces underscores and in future will capitilise words.
+ * Replaces underscores capitalises words.
  *
  * @param sqlName a SQL column name or table name in snake case
  * @example
@@ -19,5 +21,5 @@
      )
  */
 export const sqlNameToEnglish = (sqlName: string) => {
-  return sqlName.replace(/_/g, ' ')
+  return capitalizeEveryWord(sqlName.replace(/_/g, ' '))
 }

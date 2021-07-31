@@ -1,6 +1,6 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { ICombinedSavedFilter } from '../../types/ICombinedSavedFilter'
-import { translateFiltersToEnglish } from '../../helpers/translateFiltersToEnglish'
+import { translateFiltersToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
 import { IUserFilterDisplay } from '../../types/IUserFilter'
 import { Timer } from '../../helpers/Timer'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
@@ -30,7 +30,7 @@ export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDi
     dateSaved: new Date(filter.saved_date).valueOf(),
     cachedFilterId: filter.cached_filter_fk,
     category: filter.category,
-    urlToFilter: `${getFilterConfig({ category: filter.category }).redirectUrl}filter/${filter.cached_filter_fk}`,
+    urlToFilter: `/${getFilterConfig({ category: filter.category }).urlPath}/filter/${filter.cached_filter_fk}`,
     userFilterId: filter.user_saved_id.toString(),
     resultCount: Number(filter.result_count)
   }))
