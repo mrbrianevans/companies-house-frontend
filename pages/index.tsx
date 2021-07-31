@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import ButtonLink from '../components/Inputs/ButtonLink'
 import { useSession } from 'next-auth/client'
+import { companyNumberRegex } from '../types/patterns/CompanyNumberRegex'
 
 const styles = require('../styles/Home.module.css')
 export default function Home() {
@@ -22,15 +23,6 @@ export default function Home() {
           />
           {!loading && !session && <ButtonLink href={'/auth/signin'} label={'Sign in!'} />}
         </div>
-        <Link href={'/accountants/filter'}>
-          <a draggable={'false'}>
-            <h3>Filter accountants</h3>
-            <p>
-              This aggregates accountants disclosure on accounts to build a picture of how many clients an accountant
-              has
-            </p>
-          </a>
-        </Link>
         <Link href={'/company/filter'}>
           <a draggable={'false'}>
             <h3>Filter companies</h3>
@@ -43,29 +35,38 @@ export default function Home() {
             <p>Search for a company by name or company number</p>
           </a>
         </Link>
+        <Link href={'/accountants/filter'}>
+          <a draggable={'false'}>
+            <h3>Filter accountants</h3>
+            <p>
+              This aggregates accountants disclosure on accounts to build a picture of how many clients an accountant
+              has
+            </p>
+          </a>
+        </Link>
         <Link href={'/accountants'}>
           <a draggable={'false'}>
             <h3>Search accountants</h3>
             <p>Search for an accounting practice by name</p>
           </a>
         </Link>
-        <Link href={'/officers/search'}>
+        <Link href={'/officer/filter'}>
+          <a draggable={'false'}>
+            <h3>Filter officers</h3>
+            <p>Filter officers by age</p>
+          </a>
+        </Link>
+        <Link href={'/officer/search'}>
           <a draggable={'false'}>
             <h3>Search officers</h3>
             <p>Search for an officer by name</p>
-          </a>
-        </Link>
-        <Link href={'#'}>
-          <a draggable={'false'}>
-            <h3>Filter officers</h3>
-            <p>Feature coming soon to filter officers by age</p>
           </a>
         </Link>
         <div className={styles.aboutCard}>
           <h3>About</h3>
           <p>
             Every company in the UK is compelled by law to file annual accounts with Companies House, who then makes
-            these publically available. This is a facility to filter UK companies using the data from companies house
+            these publicly available. This is a facility to filter UK companies using the data from companies house
           </p>
         </div>
       </div>
@@ -74,6 +75,6 @@ export default function Home() {
 }
 
 const getSearchLink = (value: string) => {
-  if (value.match(/^[0-9]{6,8}|([A-Z]{2}[0-9]{6})$/)) return 'company/' + encodeURIComponent(value)
+  if (value.match(companyNumberRegex)) return 'company/' + encodeURIComponent(value)
   else return '/search' + (value ? '/' + encodeURIComponent(value) : '')
 }

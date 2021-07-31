@@ -23,7 +23,7 @@ type OfficerSearchResultsProps = {
 const OfficerSearchPage = ({ query, results, responseTime }: OfficerSearchResultsProps) => {
   return (
     <Page>
-      <h1>Officer search</h1>
+      <h1>Officer search results</h1>
       <div className={styles.searchRow}>
         <p className={styles.inputLabel}>
           <label htmlFor={filterConfig.labelSingular + 'SearchBox'}>

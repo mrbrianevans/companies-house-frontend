@@ -20,6 +20,7 @@ test('test companyProfile page', async ({ page, port }) => {
   const companyNumber = '12851415'
   await Promise.all([
     page.waitForResponse((response) => response.url().endsWith(companyNumber + '.json')),
+    page.waitForNavigation({ waitUntil: 'networkidle' }),
     page.goto(testUrl.getUrl('company', companyNumber))
   ])
   const companyName = await page.innerText('main h1')
@@ -32,6 +33,7 @@ test('test companyProfile page for company with accounts', async ({ page, port }
   const companyNumber = '03177212'
   await Promise.all([
     page.waitForResponse((response) => response.url().endsWith(companyNumber + '.json')),
+    page.waitForNavigation({ waitUntil: 'networkidle' }),
     page.goto(testUrl.getUrl('company', companyNumber))
   ])
   const companyName = await page.innerText('main h1')

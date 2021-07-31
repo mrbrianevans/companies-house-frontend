@@ -32,6 +32,7 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
 
   const splitQuery = query
     .split(' ')
+    .map((s) => s.replace(/[^a-zA-Z0-9-_]/, ''))
     .map((s) => s.trim())
     .filter((s) => s.length)
     .join(' & ')

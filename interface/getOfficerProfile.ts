@@ -43,5 +43,6 @@ export const getOfficerProfile = async (officer_id: string) => {
   await pool.end()
   timer.flush()
   const output: IOfficerItem = convertOfficerDatabaseItemToItem(results[0])
+  timer.addDetail('officer name', output.forenames + ' ' + output.surname)
   return output
 }

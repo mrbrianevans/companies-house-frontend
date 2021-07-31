@@ -46,6 +46,15 @@ test('home page hyper links', async ({ page, port }) => {
 
   await page.click('a:has-text("Search accountants")')
   await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/HomepageLink-Search accountants.png` })
+  await page.goBack()
+
+  await page.click('a:has-text("Search officers")')
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/HomepageLink-Search officers.png` })
+  await page.goBack()
+
+  await page.click('a:has-text("Filter officers")')
+  await page.screenshot({ path: `${process.env.BROWSER_TEST_OUTPUT_DIR}/HomepageLink-Filter officers.png` })
+  await page.goBack()
   /*
   I would like to test the response codes of the hyper links, but can't find a way to do it. Tried this:
 

@@ -28,7 +28,7 @@ type ${PascalName}SearchResultsProps = {
 const ${PascalName}SearchPage = ({ query, results, responseTime }: ${PascalName}SearchResultsProps) => {
   return (
     <Page>
-      <h1>${PascalName} search</h1>
+      <h1>${PascalName} search results</h1>
       <div className={styles.searchRow}>
         <p className={styles.inputLabel}>
           <label htmlFor={filterConfig.labelSingular+'SearchBox'}>Search for {filterConfig.labelPlural} by name</label>
