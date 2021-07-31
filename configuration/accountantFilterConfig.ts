@@ -14,8 +14,7 @@ import {
 } from '../interface/filterAccountants/filters/numberOfClients'
 
 export const accountantFilterConfig: IFilterConfig = {
-  countResultsApiUrl: '/api/filter/countResults',
-  getFilterIdApiUrl: '/api/filter/getFilterId',
+  urlPath: 'accountants',
   redirectUrl: '/accountants/filter/',
   viewItemUrl: '/accountants/',
   labelPlural: 'accountants',

@@ -1,26 +1,28 @@
-import { IFilterOption } from '../../../types/IFilters'
 import * as React from 'react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { ICachedFilter } from '../../../types/ICachedFilter'
 import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
-import { companyFilterConfig } from '../../../configuration/companyFilterConfig'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
 import { ICompanyViewItem } from '../../../types/ICompanyViewItem'
+import getFilterConfig from '../../../helpers/getFilterConfig'
 
 interface Props {
-  filterOptions?: IFilterOption[]
   savedFilter: ICachedFilter<ICompanyViewItem>
 }
-const CompanyFilterPage = ({ savedFilter, filterOptions }: Props) => {
+const category = FilterCategory.COMPANY
+const config = getFilterConfig({ category })
+const filterOptions = getFilterOptions({ category })
+
+const CompanyFilterPage = ({ savedFilter }: Props) => {
   return (
     <FilterPage
       ResultsTable={CompanyResultsTable}
-      config={companyFilterConfig}
-      category={FilterCategory.COMPANY}
+      config={config}
       filterOptions={filterOptions}
+      category={category}
       savedFilter={savedFilter}
     />
   )
@@ -37,7 +39,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   const savedFilter = await getCachedFilter<ICompanyViewItem>({
     cachedFilterId: id,
-    category: FilterCategory.COMPANY
+    category
   })
   if (savedFilter === null) {
     return {
@@ -45,7 +47,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   }
   const returnProps: Props = {
-    filterOptions: getFilterOptions({ category: FilterCategory.COMPANY }),
     savedFilter: savedFilter
   }
   return {

@@ -46,8 +46,7 @@ import {
 } from '../interface/filterCompanies/filters/cashAtBank'
 
 export const companyFilterConfig: IFilterConfig = {
-  countResultsApiUrl: '/api/companies/countFilterResults',
-  getFilterIdApiUrl: '/api/companies/filterRedirect',
+  urlPath: 'company',
   redirectUrl: '/company/filter/',
   viewItemUrl: '/company/',
   labelPlural: 'companies',

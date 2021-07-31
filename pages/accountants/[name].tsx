@@ -18,7 +18,7 @@ interface props {
   companyProfile?: ICompanyProfile | null
 }
 
-const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
+const AccountantProfilePage = ({ accountantProfile, companyProfile }: props) => {
   const [clients, setClients] = useState<undefined | ICompanyProfile[]>()
   useEffect(() => {
     if (accountantProfile) {
@@ -75,7 +75,7 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
   )
 }
 
-export default CompanyDetails
+export default AccountantProfilePage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const {
