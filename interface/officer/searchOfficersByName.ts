@@ -3,8 +3,7 @@
 
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
-import { IPersonOfficersItem } from '../../types/IPersonOfficersItem'
-import { IOfficer } from '../../types/IOfficer'
+import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem, IOfficerItem } from '../../types/IOfficer'
 import { IDetailedPostcodesItem } from '../../types/IDetailedPostcodesItem'
 
 // input parameters for searchOfficersByName - query
@@ -14,7 +13,7 @@ export interface SearchOfficersByNameParams {
 
 // return type of searchOfficersByName - officers
 export interface SearchOfficersByNameOutput {
-  results: IOfficer[]
+  results: IOfficerItem[]
 }
 
 /**
@@ -50,7 +49,7 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   `,
         [splitQuery]
       )
-      .then(({ rows }: { rows: (IPersonOfficersItem & IDetailedPostcodesItem)[] }) => rows)
+      .then(({ rows }: { rows: (IOfficerDatabaseItem & IDetailedPostcodesItem)[] }) => rows)
       .catch((e) => timer.postgresError(e))) ?? []
   queryTimer.stop()
   if (!result || result?.length === 0) timer.customError('No results returned')
@@ -59,31 +58,7 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   await pool.end()
   timer.flush()
   const output: SearchOfficersByNameOutput = Object.freeze({
-    results: result.map((r) => ({
-      title: r.title,
-      address: r.post_code
-        ? {
-            streetAddress: r.address_line_1,
-            postCode: r.post_code,
-            city: r.built_up_sub_division,
-            country: r.country,
-            county: r.county,
-            lat: r.lat,
-            long: r.long
-          }
-        : null,
-      birthDate: r.birth_date
-        ? {
-            year: r.birth_date.getFullYear(),
-            month: r.birth_date.getMonth()
-          }
-        : null,
-      forenames: r.forenames,
-      surname: r.surname,
-      nationality: r.nationality,
-      occupation: r.occupation,
-      personNumber: r.person_number
-    }))
+    results: result.map(convertOfficerDatabaseItemToItem)
   })
   return output
 }

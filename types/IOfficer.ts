@@ -1,12 +1,67 @@
-import { IAddress } from './IAddress'
+// generated typescript definitions from database using groovy script
 
-export interface IOfficer {
-  personNumber: string
-  address?: IAddress
-  birthDate?: { year: number; month: number }
+export interface IOfficerDatabaseItem {
+  person_number: string
+  post_code?: string
+  birth_date?: Date
   title?: string
   forenames?: string
   surname: string
-  nationality?: string
+  honours?: string
+  care_of?: string
+  po_box?: string
+  address_line_1?: string
+  address_line_2?: string
+  post_town?: string
+  county?: string
+  country?: string
   occupation?: string
+  nationality?: string
+  usual_residential_country?: string
+  officer_name_vector?: unknown
+}
+
+export interface IOfficerItem {
+  personNumber: string
+  postCode?: string
+  birthDate?: Date
+  title?: string
+  forenames?: string
+  surname: string
+  honours?: string
+  careOf?: string
+  poBox?: string
+  addressLine1?: string
+  addressLine2?: string
+  postTown?: string
+  county?: string
+  country?: string
+  occupation?: string
+  nationality?: string
+  usualResidentialCountry?: string
+  officerNameVector?: unknown
+}
+
+export function convertOfficerDatabaseItemToItem(databaseItem: IOfficerDatabaseItem): IOfficerItem {
+  const item = {
+    personNumber: databaseItem.person_number,
+    postCode: databaseItem.post_code,
+    birthDate: databaseItem.birth_date,
+    title: databaseItem.title,
+    forenames: databaseItem.forenames,
+    surname: databaseItem.surname,
+    honours: databaseItem.honours,
+    careOf: databaseItem.care_of,
+    poBox: databaseItem.po_box,
+    addressLine1: databaseItem.address_line_1,
+    addressLine2: databaseItem.address_line_2,
+    postTown: databaseItem.post_town,
+    county: databaseItem.county,
+    country: databaseItem.country,
+    occupation: databaseItem.occupation,
+    nationality: databaseItem.nationality,
+    usualResidentialCountry: databaseItem.usual_residential_country,
+    officerNameVector: databaseItem.officer_name_vector
+  }
+  return item
 }

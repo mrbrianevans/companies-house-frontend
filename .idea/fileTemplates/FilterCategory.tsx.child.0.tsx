@@ -1,25 +1,33 @@
-import * as React from 'react'
+// this is the filter index page for a $NAME 
+// this file is located in: /${DIR_PATH}/${FILE_NAME}
+#set($lower_first_letter = $NAME.substring(0,1).toLowerCase())
+#set($upper_first_letter = $NAME.substring(0,1).toUpperCase())
+#set($the_rest = $NAME.substring(1))
+#set($camelName = ${lower_first_letter} + ${the_rest})
+#set($PascalName = ${upper_first_letter} + ${the_rest})
+#set($nameEnum = $NAME.toUpperCase())
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { ICachedFilter } from '../../../types/ICachedFilter'
-import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
+import { ${PascalName}ResultsTable } from '../../../components/FilterPage/ResultsTables/${PascalName}ResultsTable'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
-import { ICompanyViewItem } from '../../../types/ICompanyViewItem'
+// to create this, right click a database table >> scripts >> generate type defs
+import { I${PascalName}Item } from '../../../types/I${PascalName}'
 import getFilterConfig from '../../../helpers/getFilterConfig'
 
 interface Props {
-  savedFilter: ICachedFilter<ICompanyViewItem>
+  savedFilter: ICachedFilter<I${PascalName}Item>
 }
-const category = FilterCategory.COMPANY
-const filterConfig = getFilterConfig({ category })
+const category = FilterCategory.$nameEnum
+const filterConfig = getFilterConfig({category})
 const filterOptions = getFilterOptions({ category })
 
-const CompanyFilterPage = ({ savedFilter }: Props) => {
+const ${PascalName}FilterPage = ({ savedFilter }: Props) => {
   return (
     <FilterPage
-      ResultsTable={CompanyResultsTable}
+      ResultsTable={${PascalName}ResultsTable}
       config={filterConfig}
       filterOptions={filterOptions}
       category={category}
@@ -28,7 +36,7 @@ const CompanyFilterPage = ({ savedFilter }: Props) => {
   )
 }
 
-export default CompanyFilterPage
+export default ${PascalName}FilterPage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params
@@ -37,7 +45,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<ICompanyViewItem>({
+  const savedFilter = await getCachedFilter<I${PascalName}Item>({
     cachedFilterId: id,
     category
   })

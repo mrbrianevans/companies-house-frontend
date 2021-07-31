@@ -1,25 +1,28 @@
-import * as React from 'react'
+// this is the filter index page for a officer
+// this file is located in: /pages/officer/filter/[id].tsx
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { ICachedFilter } from '../../../types/ICachedFilter'
-import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
+import { OfficerResultsTable } from '../../../components/FilterPage/ResultsTables/OfficerResultsTable'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
-import { ICompanyViewItem } from '../../../types/ICompanyViewItem'
+// to create this, right click a database table >> scripts >> generate type defs
+import { IOfficerItem } from '../../../types/IOfficer'
 import getFilterConfig from '../../../helpers/getFilterConfig'
 
 interface Props {
-  savedFilter: ICachedFilter<ICompanyViewItem>
+  savedFilter: ICachedFilter<IOfficerItem>
 }
-const category = FilterCategory.COMPANY
+
+const category = FilterCategory.OFFICER
 const filterConfig = getFilterConfig({ category })
 const filterOptions = getFilterOptions({ category })
 
-const CompanyFilterPage = ({ savedFilter }: Props) => {
+const OfficerFilterPage = ({ savedFilter }: Props) => {
   return (
     <FilterPage
-      ResultsTable={CompanyResultsTable}
+      ResultsTable={OfficerResultsTable}
       config={filterConfig}
       filterOptions={filterOptions}
       category={category}
@@ -28,7 +31,7 @@ const CompanyFilterPage = ({ savedFilter }: Props) => {
   )
 }
 
-export default CompanyFilterPage
+export default OfficerFilterPage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { id } = context.params
@@ -37,7 +40,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<ICompanyViewItem>({
+  const savedFilter = await getCachedFilter<IOfficerItem>({
     cachedFilterId: id,
     category
   })
