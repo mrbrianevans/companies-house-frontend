@@ -18,6 +18,7 @@
 import { IMinorQuery } from './IQueries'
 import { FilterCategory } from './FilterCategory'
 import { FilterComparison } from '../configuration/filterComparisons'
+import { FilterDatatype } from '../configuration/filterDatatypes'
 
 export interface IFilterValue {
   /**
@@ -38,7 +39,7 @@ export interface IFilterValue {
 export interface IFilterOption {
   field: string
   possibleComparisons: FilterComparison[]
-  dataType: 'string' | 'number' | 'date'
+  dataType: FilterDatatype
   /**
    * A function which takes an instance of the filter and returns a human readable version.
    *
@@ -60,6 +61,6 @@ export interface IFilterOption {
 // export type IFilterOption = INumberFilterOption | IStringFilterOption
 //todo: the filter system needs to be improved as follows:
 // [x] add the option for excluding
-// - add 'date' as a value type
-// - add 'is greater than' and 'is less than' for number comparisons
+// - add 'date' as a value type -
+// - add 'is greater than' and 'is less than' for number comparisons -
 // - add suggestions as value:label pairs (optionally)

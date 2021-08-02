@@ -1,23 +1,15 @@
 // results table for officer
 // this file is located in: /components/FilterPage/ResultsTables/OfficerResultsTable.tsx
 import Link from 'next/link'
-import { IFilterConfig } from '../../../types/IFilterConfig'
-import { ICachedFilter } from '../../../types/ICachedFilter'
 import { IOfficerItem as ResultType } from '../../../types/IOfficer'
+import { IResultsTable } from '../../../types/IResultsTable'
 
-interface OfficerResultsTableParams {
-  matchingResults: ResultType[]
-  tableClassName: any
-  filterConfig: IFilterConfig
-  cachedFilter?: ICachedFilter<any>
-}
-
-export function OfficerResultsTable({
+export const OfficerResultsTable: IResultsTable<ResultType> = ({
   matchingResults,
   tableClassName,
   filterConfig,
   cachedFilter
-}: OfficerResultsTableParams): JSX.Element {
+}): JSX.Element => {
   // the zeroth row is used to determine the headers.
   // put the unique identifier column in the first position always
   return (
@@ -38,7 +30,7 @@ export function OfficerResultsTable({
               {Object.entries(item).map(([columnName, value], index) => (
                 <td key={index}>
                   {columnName === filterConfig.uniqueIdentifier ? (
-                    <Link href={filterConfig.viewItemUrl + value}>
+                    <Link href={`/${filterConfig.urlPath}/${value}`}>
                       <a target={'_blank'}>{value}</a>
                     </Link>
                   ) : (

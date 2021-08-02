@@ -21,12 +21,13 @@ import { FormatterRow } from 'fast-csv'
 import FormRow from '../Inputs/FormRow'
 import ButtonLink from '../Inputs/ButtonLink'
 import { fetchCountResults } from '../../ajax/filter/countResults'
-import { translateFiltersToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { translateFiltersToEnglish, translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { IResultsTable } from '../../types/IResultsTable'
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
   filterOptions?: IFilterOption[]
-  ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
+  ResultsTable?: IResultsTable<ResultType>
   config: IFilterConfig
   category: FilterCategory
   savedFilter?: ICachedFilter<ResultType>
@@ -186,7 +187,10 @@ export const FilterPage = <ResultType extends object>({
           filters?.map((filter: IFilterValue, i) => (
             <div style={{ width: '100%' }} key={i}>
               <p className={styles.appliedFilter}>
-                {translateFiltersToEnglish([filter])}
+                {translateFilterToEnglish(
+                  filter,
+                  filterOptions.find((f) => f.field === filter.field) || filterOptions[0]
+                )}
                 <IconButton label={'x'} onClick={() => removeFilter(i)} />
               </p>
             </div>
@@ -241,7 +245,12 @@ export const FilterPage = <ResultType extends object>({
             {filterMatches?.length > 0 ? (
               <div className={styles.resultsScrollableContainer}>
                 {ResultsTable ? (
-                  <ResultsTable matchingResults={filterMatches} tableClassName={styles.resultsTable} />
+                  <ResultsTable
+                    matchingResults={filterMatches}
+                    tableClassName={styles.resultsTable}
+                    filterConfig={config}
+                    cachedFilter={savedFilter}
+                  />
                 ) : (
                   <GenericResultsTable<ResultType>
                     matchingResults={filterMatches}

@@ -28,8 +28,6 @@ export interface CountResultsOutput {
  * @returns  CountResultsOutput count
  */
 export async function countResults({ filters, category }: CountResultsParams): Promise<CountResultsOutput> {
-  //todo: when combineQueries is improved/fixed, this count method can also be greatly improved:
-  // - rather than doing a WITH results AS (combineQueries), it can be a SELECT COUNT(*) FROM combineQueries
   const timer = new Timer({ label: 'countResults() method call', filename: 'interface/filter/countResults.ts' })
   const pool = getDatabasePool()
   const id = getFilterId(filters, category)
@@ -47,14 +45,15 @@ export async function countResults({ filters, category }: CountResultsParams): P
     return { count: savedFilterRows[0].result_count }
   }
   timer.addDetail('Count already cached', false)
-  const { value: bigValue, query: bigQuery } = combineQueries({ filters, category })
+  const { value: bigValue, query: bigQuery } = combineQueries({
+    filters,
+    category,
+    customSelect: `SELECT COUNT(*) AS count`
+  })
+  console.log('COUNT RESULTS:')
+  console.log(prettyPrintSqlQuery(bigQuery, bigValue))
   const count: number = await pool
-    .query(
-      `
-  WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;
-  `,
-      bigValue
-    )
+    .query(bigQuery, bigValue)
     .then(({ rows }) => Number(rows[0].count))
     .catch((e) => timer.postgresError(e))
   timer.addDetail('Count returned from database', count)

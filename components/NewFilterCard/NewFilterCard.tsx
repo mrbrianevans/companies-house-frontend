@@ -9,9 +9,11 @@ import TextBox from '../Inputs/TextBox'
 import TextBoxNumber from '../Inputs/TextBoxNumber'
 import { FilterComparison, FilterComparisonsMap } from '../../configuration/filterComparisons'
 import { getFilterComparisonProperties } from '../../helpers/filters/getFilterComparisonProperties'
+import TextBoxDate from '../Inputs/TextBoxDate'
+import { translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { FilterDatatype } from '../../configuration/filterDatatypes'
 
 const styles = require('./NewFilterCard.module.scss')
-// const formStyles = require('../styles/form.module.css')
 type Props = {
   addFilter: (filter: IFilterValue) => void
   filteringLabel: string
@@ -29,12 +31,14 @@ export function NewFilterCard(props: Props) {
   const [comparison, setComparison] = useState<FilterComparison>(
     filterOptions.length && selectedFilterOption.possibleComparisons[0]
   )
-  const [min, setMin] = useState(0)
-  const [max, setMax] = useState(1000)
-  const [exclude, setExclude] = useState(false)
+  // min and typingNumber COULD technically be the same variable (reuse), but might be less readable
+  // Rather than having separate state for the Date, number and Date share state variables
+  const [min, setMin] = useState(NaN)
+  const [max, setMax] = useState(NaN)
+  const [typingNumber, setTypingNumber] = useState<number>(NaN)
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
-  const [typingNumber, setTypingNumber] = useState<number>(0)
+  const [exclude, setExclude] = useState(false)
   const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
   const getCurrentFilter: () => IFilterValue = () => {
     if (comparison === FilterComparison.IS_BETWEEN)
@@ -45,10 +49,20 @@ export function NewFilterCard(props: Props) {
         exclude
       }
     else {
+      let _values: string[] | [number, number] | [number]
+      switch (selectedFilterOption.dataType) {
+        case FilterDatatype.date:
+        case FilterDatatype.number:
+          _values = [typingNumber]
+          break
+        case FilterDatatype.string:
+          _values = [...values, typingValue].filter((v) => v.toString().length)
+          break
+      }
       return {
         field: selectedFilterOption.field,
         comparison: comparison,
-        values: [...values, typingValue].filter((v) => v.toString().length),
+        values: _values,
         exclude
       }
     }
@@ -73,13 +87,23 @@ export function NewFilterCard(props: Props) {
     // sets the inputs to their default values.
     setSelectedFilterOption(filterOptions[0])
     setComparison(selectedFilterOption.possibleComparisons[0])
-    setMin(0)
-    setMax(1000)
+    setMin(NaN)
+    setMax(NaN)
     setExclude(false)
     setValues([])
     setTypingValue('')
+    setTypingNumber(NaN)
   }
-  //todo: when the filter category changes, reset the values to []
+  //when the filter category changes, reset the values to []
+  useEffect(() => {
+    setComparison(selectedFilterOption.possibleComparisons[0])
+    setMin(NaN)
+    setMax(NaN)
+    setExclude(false)
+    setValues([])
+    setTypingValue('')
+    setTypingNumber(NaN)
+  }, [selectedFilterOption])
   return (
     <div className={styles.newFilterCard} style={{ width: '100%' }} data-test-id={'newFilterDiv'}>
       <h3>Add new filter</h3>
@@ -115,15 +139,19 @@ export function NewFilterCard(props: Props) {
             />
             {comparison === FilterComparison.IS_BETWEEN ? (
               <>
-                {selectedFilterOption.dataType == 'number' && <TextBoxNumber value={min} onChange={(v) => setMin(v)} />}
-                {selectedFilterOption.dataType == 'date' && <input type={'date'} />}
+                {selectedFilterOption.dataType == FilterDatatype.number && (
+                  <TextBoxNumber value={min} onChange={setMin} />
+                )}
+                {selectedFilterOption.dataType == FilterDatatype.date && <TextBoxDate value={min} onChange={setMin} />}
                 <span className={styles.joiningWordInFormRow}> and </span>
-                {selectedFilterOption.dataType == 'number' && <TextBoxNumber value={max} onChange={(v) => setMax(v)} />}
-                {selectedFilterOption.dataType == 'date' && <input type={'date'} />}
+                {selectedFilterOption.dataType == FilterDatatype.number && (
+                  <TextBoxNumber value={max} onChange={setMax} />
+                )}
+                {selectedFilterOption.dataType == FilterDatatype.date && <TextBoxDate value={max} onChange={setMax} />}
               </>
             ) : (
               <>
-                {selectedFilterOption.dataType == 'string' && (
+                {selectedFilterOption.dataType == FilterDatatype.string && (
                   <TextBox
                     value={typingValue}
                     onChange={setTypingValue}
@@ -134,7 +162,7 @@ export function NewFilterCard(props: Props) {
                     }}
                   />
                 )}
-                {selectedFilterOption.dataType == 'number' && (
+                {selectedFilterOption.dataType == FilterDatatype.number && (
                   <TextBoxNumber
                     value={typingNumber}
                     onChange={setTypingNumber}
@@ -144,7 +172,9 @@ export function NewFilterCard(props: Props) {
                     }}
                   />
                 )}
-                {selectedFilterOption.dataType == 'date' && <input type={'date'} />}
+                {selectedFilterOption.dataType == FilterDatatype.date && (
+                  <TextBoxDate value={typingNumber} onChange={setTypingNumber} />
+                )}
                 <IconButton
                   label={'+'}
                   onClick={() => {
@@ -155,15 +185,7 @@ export function NewFilterCard(props: Props) {
               </>
             )}
           </FormRow>
-          <p>
-            {exclude ? 'Exclude' : 'Only show'} {props.filteringLabel} where {selectedFilterOption.field}{' '}
-            {getFilterComparisonProperties(comparison).english}{' '}
-            {comparison === FilterComparison.IS_BETWEEN
-              ? min + ' and ' + max
-              : values.length
-              ? values.join(' or ')
-              : typingValue}
-          </p>
+          <p>{translateFilterToEnglish(getCurrentFilter(), selectedFilterOption, props.filteringLabel)}</p>
 
           <Button
             onClick={addFilter}

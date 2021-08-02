@@ -5,7 +5,8 @@ export enum FilterComparison {
   REFERENCES,
   BEFORE,
   AFTER,
-  IS_BETWEEN
+  IS_BETWEEN,
+  CONTAINS
 }
 type FilterComparisonProperties = {
   sqlOperator: string
@@ -13,7 +14,8 @@ type FilterComparisonProperties = {
 }
 
 export const FilterComparisonsMap = new Map<FilterComparison, FilterComparisonProperties>([
-  [FilterComparison.MATCHES, { sqlOperator: 'ILIKE', english: 'matches' }],
+  [FilterComparison.CONTAINS, { sqlOperator: 'ILIKE', english: 'contains' }],
+  [FilterComparison.MATCHES, { sqlOperator: '@@', english: 'matches' }],
   [FilterComparison.GREATER_THAN, { sqlOperator: '>', english: 'greater than' }],
   [FilterComparison.LESS_THAN, { sqlOperator: '<', english: 'less than' }],
   [FilterComparison.BEFORE, { sqlOperator: '<', english: 'before' }],

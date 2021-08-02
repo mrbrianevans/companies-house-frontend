@@ -4,6 +4,7 @@ export const prettyPrintSqlQuery = (query: string, values: any[]) => {
     if (typeof value === 'number') return value
     else if (typeof value === 'undefined') return 'null'
     else if (typeof value === 'string') return `'${value}'`
+    else if (value instanceof Date) return `'${value.toUTCString()}'`
     else if (typeof value === 'object') return "'{" + value.join(',') + "}'"
     else return value?.toString()
   })
