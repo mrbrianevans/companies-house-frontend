@@ -37,6 +37,7 @@ export default async function applyFilters<FilterCategoryType>({
   })
   // add filter id to the log
   const filterId = getFilterId(filters, category)
+  console.log('Apply filters', filterId)
   timer.addDetail('filterId', filterId)
   const { query, value } = combineQueries({ filters, category })
   const config = getFilterConfig({ category })
@@ -51,7 +52,10 @@ LIMIT $${value.length + 1}`
   const prettyPrintedQuery = prettyPrintSqlQuery(limitedQuery, value)
   // console.log(prettyPrintedQuery)
   const resultQueryTimer = timer.start('Query database for results of filters')
-  const { rows: matches } = await pool.query(limitedQuery, value)
+  const matches = await pool
+    .query(limitedQuery, value)
+    .then(({ rows }) => rows)
+    .catch(timer.postgresErrorReturn([]))
   const executionTime = resultQueryTimer.stop()
   //save in cached filters the fact that it was run and the time it took to run. not sure if this is the right place
   const persistTimeToRunTimer = timer.start('Persist the time taken to run filter in cached_filters')

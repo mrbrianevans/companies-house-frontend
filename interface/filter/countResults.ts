@@ -50,8 +50,7 @@ export async function countResults({ filters, category }: CountResultsParams): P
     category,
     customSelect: `SELECT COUNT(*) AS count`
   })
-  console.log('COUNT RESULTS:')
-  console.log(prettyPrintSqlQuery(bigQuery, bigValue))
+  // console.log(prettyPrintSqlQuery(bigQuery, bigValue))
   const count: number = await pool
     .query(bigQuery, bigValue)
     .then(({ rows }) => Number(rows[0].count))
@@ -60,8 +59,10 @@ export async function countResults({ filters, category }: CountResultsParams): P
   if (count === null || count === undefined) {
     timer.customError('Count results returned null or undefined')
   } else {
-    timer.next(`Persist result size ${count} in DB`)
-    await pool.query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+    timer.next(`Persist result size in DB`)
+    await pool
+      .query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+      .catch(timer.postgresError)
   }
   timer.flush()
 

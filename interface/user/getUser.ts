@@ -1,18 +1,10 @@
-import { DefaultSession, DefaultUser } from 'next-auth'
+import { DefaultSession } from 'next-auth'
 import { Timer } from '../../helpers/Timer'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import camelcaseKeys from 'camelcase-keys'
+import { convertUserDatabaseItemToItem, IUserDatabaseItem, IUserItem } from '../../types/IUser'
 
 type GetUserProfileParams = {
   session?: DefaultSession
-}
-
-export interface UserProfile {
-  id: number
-  name?: string
-  email: string
-  emailVerified: Date
-  createdAt: Date
 }
 
 /**
@@ -27,7 +19,7 @@ export interface UserProfile {
  * const session = await getSession(context)
  * const user = await getUserProfile({session})
  */
-export const getUser: (params: GetUserProfileParams) => Promise<UserProfile> = async ({ session }) => {
+export const getUser: (params: GetUserProfileParams) => Promise<IUserItem> = async ({ session }) => {
   if (!session) {
     return null
   }
@@ -36,17 +28,20 @@ export const getUser: (params: GetUserProfileParams) => Promise<UserProfile> = a
     filename: '/interface/user/getUserProfile.ts'
   })
   const pool = getDatabasePool()
-  const { rows, rowCount } = await pool.query(
-    `
-  SELECT id, name, email, email_verified, created_at
+  const user: IUserDatabaseItem = await pool
+    .query(
+      `
+  SELECT id, name, email, email_verified, created_at, role_code
   FROM users
   WHERE email=$1
   `,
-    [session.user.email]
-  )
+      [session.user.email]
+    )
+    .then(({ rows }) => rows[0])
+    .catch(timer.postgresError)
   timer.flush()
-  if (rowCount !== 1) return null
+  if (!user) return null
   else {
-    return camelcaseKeys(rows[0])
+    return convertUserDatabaseItemToItem(user)
   }
 }

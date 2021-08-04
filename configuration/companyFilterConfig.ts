@@ -1,6 +1,5 @@
 import { IFilterConfig } from '../types/IFilterConfig'
-import { FilterComparison } from './filterComparisons'
-import { FilterDatatype } from './filterDatatypes'
+import { companyFilters } from './filters/companyFilters'
 
 export const companyFilterConfig: IFilterConfig = {
   urlPath: 'company',
@@ -10,12 +9,5 @@ export const companyFilterConfig: IFilterConfig = {
   main_table: 'company_view',
   operation_code: 'download_company_records',
   uniqueIdentifier: 'company_number',
-  filters: [
-    {
-      columnName: 'name',
-      dataType: FilterDatatype.string,
-      field: 'name',
-      possibleComparisons: [FilterComparison.CONTAINS]
-    }
-  ]
+  filters: companyFilters
 }
