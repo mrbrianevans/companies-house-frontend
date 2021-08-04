@@ -1,6 +1,8 @@
 import test from '../nextFixture'
 import { TestUrl } from '../../helpers/TestUrl'
 import { expect } from '@playwright/test'
+import { FilterComparison } from '../../../configuration/filterComparisons'
+import { getFilterComparisonProperties } from '../../../helpers/filters/getFilterComparisonProperties'
 
 test('company filter page root (no filter applied)', async ({ page, port }) => {
   const testUrl = new TestUrl({ port })
@@ -22,8 +24,8 @@ test('company filter page - apply filter from root', async ({ page, port }) => {
   })
   await page.goto(testUrl.getUrl('company', 'filter'))
   //values to test with
-  const testFilterBy = 'location'
-  const testOperator = 'includes'
+  const testFilterBy = 'area'
+  const testOperator = FilterComparison.CONTAINS
   const testValue = 'exeter'
 
   // identifies the new filter div by a div containing a h3 that says 'new filter'
@@ -32,7 +34,7 @@ test('company filter page - apply filter from root', async ({ page, port }) => {
   const filterBy = await newFilterDiv.$(':nth-match(select, 1)')
   await filterBy.selectOption(testFilterBy)
   const filterOperator = await newFilterDiv.$(':nth-match(select, 2)')
-  await filterOperator.selectOption(testOperator)
+  await filterOperator.selectOption(testOperator.toString())
   const filterValue = await newFilterDiv.$(':nth-match(input, 1)')
   await filterValue.fill(testValue)
   const addFilterButton = await newFilterDiv.$('button:text-matches("add filter", "i")')
@@ -42,6 +44,6 @@ test('company filter page - apply filter from root', async ({ page, port }) => {
   // check that filter was added and is showing an english representation
   const addedFilterDescription = await page.innerText('div:below(div:has(h3:text-matches("new filter", "i"))) p')
   expect(addedFilterDescription).toMatch(new RegExp(testFilterBy, 'i'))
-  expect(addedFilterDescription).toMatch(new RegExp(testOperator, 'i'))
+  expect(addedFilterDescription).toMatch(new RegExp(getFilterComparisonProperties(testOperator).english, 'i'))
   expect(addedFilterDescription).toMatch(new RegExp(testValue, 'i'))
 })
