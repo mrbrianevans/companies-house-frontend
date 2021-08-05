@@ -5,6 +5,7 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { getItemById } from './getItemById'
 
 export type CacheResultsParams = {
   id: string
@@ -32,16 +33,17 @@ export async function cacheResults<FilterResultsType>({
   })
   const config = getFilterConfig({ category })
   const pool = getDatabasePool()
-  const { rows: preexistingResults }: { rows: FilterResultsType[] } = await pool.query(
-    `
-      SELECT m.*
-      FROM cached_filter_results cfr 
-          -- this used to be a LEFT JOIN. taken out now. not sure why that was there
-           JOIN ${config.main_table} m ON cfr.data_fk = m.${config.uniqueIdentifier}
-      WHERE cfr.filter_fk=$1;
-  `,
-    [id]
+  timer.start('fetch cached result ids from database')
+  const resultIds: string[] = await pool
+    .query(`SELECT data_fk FROM cached_filter_results cfr WHERE cfr.filter_fk=$1`, [id])
+    .then(({ rows }: { rows: { data_fk: string }[] }) => rows.map((row) => row.data_fk))
+    .catch(timer.postgresErrorReturn([]))
+  timer.next('fetch items from ids array')
+  let resultItems: { item: FilterResultsType }[] = await Promise.all(
+    resultIds.map((id) => getItemById<FilterResultsType>({ id, category }))
   )
+  const preexistingResults = resultItems.map((result) => result.item)
+  timer.end()
   if (preexistingResults.length === 0) {
     // this is if there are no previously cached results.
     // Could be further improved to be if the number previously cached doesn't match the limit specified
