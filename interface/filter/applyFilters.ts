@@ -37,7 +37,7 @@ export default async function applyFilters<FilterCategoryType>({
   })
   // add filter id to the log
   const filterId = getFilterId(filters, category)
-  console.log('Apply filters', filterId)
+  // console.log('Apply filters', filterId)
   timer.addDetail('filterId', filterId)
   const { query, value } = combineQueries({ filters, category })
   const config = getFilterConfig({ category })

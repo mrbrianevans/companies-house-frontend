@@ -8,10 +8,10 @@
 #set($Output = ${PascalName} + "Output")
 // to import from this file, use: import { ${Params}, ${Output}, $camelName } from '../../interface/${sub_directory}/${camelName}'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getFilterId } from '../../filters/helpers/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 

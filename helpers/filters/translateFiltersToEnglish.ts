@@ -26,7 +26,7 @@ export const translateFilterToEnglish = (filter: IFilterValue, filterOption: IFi
                 ? filter.values.join(' or ')
                 : renderNumberValue(Number(filter.values[0]), filterOption)
             }
-              `.replaceAll(/\s/g, ' ')
+              `.replaceAll(/\s+/g, ' ')
 }
 
 const renderNumberValue = (num: number, filterOption: IFilterOption) => {
