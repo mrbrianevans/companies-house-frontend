@@ -6,6 +6,7 @@ import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getItemById } from './getItemById'
+import { pmap } from '../../helpers/ArrayUtils'
 
 export type CacheResultsParams = {
   id: string
@@ -39,9 +40,7 @@ export async function cacheResults<FilterResultsType>({
     .then(({ rows }: { rows: { data_fk: string }[] }) => rows.map((row) => row.data_fk))
     .catch(timer.postgresErrorReturn([]))
   timer.next('fetch items from ids array')
-  let resultItems: { item: FilterResultsType }[] = await Promise.all(
-    resultIds.map((id) => getItemById<FilterResultsType>({ id, category }))
-  )
+  let resultItems = await pmap(resultIds, (id) => getItemById<FilterResultsType>({ id, category }))
   const preexistingResults = resultItems.map((result) => result.item)
   timer.end()
   if (preexistingResults.length === 0) {
