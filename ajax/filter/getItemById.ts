@@ -7,7 +7,10 @@ import { GetItemByIdParams, GetItemByIdOutput } from '../../interface/filter/get
  * @example
  * const { item } = await $END$fetchGetItemById({ id, category })
  */
-export const fetchGetItemById: (params: GetItemByIdParams) => Promise<GetItemByIdOutput> = async ({ id, category }) => {
+export async function fetchGetItemById<ItemType>({
+  id,
+  category
+}: GetItemByIdParams): Promise<GetItemByIdOutput<ItemType>> {
   return await fetch('/api/filter/getItemById', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },

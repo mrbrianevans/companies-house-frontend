@@ -14,11 +14,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).send('Some params are undefined. Required: id, category')
     return
   }
-  const session = await getSession({ req })
-  const user = await getUser({ session })
-  const output = await getItemById({ id, category })
+  const output = await getItemById<any>({ id, category })
   if (output) {
-    const { item }: GetItemByIdOutput = output
+    const { item }: GetItemByIdOutput<any> = output
     res.json({ item })
     return
   } else {

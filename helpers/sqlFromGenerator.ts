@@ -17,10 +17,10 @@ export const getFromClause = ({ filters, category }: SqlFromConverterParams) => 
   const joins = []
   for (const filter of filters) {
     const filterOption = getFilterOptionForFilterValue({ filterValue: filter, category })
+    if (!filterOption) continue
     const ref = filterOption.references
-    if (ref !== undefined) {
-      joins.push(`JOIN ${ref.tableName} ON ${ref.tableName}.${ref.column}=${mainTable}.${filterOption.columnName}`)
-    }
+    if (ref === undefined) continue
+    joins.push(`JOIN ${ref.tableName} ON ${ref.tableName}.${ref.column}=${mainTable}.${filterOption.columnName}`)
   }
   return `  FROM ${mainTable}${joins.length ? '\n\t' + joins.join('\n\t') : ''}`
 }

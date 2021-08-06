@@ -6,8 +6,8 @@ import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTable
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
-import { ICompanyViewItem } from '../../../types/ICompanyViewItem'
 import getFilterConfig from '../../../helpers/getFilterConfig'
+import { ICompanyViewItem } from '../../../types/ICompanyView'
 
 interface Props {
   savedFilter: ICachedFilter<ICompanyViewItem>
