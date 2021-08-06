@@ -8,10 +8,11 @@ import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Page } from '../../components/Page/Page'
 import { getOfficerProfile } from '../../interface/getOfficerProfile'
 import { useRouter } from 'next/router'
-import { OfficerResultsTable } from '../../components/FilterPage/ResultsTables/OfficerResultsTable'
 import getFilterConfig from '../../helpers/getFilterConfig'
-
-const styles = require('./OfficerProfile.module.sass')
+import { OfficerProfile } from '../../components/OfficerProfile/OfficerProfile'
+import { useEffect, useState } from 'react'
+import { fetchGetOfficerAppointmentsForOfficer } from '../../ajax/officer/getOfficerAppointmentsForOfficer'
+import { IOfficerAppointmentFullDetails, IOfficerAppointmentWithOfficer } from '../../types/IOfficerAppointments'
 
 const category = FilterCategory.OFFICER
 const filterConfig = getFilterConfig({ category })
@@ -22,24 +23,23 @@ interface props {
 
 const OfficerProfilePage = ({ officerProfile }: props) => {
   const router = useRouter()
+  const [officerAppointments, setOfficerAppointments] = useState<IOfficerAppointmentFullDetails[]>()
+  useEffect(() => {
+    if (typeof router.query.officer_id === 'string') {
+      fetchGetOfficerAppointmentsForOfficer({ personNumber: router.query.officer_id }).then((r) => {
+        console.log(r)
+        if (r) setOfficerAppointments(r.officerAppointments)
+      })
+    }
+  }, [router.query.officer_id])
   return (
     <Page>
-      {router.isFallback ? (
-        <p>Loading {filterConfig.labelPlural} details...</p>
-      ) : (
-        <>
-          <h1>
-            {Object.values(officerProfile)[0]} {Object.values(officerProfile)[1]}
-          </h1>
-          <div className={styles.mainContainer}>
-            <OfficerResultsTable
-              matchingResults={[officerProfile]}
-              filterConfig={filterConfig}
-              tableClassName={styles.profileTable}
-            />
-          </div>
-        </>
-      )}
+      <OfficerProfile
+        loading={router.isFallback}
+        officer={officerProfile}
+        appointments={officerAppointments}
+        appointmentsLoading={officerAppointments === undefined}
+      />
     </Page>
   )
 }
@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const {
     params: { officer_id: idParam }
   } = context
-  if (idParam instanceof Array) return { notFound: true }
+  if (idParam instanceof Array || idParam.length !== 12) return { notFound: true }
   const id = decodeURIComponent(idParam)
   const officerProfile = await getOfficerProfile(id)
   if (!officerProfile) return { notFound: true }

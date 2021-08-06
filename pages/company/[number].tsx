@@ -137,6 +137,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     details: { class: 'company-profile' },
     filename: '/pages/company/[number].tsx'
   })
+  // todo: there is no reason why these steps need to be linear. They can be asynchronous (all happen in parallel)
+  //  - use Promise.all() to improve load time of company profile
   timer.start('Get company profile')
   const companyData = await getCompanyProfile(companyNumber)
   timer.next('Get company and filing events')

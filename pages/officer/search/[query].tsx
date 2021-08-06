@@ -9,6 +9,7 @@ import { searchOfficersByName } from '../../../interface/officer/searchOfficersB
 import { OfficerSearchBar } from '../../../components/SearchBars/OfficerSearchBar'
 import { IOfficerItem as ResultType } from '../../../types/IOfficer'
 import { FilterCategory } from '../../../types/FilterCategory'
+import { serialiseResultDates } from '../../../helpers/serialiseResultDates'
 
 const styles = require('../../../styles/Search.module.sass')
 
@@ -54,7 +55,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { results } = await searchOfficersByName({ query })
   const props: OfficerSearchResultsProps = Object.freeze({
     query,
-    results: results,
+    results: serialiseResultDates(results),
     responseTime: Date.now() - startTime
   })
   return {

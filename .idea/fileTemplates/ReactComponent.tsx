@@ -1,5 +1,5 @@
 #set($name = $NAME.substring(0,1).toUpperCase() + $NAME.substring(1))
-const styles = require('./${name}.module.scss')
+const styles = require('./${name}.module.sass')
 
 type ${name}Props = {
   loading?: boolean

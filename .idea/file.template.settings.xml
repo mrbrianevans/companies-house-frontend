@@ -12,35 +12,37 @@
       <template name="API endpoint.ts.child.0.ts" file-name="/pages/api/${sub_directory}/$NAME.substring(0,1).toLowerCase()$NAME.substring(1)" reformat="true" live-template-enabled="false" />
       <template name="API endpoint.ts.child.1.ts" file-name="/interface/${sub_directory}/$NAME.substring(0,1).toLowerCase()$NAME.substring(1)" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx" file-name="/pages/$NAME.toLowerCase()/index" reformat="true" live-template-enabled="false">
-        <template name="FilterCategory.tsx.child.11༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile" reformat="true" live-template-enabled="false" />
-        <template name="FilterCategory.tsx.child.10༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Search" reformat="true" live-template-enabled="false" />
-        <template name="FilterCategory.tsx.child.9༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Filter" reformat="true" live-template-enabled="false" />
+        <template name="FilterCategory.tsx.child.12.tsx" file-name="/components/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.0.tsx" file-name="/pages/$NAME.toLowerCase()/filter/[id]" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.1.tsx" file-name="/pages/$NAME.toLowerCase()/filter/index" reformat="true" live-template-enabled="false" />
+        <template name="FilterCategory.tsx.child.10༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Search" reformat="true" live-template-enabled="false" />
+        <template name="FilterCategory.tsx.child.11༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.2.tsx" file-name="/pages/$NAME.toLowerCase()/[$NAME.toLowerCase()_id]" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.3.tsx" file-name="/pages/$NAME.toLowerCase()/search/[query]" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.4.tsx" file-name="/pages/$NAME.toLowerCase()/search/index" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.5.tsx" file-name="/components/SearchBars/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()SearchBar" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.6.tsx" file-name="/components/FilterPage/ResultsTables/$NAME.substring(0,1).toUpperCase()$NAME.substring(1)ResultsTable" reformat="true" live-template-enabled="false" />
-        <template name="FilterCategory.tsx.child.7.sass" file-name="/pages/$NAME.toLowerCase()/${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}Profile.module" reformat="true" live-template-enabled="false" />
+        <template name="FilterCategory.tsx.child.7.sass" file-name="/components/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile/${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}Profile.module" reformat="true" live-template-enabled="false" />
         <template name="FilterCategory.tsx.child.8.ts" file-name="/interface/get$NAME.substring(0,1).toUpperCase()$NAME.substring(1)Profile" reformat="true" live-template-enabled="false" />
+        <template name="FilterCategory.tsx.child.9༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Filter" reformat="true" live-template-enabled="false" />
       </template>
       <template name="FilterCategory.tsx.child.0.tsx" file-name="/pages/$NAME.toLowerCase()/filter/[id]" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.1.tsx" file-name="/pages/$NAME.toLowerCase()/filter/index" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.10༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Search" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.11༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile" reformat="true" live-template-enabled="false" />
+      <template name="FilterCategory.tsx.child.12.tsx" file-name="/components/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.2.tsx" file-name="/pages/$NAME.toLowerCase()/[$NAME.toLowerCase()_id]" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.3.tsx" file-name="/pages/$NAME.toLowerCase()/search/[query]" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.4.tsx" file-name="/pages/$NAME.toLowerCase()/search/index" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.5.tsx" file-name="/components/SearchBars/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()SearchBar" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.6.tsx" file-name="/components/FilterPage/ResultsTables/$NAME.substring(0,1).toUpperCase()$NAME.substring(1)ResultsTable" reformat="true" live-template-enabled="false" />
-      <template name="FilterCategory.tsx.child.7.sass" file-name="/pages/$NAME.toLowerCase()/${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}Profile.module" reformat="true" live-template-enabled="false" />
+      <template name="FilterCategory.tsx.child.7.sass" file-name="/components/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Profile/${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}Profile.module" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.8.ts" file-name="/interface/get$NAME.substring(0,1).toUpperCase()$NAME.substring(1)Profile" reformat="true" live-template-enabled="false" />
       <template name="FilterCategory.tsx.child.9༏ext༏.spec.ts" file-name="/tests/browser/$NAME.toLowerCase()/$NAME.substring(0,1).toUpperCase()$NAME.substring(1).toLowerCase()Filter" reformat="true" live-template-enabled="false" />
       <template name="ReactComponent.tsx" file-name="$NAME.substring(0,1).toUpperCase()$NAME.substring(1)" reformat="false" live-template-enabled="false">
-        <template name="ReactComponent.tsx.child.0.scss" file-name="${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}.module" reformat="true" live-template-enabled="false" />
+        <template name="ReactComponent.tsx.child.0.sass" file-name="${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}.module" reformat="true" live-template-enabled="false" />
       </template>
-      <template name="ReactComponent.tsx.child.0.scss" file-name="${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}.module" reformat="true" live-template-enabled="false" />
+      <template name="ReactComponent.tsx.child.0.sass" file-name="${NAME.substring(0,1).toUpperCase()}${NAME.substring(1)}.module" reformat="true" live-template-enabled="false" />
     </default_templates>
   </component>
 </project>

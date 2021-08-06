@@ -15,7 +15,7 @@ import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Page } from '../../components/Page/Page'
 import { get${PascalName}Profile } from '../../interface/get${PascalName}Profile'
 import { useRouter } from 'next/router'
-import { ${PascalName}ResultsTable } from '../../components/FilterPage/ResultsTables/${PascalName}ResultsTable'
+import { ${PascalName}Profile } from '../../components/${PascalName}Profile/${PascalName}Profile'
 import getFilterConfig from '../../helpers/getFilterConfig'
 const styles = require('./${PascalName}Profile.module.sass')
 
@@ -30,16 +30,7 @@ const ${PascalName}ProfilePage = ({ ${camelName}Profile }: props) => {
   const router = useRouter()
   return (
     <Page>
-      {router.isFallback ? (
-        <p>Loading {filterConfig.labelPlural} details...</p>
-      ) : (
-        <>
-          <h1>{Object.values(${camelName}Profile)[0]} {Object.values(${camelName}Profile)[1]}</h1>
-          <div className={styles.mainContainer}>
-            <${PascalName}ResultsTable matchingResults={[${camelName}Profile]} filterConfig={filterConfig} tableClassName={styles.profileTable}/>
-          </div>
-        </>
-      )}
+      <${PascalName}Profile loading={router.isFallback} ${camelName}={${camelName}Profile}/>
     </Page>
   )
 }
