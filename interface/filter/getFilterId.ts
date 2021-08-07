@@ -61,7 +61,7 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
       }
       return rows[0]
     })
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   executeQueryTimer.stop()
   await pool.end()
   if (!row) {

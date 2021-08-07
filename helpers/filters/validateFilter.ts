@@ -25,6 +25,7 @@ export const validateFilter: (filterValue: IFilterValue, category: FilterCategor
     if (Object.keys(filterValue).sort().toString() !== ['comparison', 'field', 'exclude', 'values'].sort().toString())
       throw new Error("filterValue doesn't have correct keys: " + Object.keys(filterValue).join(','))
     // check that there are the correct number of values
+    if (!(filterValue.values instanceof Array)) throw new Error('Values are not in an array')
     switch (filterValue.comparison) {
       case FilterComparison.LESS_THAN:
       case FilterComparison.GREATER_THAN:
@@ -77,4 +78,11 @@ export const validateFilter: (filterValue: IFilterValue, category: FilterCategor
     console.log(validationFailures)
   }
   return validationFailures.length === 0
+}
+
+export const filtersAreValid: (params: { filters: IFilterValue[]; category: FilterCategory }) => boolean = ({
+  filters,
+  category
+}) => {
+  return filters.every((filter, index) => validateFilter(filter, category))
 }

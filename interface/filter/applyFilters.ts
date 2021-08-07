@@ -6,6 +6,7 @@ import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/filters/getFilterId'
 import getFilterConfig from '../../helpers/getFilterConfig'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 type Params = {
   filters: IFilterValue[]
@@ -35,6 +36,7 @@ export default async function applyFilters<FilterCategoryType>({
     filename: '/interface/filter/applyFilters.ts',
     details: { category }
   })
+  if (!filtersAreValid({ filters, category })) return null
   // add filter id to the log
   const filterId = getFilterId(filters, category)
   // console.log('Apply filters', filterId)

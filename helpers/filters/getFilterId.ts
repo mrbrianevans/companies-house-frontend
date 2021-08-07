@@ -1,5 +1,6 @@
 import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
+import { filtersAreValid } from './validateFilter'
 
 const hash = require('object-hash')
 
@@ -12,6 +13,7 @@ const hash = require('object-hash')
  * @param category the filter category such as COMPANY or ACCOUNTANT
  */
 export const getFilterId = (filters: IFilterValue[], category: FilterCategory) => {
+  if (!filtersAreValid({ filters, category })) return null
   // uses unordered settings in hashing algorithm so that differently ordered filters don't produce different hashes
   const hashString: string = hash(
     { filters, category },

@@ -53,7 +53,7 @@ export interface IFilterOption {
   /**
    * Optional suggestions to show in a dropdown box
    */
-  suggestions?: string[]
+  suggestions?: string[] | { label: string; value: string }[]
 }
 
 // export type IFilterOption = INumberFilterOption | IStringFilterOption

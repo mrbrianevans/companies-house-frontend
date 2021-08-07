@@ -7,6 +7,7 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 // input parameters for countResults - filters, category
 export interface CountResultsParams {
@@ -27,6 +28,7 @@ export interface CountResultsOutput {
  * @returns  CountResultsOutput count
  */
 export async function countResults({ filters, category }: CountResultsParams): Promise<CountResultsOutput> {
+  if (!filtersAreValid({ filters, category })) return null
   const timer = new Timer({ label: 'countResults() method call', filename: 'interface/filter/countResults.ts' })
   const pool = getDatabasePool()
   const id = getFilterId(filters, category)

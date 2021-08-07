@@ -9,6 +9,7 @@ import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { cacheResults } from './cacheResults'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 // input parameters for cacheFilter
 export interface CacheFilterParams {
@@ -33,6 +34,7 @@ export async function cacheFilter<FilterCategoryType>({
   category
 }: CacheFilterParams): Promise<CacheFilterOutput | null> {
   const timer = new Timer({ label: 'Call cacheFilter method', filename: 'interface/filter/cacheFilter.ts' })
+  if (!filtersAreValid({ filters, category })) return null
   const pool = getDatabasePool()
   const id = getFilterId(filters, category)
   const client = await pool.connect()

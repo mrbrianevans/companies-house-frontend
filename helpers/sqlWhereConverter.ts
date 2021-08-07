@@ -51,7 +51,16 @@ export const sqlWhereConverter = ({ filter, category, values }: SqlWhereConverte
     case FilterComparison.GREATER_THAN:
     case FilterComparison.LESS_THAN:
       return `${qualifiedName} ${comparator} $${values.push(min)}`
+    case FilterComparison.EQUALS:
+      return filter.values.map((value) => `${qualifiedName}=$${values.push(value)}`).join(' OR ')
   }
+  console.log(
+    JSON.stringify({
+      severity: 'ERROR',
+      message: 'No case triggered for where converter',
+      filename: 'helpers/sqlWhereConverter'
+    })
+  )
   // if nothing else has been triggered, then there is an error. This will just skip this filter.
   return 'TRUE'
 }

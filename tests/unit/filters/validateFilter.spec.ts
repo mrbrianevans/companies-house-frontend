@@ -1,6 +1,6 @@
 import { IFilterValue } from '../../../types/IFilters'
 import { FilterComparison } from '../../../configuration/filterComparisons'
-import { validateFilter } from '../../../helpers/filters/validateFilter'
+import { validateFilter, filtersAreValid } from '../../../helpers/filters/validateFilter'
 import { FilterCategory } from '../../../types/FilterCategory'
 import { expect } from 'chai'
 
@@ -14,7 +14,7 @@ describe('test the validate filter method to correctly determine if a filter val
         exclude: false
       },
       {
-        field: 'officer name vector',
+        field: 'name',
         values: ['henry', 'james'],
         comparison: FilterComparison.MATCHES,
         exclude: false
@@ -22,7 +22,7 @@ describe('test the validate filter method to correctly determine if a filter val
       {
         field: 'nationality',
         values: ['malawian'],
-        comparison: FilterComparison.CONTAINS,
+        comparison: FilterComparison.EQUALS,
         exclude: false
       },
       {
@@ -34,11 +34,11 @@ describe('test the validate filter method to correctly determine if a filter val
     ]
     validFilters.forEach((filter) => {
       const filterIsValid = validateFilter(filter, FilterCategory.OFFICER)
-      expect(filterIsValid).to.be.true
+      expect(filterIsValid).to.be.equal(true, 'Filter: ' + JSON.stringify(filter))
     })
   })
   it('should return false for invalid officer filters', () => {
-    const validFilters = [
+    const invalidFilters = [
       {
         field: 'birth date',
         values: [new Date()],
@@ -64,9 +64,58 @@ describe('test the validate filter method to correctly determine if a filter val
         exclude: false
       }
     ]
-    validFilters.forEach((filter) => {
+    invalidFilters.forEach((filter) => {
       const filterIsValid = validateFilter(filter as IFilterValue, FilterCategory.OFFICER)
-      expect(filterIsValid).to.be.false
+      expect(filterIsValid).to.be.equal(false, 'Filter: ' + JSON.stringify(filter))
     })
+  })
+
+  it('should fail validation for invalid officer filters', () => {
+    const filters: IFilterValue[] = [
+      {
+        comparison: 7,
+        exclude: false,
+        field: 'firstname',
+        values: ['bruce']
+      },
+      {
+        comparison: 7,
+        exclude: false,
+        field: 'usual country of residence',
+        values: ['england', 'united kingdom']
+      },
+      {
+        comparison: 7,
+        exclude: false,
+        field: 'title',
+        values: ['mr']
+      },
+      {
+        comparison: 7,
+        exclude: false,
+        field: 'nationality',
+        values: ['british', 'south african']
+      },
+      {
+        comparison: 7,
+        exclude: false,
+        field: 'occupation',
+        values: ['accountant']
+      },
+      {
+        comparison: 6,
+        exclude: false,
+        field: 'birth date',
+        values: [0, 315532800000]
+      },
+      {
+        comparison: 0,
+        exclude: false,
+        field: 'name',
+        values: ['bruce']
+      }
+    ]
+    const valid = filtersAreValid({ filters, category: FilterCategory.OFFICER })
+    expect(valid).to.be.equal(false, "You can't filter nationality with contains comparison")
   })
 })

@@ -10,6 +10,7 @@ import getFilterConfig from '../../../helpers/getFilterConfig'
 import combineQueries from '../../../interface/filter/combineQueries'
 import applyFilters from '../../../interface/filter/applyFilters'
 import { prettyPrintSqlQuery } from '../../../helpers/prettyPrintSqlQuery'
+import { validateFilter } from '../../../helpers/filters/validateFilter'
 
 describe('creates random filters based on config and runs them against the database', function () {
   this.slow()
@@ -67,6 +68,7 @@ const generateRandomFilter: (category: FilterCategory) => IFilterValue = (catego
     exclude: false
   }
   // console.log(translateFilterToEnglish(filter, filterOption, config.labelPlural))
+  console.assert(validateFilter(filter, category))
   return filter
 }
 
