@@ -54,6 +54,10 @@ export interface IFilterOption {
    * Optional suggestions to show in a dropdown box
    */
   suggestions?: string[] | { label: string; value: string }[]
+  /**
+   * If true, then the user will only be allowed to submit the suggestions as values in an IFilterValue
+   */
+  forceSuggestions?: boolean
 }
 
 // export type IFilterOption = INumberFilterOption | IStringFilterOption

@@ -20,13 +20,26 @@ export const personOfficersFilters: IFilterOption[] = [
     columnName: 'occupation',
     dataType: FilterDatatype.string,
     field: 'occupation',
-    possibleComparisons: [FilterComparison.CONTAINS]
+    possibleComparisons: [FilterComparison.CONTAINS],
+    suggestions: ['DIRECTOR', 'ACCOUNTANT', 'MANAGING DIRECTOR', 'TECHNICAL DIRECTOR', 'ENGINEER']
   },
   {
     columnName: 'nationality',
     dataType: FilterDatatype.string,
     field: 'nationality',
-    possibleComparisons: [FilterComparison.CONTAINS]
+    possibleComparisons: [FilterComparison.EQUALS],
+    suggestions: [
+      { label: 'British', value: 'BRITISH' },
+      { label: 'English', value: 'ENGLISH' },
+      { label: 'Irish', value: 'IRISH' },
+      { label: 'Indian', value: 'INDIAN' },
+      { label: 'German', value: 'GERMAN' },
+      { label: 'Romanian', value: 'ROMANIAN' },
+      { label: 'Polish', value: 'POLISH' },
+      { label: 'American', value: 'AMERICAN' },
+      { label: 'Chinese', value: 'CHINESE' }
+    ],
+    forceSuggestions: true
   },
   {
     columnName: 'title',

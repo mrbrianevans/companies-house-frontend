@@ -151,17 +151,24 @@ export function NewFilterCard(props: Props) {
               </>
             ) : (
               <>
-                {selectedFilterOption.dataType == FilterDatatype.string && (
-                  <TextBox
-                    value={typingValue}
-                    onChange={setTypingValue}
-                    suggestions={selectedFilterOption.suggestions}
-                    onEnter={() => {
-                      addValue(typingValue.trim())
-                      setTypingValue('')
-                    }}
-                  />
-                )}
+                {selectedFilterOption.dataType == FilterDatatype.string &&
+                  (selectedFilterOption.forceSuggestions ? (
+                    <DropDown<string>
+                      options={selectedFilterOption.suggestions}
+                      value={typingValue}
+                      valueSetter={setTypingValue}
+                    />
+                  ) : (
+                    <TextBox
+                      value={typingValue}
+                      onChange={setTypingValue}
+                      suggestions={selectedFilterOption.suggestions}
+                      onEnter={() => {
+                        addValue(typingValue.trim())
+                        setTypingValue('')
+                      }}
+                    />
+                  ))}
                 {selectedFilterOption.dataType == FilterDatatype.number && (
                   <TextBoxNumber
                     value={typingNumber}

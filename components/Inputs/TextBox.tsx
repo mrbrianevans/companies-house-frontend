@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const styles = require('./Inputs.module.scss')
 
@@ -11,30 +11,11 @@ type TextBoxProps = {
   onEnter?: () => void
 }
 const TextBox = (props: TextBoxProps) => {
-  const [suggestionObjects] = useState<{ label: string; value: string }[]>(
-    props.suggestions?.map((suggestion) => {
-      if (typeof suggestion === 'string') return { label: suggestion, value: suggestion }
-      else return suggestion
-    })
-  )
-  const [id] = useState(
-    'list' +
-      suggestionObjects
-        ?.map((suggestion) => {
-          return `${suggestion.label}${suggestion.value}`
-            .split('')
-            .map((char) => char.charCodeAt(0))
-            .reduce((previousValue, currentValue) => previousValue + currentValue)
-        })
-        .reduce((previousValue, currentValue) => previousValue + currentValue) *
-        props.suggestions?.length
-  )
-
   return (
     <>
       <input
         type={'text'}
-        list={suggestionObjects ? id : undefined}
+        list={getSuggestionsHash(props.suggestions)}
         className={styles.textBox}
         placeholder={props.placeholder}
         value={props.value}
@@ -45,9 +26,9 @@ const TextBox = (props: TextBoxProps) => {
           }
         }}
       />
-      <datalist id={suggestionObjects ? id : undefined}>
-        {suggestionObjects?.map((suggestion) => (
-          <option key={suggestion.value} value={suggestion.value}>
+      <datalist id={getSuggestionsHash(props.suggestions)}>
+        {getUnifiedSuggestions(props.suggestions)?.map((suggestion) => (
+          <option key={suggestion.value} value={suggestion.value} label={suggestion.label}>
             {suggestion.label}
           </option>
         ))}
@@ -57,3 +38,27 @@ const TextBox = (props: TextBoxProps) => {
 }
 
 export default TextBox
+
+const getUnifiedSuggestions = (suggestions: string[] | SuggestionObject[]) => {
+  return suggestions?.map((suggestion) => {
+    if (typeof suggestion === 'string') return { label: suggestion, value: suggestion }
+    else return suggestion
+  })
+}
+
+const getSuggestionsHash = (suggestions?: string[] | SuggestionObject[]) => {
+  return suggestions
+    ? 'list' +
+        getUnifiedSuggestions(suggestions)
+          ?.map((suggestion) => {
+            return `${suggestion.label}${suggestion.value}`
+              .split('')
+              .map((char) => char.charCodeAt(0))
+              .reduce((previousValue, currentValue) => previousValue + currentValue)
+          })
+          .reduce((previousValue, currentValue) => previousValue + currentValue) *
+          suggestions.length
+    : undefined
+}
+
+type SuggestionObject = { label: string; value: string }
