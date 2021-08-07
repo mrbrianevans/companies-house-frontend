@@ -27,7 +27,6 @@ const OfficerProfilePage = ({ officerProfile }: props) => {
   useEffect(() => {
     if (typeof router.query.officer_id === 'string') {
       fetchGetOfficerAppointmentsForOfficer({ personNumber: router.query.officer_id }).then((r) => {
-        console.log(r)
         if (r) setOfficerAppointments(r.officerAppointments)
       })
     }

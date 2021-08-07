@@ -5,6 +5,9 @@ import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem as ResultType } 
 import { IResultsTable } from '../../../types/IResultsTable'
 import { splitDate } from '../../../helpers/splitDate'
 import { formatOfficerName } from '../../../helpers/officers/formatOfficerName'
+import { capitalizeEveryWord } from '../../../helpers/StringManipulation'
+import { CloudStorageUrl } from '../../../types/constants/CloudStorageUrl'
+import Image from 'next/image'
 const styles = require('./ResultsTable.module.sass')
 export const OfficerResultsTable: IResultsTable<ResultType> = ({
   matchingResults,
@@ -23,6 +26,7 @@ export const OfficerResultsTable: IResultsTable<ResultType> = ({
           <th>Nationality</th>
           <th>Address</th>
           <th>Country of residence</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -30,24 +34,35 @@ export const OfficerResultsTable: IResultsTable<ResultType> = ({
           matchingResults.map((item, index) => {
             const officer = convertOfficerDatabaseItemToItem(item)
             const birthDate = splitDate(officer.birthDate)
+            const country = officer.usualResidentialCountry ?? officer.country
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td className={styles.nobreak}>
                   <Link href={'/officer/' + officer.personNumber}>
-                    <a>{formatOfficerName(officer).slice(0, 100)}</a>
+                    <a>{capitalizeEveryWord(formatOfficerName(officer).slice(0, 100))}</a>
                   </Link>
                 </td>
                 <td className={styles.nobreak}>
                   {birthDate.month?.slice(0, 3)} {birthDate.year}
                 </td>
-                <td>{officer.occupation}</td>
-                <td>{officer.nationality}</td>
+                <td>{capitalizeEveryWord(officer.occupation)}</td>
+                <td>{capitalizeEveryWord(officer.nationality)}</td>
                 <td>
                   {officer.postCode && `${officer.postCode}, `}
-                  {officer.postTown}
+                  {capitalizeEveryWord(officer.postTown)}
                 </td>
-                <td>{officer.usualResidentialCountry}</td>
+                <td>{country && <>{capitalizeEveryWord(country)} </>}</td>
+                <td>
+                  {country && (
+                    <Image
+                      src={CloudStorageUrl + 'flags/3by2/' + country.toLowerCase() + '.svg'}
+                      width={25}
+                      height={15}
+                      alt={country?.slice(0, 2)}
+                    />
+                  )}
+                </td>
               </tr>
             )
           })}

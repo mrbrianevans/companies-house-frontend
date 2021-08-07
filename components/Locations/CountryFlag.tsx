@@ -15,15 +15,15 @@ export const CountryFlag: (props: Props) => JSX.Element = ({ country, loading })
       {loading || !country ? (
         <div>
           <div>Country</div>
-          <div className={styles.flag}>?</div>
+          <div className={styles.flag}>{country?.slice(0, 2) ?? '?'}</div>
         </div>
       ) : (
         <div>
           <div>{capitalizeEveryWord(country)}</div>
           <Image
             src={CloudStorageUrl + 'flags/3by2/' + country.toLowerCase() + '.svg'}
-            width={500}
-            height={600}
+            width={100}
+            height={50}
             alt={'flag of ' + capitalizeEveryWord(country)}
           />
         </div>
