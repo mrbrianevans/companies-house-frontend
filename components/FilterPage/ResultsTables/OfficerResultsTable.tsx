@@ -1,45 +1,56 @@
 // results table for officer
 // this file is located in: /components/FilterPage/ResultsTables/OfficerResultsTable.tsx
 import Link from 'next/link'
-import { IOfficerItem as ResultType } from '../../../types/IOfficer'
+import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem as ResultType } from '../../../types/IOfficer'
 import { IResultsTable } from '../../../types/IResultsTable'
-
+import { splitDate } from '../../../helpers/splitDate'
+import { formatOfficerName } from '../../../helpers/officers/formatOfficerName'
+const styles = require('./ResultsTable.module.sass')
 export const OfficerResultsTable: IResultsTable<ResultType> = ({
   matchingResults,
   tableClassName,
   filterConfig,
   cachedFilter
 }): JSX.Element => {
-  // the zeroth row is used to determine the headers.
-  // put the unique identifier column in the first position always
   return (
     <table className={tableClassName}>
       <thead>
         <tr>
           <th />
-          {Object.keys(matchingResults[0]).map((columnName, index) => (
-            <th key={index}>{columnName}</th>
-          ))}
+          <th>Name</th>
+          <th>Birth date</th>
+          <th>Occupation</th>
+          <th>Nationality</th>
+          <th>Address</th>
+          <th>Country of residence</th>
         </tr>
       </thead>
       <tbody>
         {matchingResults?.length > 0 &&
-          matchingResults.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              {Object.entries(item).map(([columnName, value], index) => (
-                <td key={index}>
-                  {columnName === filterConfig.uniqueIdentifier ? (
-                    <Link href={`/${filterConfig.urlPath}/${value}`}>
-                      <a target={'_blank'}>{value}</a>
-                    </Link>
-                  ) : (
-                    value
-                  )}
+          matchingResults.map((item, index) => {
+            const officer = convertOfficerDatabaseItemToItem(item)
+            const birthDate = splitDate(officer.birthDate)
+            return (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td className={styles.nobreak}>
+                  <Link href={'/officer/' + officer.personNumber}>
+                    <a>{formatOfficerName(officer).slice(0, 100)}</a>
+                  </Link>
                 </td>
-              ))}
-            </tr>
-          ))}
+                <td className={styles.nobreak}>
+                  {birthDate.month?.slice(0, 3)} {birthDate.year}
+                </td>
+                <td>{officer.occupation}</td>
+                <td>{officer.nationality}</td>
+                <td>
+                  {officer.postCode && `${officer.postCode}, `}
+                  {officer.postTown}
+                </td>
+                <td>{officer.usualResidentialCountry}</td>
+              </tr>
+            )
+          })}
       </tbody>
     </table>
   )

@@ -9,8 +9,8 @@
 import Link from 'next/link'
 import { IFilterConfig } from '../../../types/IFilterConfig'
 import { ICachedFilter } from '../../../types/ICachedFilter'
-import { I${PascalName}Item as ResultType } from '../../../types/I${PascalName}'
-
+import { I${PascalName}DatabaseItem as ResultType } from '../../../types/I${PascalName}'
+const styles = require('./ResultsTable.module.sass')
 interface ${PascalName}ResultsTableParams{
   matchingResults: ResultType[]
   tableClassName: any
@@ -24,22 +24,22 @@ export function ${PascalName}ResultsTable({
   filterConfig,
   cachedFilter
 }: ${PascalName}ResultsTableParams): JSX.Element {
-  // the zeroth row is used to determine the headers.
-  // put the unique identifier column in the first position always
+  // the zeroth row is used to determine the headers
   return (
     <table className={tableClassName}>
       <thead>
         <tr>
           <th />
           {Object.keys(matchingResults[0]).map((columnName, index) => (
-            <th key={index}>{columnName}</th>
+            <th key={index} className={styles.nobreak}>{columnName}</th>
           ))}
         </tr>
       </thead>
       <tbody>
         {matchingResults?.length > 0 &&
-          matchingResults.map((item, index) => (
-            <tr key={index}>
+          matchingResults.map((item, index) => {
+          const $camelName = convert${PascalName}DatabaseItemToItem(item)
+          return <tr key={index}>
               <td>{index + 1}</td>
               {Object.entries(item).map(([columnName, value], index) => (
                 <td key={index}>
@@ -53,7 +53,7 @@ export function ${PascalName}ResultsTable({
                 </td>
               ))}
             </tr>
-          ))}
+          )}
       </tbody>
     </table>
   )
