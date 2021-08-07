@@ -3,7 +3,7 @@
 export interface IOfficerDatabaseItem {
   person_number: string
   post_code?: string
-  birth_date?: Date
+  birth_date?: string
   title?: string
   forenames?: string
   surname: string
@@ -24,7 +24,7 @@ export interface IOfficerDatabaseItem {
 export interface IOfficerItem {
   personNumber: string
   postCode?: string
-  birthDate?: Date
+  birthDate?: number
   title?: string
   forenames?: string
   surname: string
@@ -43,10 +43,10 @@ export interface IOfficerItem {
 }
 
 export function convertOfficerDatabaseItemToItem(databaseItem: IOfficerDatabaseItem): IOfficerItem {
-  const item = {
+  const item: IOfficerItem = {
     personNumber: databaseItem.person_number,
     postCode: databaseItem.post_code,
-    birthDate: databaseItem.birth_date,
+    birthDate: new Date(databaseItem.birth_date).valueOf(),
     title: databaseItem.title,
     forenames: databaseItem.forenames,
     surname: databaseItem.surname,

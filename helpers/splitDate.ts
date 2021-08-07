@@ -28,11 +28,12 @@ export const splitDate = (timestamp: number) => {
 
 /**
  * Takes a timestamp in milliseconds and returns a string in the format
- * YYYY-MM-DD such as 2021-07-19
+ * YYYY-MM-DD such as 2021-07-19. Returns empty string if timestamp is null.
  *
  * @param timestamp milliseconds since epoch
  */
 export const getYMD = (timestamp: number) => {
+  if (timestamp === null || timestamp === undefined) return ''
   const month = (new Date(timestamp).getUTCMonth() + 1).toString().padStart(2, '0')
   const year = new Date(timestamp).getUTCFullYear()
   const day = new Date(timestamp).getUTCDate().toString().padStart(2, '0')

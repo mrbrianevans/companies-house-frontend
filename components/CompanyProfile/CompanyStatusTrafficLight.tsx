@@ -74,5 +74,6 @@ const lowerCaseStatusStringToEnum = new Map<string, Status>([
   ['dissolved', Status.dissolved],
   ['liquidation', Status.liquidation],
   ['active - proposal to strike off', Status.active_proposal_to_strike_off],
-  ['in administration', Status.in_administration]
+  ['in administration', Status.in_administration],
+  ['administration', Status.in_administration]
 ])

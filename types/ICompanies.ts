@@ -13,38 +13,38 @@ export interface ICompaniesDatabaseItem {
   status?: string
   date?: number
   updated?: Date
-  can_file?: unknown
+  can_file?: boolean
 }
 
 export interface ICompaniesItem {
   name?: string
-  number?: string
-  streetaddress?: string
+  companyNumber?: string
+  streetAddress?: string
   county?: string
   country?: string
   postcode?: string
   category?: string
-  origin?: string
+  countryOfOrigin?: string
   status?: string
-  date?: number
-  updated?: Date
-  canFile?: unknown
+  dateOfCreation?: number
+  lastUpdated?: number
+  canFile?: boolean
 }
 
 export function convertCompaniesDatabaseItemToItem(databaseItem: ICompaniesDatabaseItem): ICompaniesItem {
   if (!databaseItem) return null
-  const item = {
+  const item: ICompaniesItem = {
     name: databaseItem.name,
-    number: databaseItem.number,
-    streetaddress: databaseItem.streetaddress,
+    companyNumber: databaseItem.number,
+    streetAddress: databaseItem.streetaddress,
     county: databaseItem.county,
     country: databaseItem.country,
     postcode: databaseItem.postcode,
     category: databaseItem.category,
-    origin: databaseItem.origin,
+    countryOfOrigin: databaseItem.origin,
     status: databaseItem.status,
-    date: databaseItem.date,
-    updated: databaseItem.updated,
+    dateOfCreation: new Date(databaseItem.date).valueOf(),
+    lastUpdated: new Date(databaseItem.updated).valueOf(),
     canFile: databaseItem.can_file
   }
   return item

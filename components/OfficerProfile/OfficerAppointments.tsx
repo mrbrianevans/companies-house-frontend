@@ -19,13 +19,13 @@ export const OfficerAppointments: (props: OfficerAppointmentsProps) => JSX.Eleme
         appointments?.map((appointment, index) => (
           <div key={index}>
             <CompanyName name={appointment.company.name} loading={false} />
-            <CompanyNumber companyNumber={appointment.company.number} loading={false} />
+            <CompanyNumber companyNumber={appointment.company.companyNumber} loading={false} />
             <p>
               Appointed as {appointment.appointment.appointmentType} to {appointment.company.name} on{' '}
-              {getYMD(appointment.appointment.appointmentDate?.valueOf())}
+              {getYMD(appointment.appointment.appointmentDate)}
             </p>
             <p>
-              <ButtonLink href={'/company/' + appointment.company.number}>View company</ButtonLink>
+              <ButtonLink href={'/company/' + appointment.company.companyNumber}>View company</ButtonLink>
             </p>
           </div>
         ))}

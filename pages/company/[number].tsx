@@ -22,6 +22,9 @@ import { ShareCode } from '../../components/ShareCode/ShareCode'
 import { AddressWithMapAndFlag } from '../../components/Locations/AddressWithMapAndFlag'
 import ButtonLink from '../../components/Inputs/ButtonLink'
 import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { fetchGetOfficerAppointmentsForCompany } from '../../ajax/officer/getOfficerAppointmentsForCompany'
+import { IOfficerAppointmentWithOfficer } from '../../types/IOfficerAppointments'
+import { formatOfficerName } from '../../helpers/officers/formatOfficerName'
 
 const styles = require('./CompanyProfile.module.scss')
 
@@ -36,13 +39,18 @@ interface props {
 const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEvents, financials }: props) => {
   const router = useRouter()
   const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
+  const [officers, setOfficers] = useState<IOfficerAppointmentWithOfficer[]>()
   useEffect(() => {
-    if (!companyData?.company.number) return
-    fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company.number)
+    if (router.query.number instanceof Array) return
+    fetch('/api/chApi/getFilingsList?company_number=' + router.query.number)
       .then((res) => res.json())
       .then((j) => setFilingHistory(j))
       .catch(console.error)
-  }, [companyData])
+    //call API endpoint to get list of officers related to this company from the person_officers table
+    fetchGetOfficerAppointmentsForCompany({ companyNumber: router.query.number })
+      .then((res) => setOfficers(res?.officers ?? null))
+      .catch(console.error)
+  }, [router.query.number])
   return (
     <Page>
       <article className={styles.layout}>
@@ -50,7 +58,7 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
           <CompanyName name={companyData?.company.name} loading={router.isFallback} />
         </section>
         <section className={styles.number}>
-          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company.number} />
+          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company.companyNumber} />
         </section>
         <section className={styles.sharecode}>
           <p>
@@ -62,13 +70,13 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
           <CompanyStatusTrafficLight status={companyData?.company.status} loading={router.isFallback} />
         </section>
         <section className={styles.location}>
-          <AddressWithMapAndFlag address={companyData.address} loading={router.isFallback} />
+          <AddressWithMapAndFlag address={companyData?.address} loading={router.isFallback} />
         </section>
         <section className={styles.employees}>
           <CompanyEmployees employees={financials?.employees} loading={router.isFallback} />
         </section>
         <section className={styles.officers}>
-          <CompanyOfficers officers={financials?.officers.map((o) => ({ name: o }))} loading={router.isFallback} />
+          <CompanyOfficers officers={officers} loading={!officers} />
         </section>
         <section className={styles.timeline}>
           <VerticalTimeline

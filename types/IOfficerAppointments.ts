@@ -2,7 +2,7 @@
 
 import { IOfficerItem } from './IOfficer'
 import { ICompanyProfile } from './ICompany'
-import { ICompaniesDatabaseItem } from './ICompanies'
+import { ICompaniesDatabaseItem, ICompaniesItem } from './ICompanies'
 import { ICompanyViewItem } from './ICompanyView'
 import { IWideAccountsCombinedDatabaseItem, IWideAccountsCombinedItem } from './IWideAccountsCombined'
 import { IDetailedPostcodesDatabaseItem } from './IDetailedPostcodes'
@@ -12,37 +12,43 @@ export interface IOfficerAppointmentsDatabaseItem {
   company_number?: string
   person_number?: string
   appointment_type?: string
-  appointment_date?: Date
+  appointment_date?: string
 }
 
 export interface IOfficerAppointmentsItem {
   companyNumber?: string
   personNumber?: string
   appointmentType?: string
-  appointmentDate?: Date
+  // timestamp of appointment date (only accurate to the day)
+  appointmentDate?: number
 }
 
 export function convertOfficerAppointmentsDatabaseItemToItem(
   databaseItem: IOfficerAppointmentsDatabaseItem
 ): IOfficerAppointmentsItem {
   if (!databaseItem) return null
-  const item = {
+  const item: IOfficerAppointmentsItem = {
     companyNumber: databaseItem.company_number,
     personNumber: databaseItem.person_number,
     appointmentType: databaseItem.appointment_type,
-    appointmentDate: databaseItem.appointment_date
+    appointmentDate: new Date(databaseItem.appointment_date).valueOf()
   }
   return item
 }
 
-export type IOfficerAppointmentWithOfficer = IOfficerAppointmentsItem & IOfficerItem
 export type IOfficerAppointmentWithCompany = IOfficerAppointmentsItem & ICompanyViewItem
 
 export interface IOfficerAppointmentFullDetails {
   appointment: IOfficerAppointmentsItem
-  company: ICompaniesDatabaseItem
+  company: ICompaniesItem
   sicCodes: string[]
   companyAccounts: IWideAccountsCombinedItem
   officerAddress: IAddress
   companyAddress: IAddress
+}
+
+export interface IOfficerAppointmentWithOfficer {
+  appointment: IOfficerAppointmentsItem
+  officerAddress: IAddress
+  officer: IOfficerItem
 }
