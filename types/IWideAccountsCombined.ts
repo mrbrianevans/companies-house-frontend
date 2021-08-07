@@ -24,7 +24,7 @@ export interface IWideAccountsCombinedItem {
   companyNumber?: string
   balanceSheetDate?: Date
   accountants?: string
-  accoutingSoftware?: string
+  accountingSoftware?: string
   employees?: unknown
   currentAssets?: unknown
   cashAtBank?: unknown
@@ -42,11 +42,12 @@ export interface IWideAccountsCombinedItem {
 export function convertWideAccountsCombinedDatabaseItemToItem(
   databaseItem: IWideAccountsCombinedDatabaseItem
 ): IWideAccountsCombinedItem {
-  const item = {
+  if (!databaseItem) return null
+  const item: IWideAccountsCombinedItem = {
     companyNumber: databaseItem.company_number,
     balanceSheetDate: databaseItem.balance_sheet_date,
     accountants: databaseItem.accountants,
-    accoutingSoftware: databaseItem.accouting_software,
+    accountingSoftware: databaseItem.accouting_software,
     employees: databaseItem.employees,
     currentAssets: databaseItem.current_assets,
     cashAtBank: databaseItem.cash_at_bank,

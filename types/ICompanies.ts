@@ -32,6 +32,7 @@ export interface ICompaniesItem {
 }
 
 export function convertCompaniesDatabaseItemToItem(databaseItem: ICompaniesDatabaseItem): ICompaniesItem {
+  if (!databaseItem) return null
   const item = {
     name: databaseItem.name,
     number: databaseItem.number,

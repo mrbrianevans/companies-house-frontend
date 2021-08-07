@@ -25,6 +25,7 @@ export interface IOfficerAppointmentsItem {
 export function convertOfficerAppointmentsDatabaseItemToItem(
   databaseItem: IOfficerAppointmentsDatabaseItem
 ): IOfficerAppointmentsItem {
+  if (!databaseItem) return null
   const item = {
     companyNumber: databaseItem.company_number,
     personNumber: databaseItem.person_number,

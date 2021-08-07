@@ -131,13 +131,14 @@ export const convertDetailPostcodesToAddress: (
   detailedPostcode: IDetailedPostcodesItem,
   streetAddress: string
 ) => IAddress = (detailedPostcode, streetAddress) => {
+  if (!detailedPostcode) return null
   return {
-    city: detailedPostcode.builtUpArea,
-    country: detailedPostcode.country,
-    county: detailedPostcode.county,
-    lat: detailedPostcode.lat,
-    long: detailedPostcode.long,
-    postCode: detailedPostcode.postcode,
-    streetAddress
+    city: detailedPostcode.builtUpArea ?? null,
+    country: detailedPostcode.country ?? null,
+    county: detailedPostcode.county ?? null,
+    lat: detailedPostcode.lat ?? null,
+    long: detailedPostcode.long ?? null,
+    postCode: detailedPostcode.postcode ?? null,
+    streetAddress: streetAddress ?? null
   }
 }

@@ -1,5 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { ICompanyProfile } from '../../types/ICompany'
+import { ICompanyFullDetails, ICompanyProfile } from '../../types/ICompany'
 import { Page } from '../../components/Page/Page'
 import { CompanyEvent, FilingEvent } from '../../types/IEvent'
 import { getCompanyProfile } from '../../interface/getCompanyProfile'
@@ -26,7 +26,7 @@ import { capitalizeEveryWord } from '../../helpers/StringManipulation'
 const styles = require('./CompanyProfile.module.scss')
 
 interface props {
-  companyData: ICompanyProfile
+  companyData: ICompanyFullDetails
   apiResponseTime: number
   filingEvents?: FilingEvent[]
   companyEvents?: CompanyEvent[]
@@ -37,8 +37,8 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
   const router = useRouter()
   const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
   useEffect(() => {
-    if (!companyData?.company_number) return
-    fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company_number)
+    if (!companyData?.company.number) return
+    fetch('/api/chApi/getFilingsList?company_number=' + companyData?.company.number)
       .then((res) => res.json())
       .then((j) => setFilingHistory(j))
       .catch(console.error)
@@ -47,10 +47,10 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
     <Page>
       <article className={styles.layout}>
         <section className={styles.name}>
-          <CompanyName name={companyData?.name} loading={router.isFallback} />
+          <CompanyName name={companyData?.company.name} loading={router.isFallback} />
         </section>
         <section className={styles.number}>
-          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company_number} />
+          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company.number} />
         </section>
         <section className={styles.sharecode}>
           <p>
@@ -59,23 +59,10 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
           {/*<ShareCode text={`filfa.co/v/${companyData?.company_number}`} />*/}
         </section>
         <section className={styles.status}>
-          <CompanyStatusTrafficLight status={companyData?.status} loading={router.isFallback} />
+          <CompanyStatusTrafficLight status={companyData?.company.status} loading={router.isFallback} />
         </section>
         <section className={styles.location}>
-          <AddressWithMapAndFlag
-            address={
-              companyData && {
-                streetAddress: companyData.streetaddress,
-                country: companyData.country,
-                city: companyData.built_up_area,
-                county: companyData.county,
-                lat: 0,
-                long: 0,
-                postCode: companyData.postcode
-              }
-            }
-            loading={router.isFallback}
-          />
+          <AddressWithMapAndFlag address={companyData.address} loading={router.isFallback} />
         </section>
         <section className={styles.employees}>
           <CompanyEmployees employees={financials?.employees} loading={router.isFallback} />
@@ -133,18 +120,15 @@ export const getStaticProps: GetStaticProps = async (context) => {
       }
     }
   const timer = new Timer({
-    label: `Load company profile page details (company number:${companyNumber})`,
-    details: { class: 'company-profile' },
+    label: `Load company profile page details`,
+    details: { class: 'companyProfilePage', companyNumber },
     filename: '/pages/company/[number].tsx'
   })
-  // todo: there is no reason why these steps need to be linear. They can be asynchronous (all happen in parallel)
-  //  - use Promise.all() to improve load time of company profile
-  timer.start('Get company profile')
-  const companyData = await getCompanyProfile(companyNumber)
-  timer.next('Get company and filing events')
-  const { companyEvents, filingEvents } = await getCompanyEvents(companyNumber)
-  timer.next('Get company accounts')
-  let financials: ICompanyAccounts = await getCompanyAccounts(companyNumber)
+  const [companyData, { companyEvents, filingEvents }, financials] = await Promise.all([
+    getCompanyProfile(companyNumber),
+    getCompanyEvents(companyNumber),
+    getCompanyAccounts(companyNumber)
+  ])
   const returnProps: props = {
     companyData,
     apiResponseTime: timer.flush(), // this console logs and returns the time

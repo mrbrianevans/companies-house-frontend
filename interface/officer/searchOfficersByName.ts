@@ -4,7 +4,7 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem, IOfficerItem } from '../../types/IOfficer'
-import { IDetailedPostcodesItem } from '../../types/IDetailedPostcodesItem'
+import { IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
 
 // input parameters for searchOfficersByName - query
 export interface SearchOfficersByNameParams {
@@ -50,7 +50,7 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   `,
         [splitQuery]
       )
-      .then(({ rows }: { rows: (IOfficerDatabaseItem & IDetailedPostcodesItem)[] }) => rows)
+      .then(({ rows }: { rows: (IOfficerDatabaseItem & IDetailedPostcodesDatabaseItem)[] }) => rows)
       .catch((e) => timer.postgresError(e))) ?? []
   queryTimer.stop()
   if (!result || result?.length === 0) timer.customError('No results returned')

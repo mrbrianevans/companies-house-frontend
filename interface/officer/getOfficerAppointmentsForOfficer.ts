@@ -52,24 +52,6 @@ export async function getOfficerAppointmentsForOfficer({
     details: { personNumber }
   })
   const pool = getDatabasePool()
-  console.log(
-    prettyPrintSqlQuery(
-      `
-          SELECT row_to_json(oa.*) AS appointment
-               , (SELECT ARRAY_AGG(sm.description) FROM sic s JOIN sic_map sm on s.sic_code = sm.code WHERE s.company_number=c.number) AS sic_codes
-               , row_to_json(c.*) AS company
-               , row_to_json(wac.*) AS wide_company
-               , row_to_json(dp.*) AS address
-          FROM officer_appointments oa
-                   JOIN companies c ON oa.company_number = c.number
-                   LEFT JOIN wide_accounts_combined wac on oa.company_number = wac.company_number
-                   JOIN detailed_postcodes dp on c.postcode = dp.postcode
-                   JOIN person_officers po on oa.person_number = po.person_number
-          WHERE oa.person_number = $1
-      `,
-      [personNumber]
-    )
-  )
   const results: {
     appointment: IOfficerAppointmentsDatabaseItem
     company: ICompaniesDatabaseItem
