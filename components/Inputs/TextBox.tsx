@@ -7,19 +7,25 @@ type TextBoxProps = {
   placeholder?: string
   value: string
   onChange: (newValue: string) => void
-  suggestions?: string[] //todo: give this the option of being [{value: "", label: ""}]
+  suggestions?: string[] | { label: string; value: string }[]
   onEnter?: () => void
 }
 const TextBox = (props: TextBoxProps) => {
+  const [suggestionObjects] = useState<{ label: string; value: string }[]>(
+    props.suggestions?.map((suggestion) => {
+      if (typeof suggestion === 'string') return { label: suggestion, value: suggestion }
+      else return suggestion
+    })
+  )
   const [id] = useState(
     'list' +
-      props.suggestions
-        ?.map((suggestion) =>
-          suggestion
+      suggestionObjects
+        ?.map((suggestion) => {
+          return `${suggestion.label}${suggestion.value}`
             .split('')
             .map((char) => char.charCodeAt(0))
             .reduce((previousValue, currentValue) => previousValue + currentValue)
-        )
+        })
         .reduce((previousValue, currentValue) => previousValue + currentValue) *
         props.suggestions?.length
   )
@@ -28,7 +34,7 @@ const TextBox = (props: TextBoxProps) => {
     <>
       <input
         type={'text'}
-        list={props.suggestions ? id : undefined}
+        list={suggestionObjects ? id : undefined}
         className={styles.textBox}
         placeholder={props.placeholder}
         value={props.value}
@@ -39,13 +45,13 @@ const TextBox = (props: TextBoxProps) => {
           }
         }}
       />
-      {props.suggestions && (
-        <datalist id={id}>
-          {props.suggestions.map((suggestion) => (
-            <option key={suggestion}>{suggestion}</option>
-          ))}
-        </datalist>
-      )}
+      <datalist id={suggestionObjects ? id : undefined}>
+        {suggestionObjects?.map((suggestion) => (
+          <option key={suggestion.value} value={suggestion.value}>
+            {suggestion.label}
+          </option>
+        ))}
+      </datalist>
     </>
   )
 }
