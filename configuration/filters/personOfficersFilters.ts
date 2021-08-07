@@ -5,22 +5,28 @@ import { FilterComparison } from '../filterComparisons'
 
 export const personOfficersFilters: IFilterOption[] = [
   {
-    columnName: 'person_number',
+    columnName: 'officer_name_vector',
     dataType: FilterDatatype.string,
-    field: 'person number',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'post_code',
-    dataType: FilterDatatype.string,
-    field: 'post code',
-    possibleComparisons: [FilterComparison.CONTAINS]
+    field: 'name',
+    possibleComparisons: [FilterComparison.MATCHES]
   },
   {
     columnName: 'birth_date',
     dataType: FilterDatatype.date,
     field: 'birth date',
     possibleComparisons: [FilterComparison.AFTER, FilterComparison.BEFORE, FilterComparison.IS_BETWEEN]
+  },
+  {
+    columnName: 'occupation',
+    dataType: FilterDatatype.string,
+    field: 'occupation',
+    possibleComparisons: [FilterComparison.CONTAINS]
+  },
+  {
+    columnName: 'nationality',
+    dataType: FilterDatatype.string,
+    field: 'nationality',
+    possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
     columnName: 'title',
@@ -31,7 +37,7 @@ export const personOfficersFilters: IFilterOption[] = [
   {
     columnName: 'forenames',
     dataType: FilterDatatype.string,
-    field: 'forenames',
+    field: 'firstname',
     possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
@@ -41,33 +47,15 @@ export const personOfficersFilters: IFilterOption[] = [
     possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
-    columnName: 'honours',
+    columnName: 'usual_residential_country',
     dataType: FilterDatatype.string,
-    field: 'honours',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'care_of',
-    dataType: FilterDatatype.string,
-    field: 'care of',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'po_box',
-    dataType: FilterDatatype.string,
-    field: 'po box',
+    field: 'usual country of residence',
     possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
     columnName: 'address_line_1',
     dataType: FilterDatatype.string,
     field: 'address line 1',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'address_line_2',
-    dataType: FilterDatatype.string,
-    field: 'address line 2',
     possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
@@ -89,27 +77,9 @@ export const personOfficersFilters: IFilterOption[] = [
     possibleComparisons: [FilterComparison.CONTAINS]
   },
   {
-    columnName: 'occupation',
+    columnName: 'post_code',
     dataType: FilterDatatype.string,
-    field: 'occupation',
+    field: 'post code',
     possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'nationality',
-    dataType: FilterDatatype.string,
-    field: 'nationality',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'usual_residential_country',
-    dataType: FilterDatatype.string,
-    field: 'usual residential country',
-    possibleComparisons: [FilterComparison.CONTAINS]
-  },
-  {
-    columnName: 'officer_name_vector',
-    dataType: FilterDatatype.string,
-    field: 'officer name vector',
-    possibleComparisons: [FilterComparison.MATCHES]
   }
 ].map((filter) => Object.freeze(filter))
