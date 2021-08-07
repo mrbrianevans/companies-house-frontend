@@ -1,7 +1,6 @@
 import { Page } from '../../components/Page/Page'
 import * as React from 'react'
 import { useState } from 'react'
-import Link from 'next/link'
 import { AccountantSearchBar } from '../../components/SearchBars/AccountantSearchBar'
 import { FeatureList } from '../../components/lists/FeatureList'
 import getFilterOptions from '../../interface/filter/getFilterOptions'

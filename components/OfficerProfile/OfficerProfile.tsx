@@ -4,7 +4,7 @@ import { ShareCode } from '../ShareCode/ShareCode'
 import { AddressWithMapAndFlag } from '../Locations/AddressWithMapAndFlag'
 import { formatOfficerName } from '../../helpers/officers/formatOfficerName'
 import { getOfficerAddressFromItem } from '../../helpers/officers/getOfficerAddressFromItem'
-import { IOfficerAppointmentFullDetails, IOfficerAppointmentWithCompany } from '../../types/IOfficerAppointments'
+import { IOfficerAppointmentFullDetails } from '../../types/IOfficerAppointments'
 import { OfficerAppointments } from './OfficerAppointments'
 import { OfficerAppointmentSummary } from './OfficerAppointmentSummary'
 

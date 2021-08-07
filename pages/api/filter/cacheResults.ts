@@ -1,6 +1,6 @@
 // this file is located in: /pages/api/filter/cacheResults.ts
 
-import { CacheResultsParams, CacheResultsOutput, cacheResults } from '../../../interface/filter/cacheResults'
+import { cacheResults, CacheResultsOutput, CacheResultsParams } from '../../../interface/filter/cacheResults'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 // api endpoint on /api/filter/cacheResults

@@ -1,11 +1,9 @@
 // generated typescript definitions from database using groovy script
 
 import { IOfficerItem } from './IOfficer'
-import { ICompanyProfile } from './ICompany'
-import { ICompaniesDatabaseItem, ICompaniesItem } from './ICompanies'
+import { ICompaniesItem } from './ICompanies'
 import { ICompanyViewItem } from './ICompanyView'
-import { IWideAccountsCombinedDatabaseItem, IWideAccountsCombinedItem } from './IWideAccountsCombined'
-import { IDetailedPostcodesDatabaseItem } from './IDetailedPostcodes'
+import { IWideAccountsCombinedItem } from './IWideAccountsCombined'
 import { IAddress } from './IAddress'
 
 export interface IOfficerAppointmentsDatabaseItem {

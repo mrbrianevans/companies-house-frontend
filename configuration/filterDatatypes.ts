@@ -1,5 +1,3 @@
-import { IMinorQuery } from '../types/IQueries'
-
 export enum FilterDatatype {
   string,
   number,

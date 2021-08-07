@@ -10,6 +10,7 @@ import { FilterCategory } from '../../types/FilterCategory'
 import ButtonLink from '../../components/Inputs/ButtonLink'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+
 const filterCategory = FilterCategory.OFFICER
 const FilterCompaniesPage = () => {
   const [companyFilters] = useState(getFilterOptions({ category: FilterCategory.COMPANY }))

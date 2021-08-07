@@ -1,5 +1,6 @@
 import { FilingHistoryItem } from '@companieshouse/api-sdk-node/dist/services/company-filing-history'
 import { getDatabasePool } from '../helpers/connectToDatabase'
+
 const snake = require('snakecase-keys')
 
 export const insertFilingEvent = async (

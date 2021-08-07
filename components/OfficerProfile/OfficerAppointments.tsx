@@ -1,5 +1,5 @@
-import { IOfficerAppointmentFullDetails, IOfficerAppointmentWithCompany } from '../../types/IOfficerAppointments'
-import { getYMD, splitDate } from '../../helpers/splitDate'
+import { IOfficerAppointmentFullDetails } from '../../types/IOfficerAppointments'
+import { getYMD } from '../../helpers/splitDate'
 import { CompanyName } from '../CompanyProfile/CompanyName'
 import { CompanyNumber } from '../CompanyProfile/CompanyNumber'
 import ButtonLink from '../Inputs/ButtonLink'

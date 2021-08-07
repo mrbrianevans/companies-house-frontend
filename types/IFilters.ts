@@ -15,8 +15,6 @@
 // - A distribution of their clients size (based on financials, and accounts type)
 // - maybe an estimation of their fees based on their clients
 
-import { IMinorQuery } from './IQueries'
-import { FilterCategory } from './FilterCategory'
 import { FilterComparison } from '../configuration/filterComparisons'
 import { FilterDatatype } from '../configuration/filterDatatypes'
 

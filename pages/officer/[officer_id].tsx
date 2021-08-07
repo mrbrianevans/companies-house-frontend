@@ -12,7 +12,7 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 import { OfficerProfile } from '../../components/OfficerProfile/OfficerProfile'
 import { useEffect, useState } from 'react'
 import { fetchGetOfficerAppointmentsForOfficer } from '../../ajax/officer/getOfficerAppointmentsForOfficer'
-import { IOfficerAppointmentFullDetails, IOfficerAppointmentWithOfficer } from '../../types/IOfficerAppointments'
+import { IOfficerAppointmentFullDetails } from '../../types/IOfficerAppointments'
 
 const category = FilterCategory.OFFICER
 const filterConfig = getFilterConfig({ category })

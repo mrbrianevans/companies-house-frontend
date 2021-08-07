@@ -1,9 +1,7 @@
 // this file is located in: /pages/api/filter/getItemById.ts
 
-import { GetItemByIdParams, GetItemByIdOutput, getItemById } from '../../../interface/filter/getItemById'
+import { getItemById, GetItemByIdOutput, GetItemByIdParams } from '../../../interface/filter/getItemById'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/client'
-import { getUser } from '../../../interface/user/getUser'
 
 // api endpoint on /api/filter/getItemById
 export default async (req: NextApiRequest, res: NextApiResponse) => {

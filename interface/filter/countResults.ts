@@ -7,7 +7,6 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 // input parameters for countResults - filters, category
 export interface CountResultsParams {

@@ -5,7 +5,6 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 import { validateFilter } from '../../helpers/filters/validateFilter'
 import { sqlWhereConverter } from '../../helpers/sqlWhereConverter'
 import { getFromClause } from '../../helpers/sqlFromGenerator'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 type Params = {
   filters: IFilterValue[]

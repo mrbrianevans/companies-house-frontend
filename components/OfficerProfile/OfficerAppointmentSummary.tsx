@@ -1,4 +1,4 @@
-import { IOfficerAppointmentFullDetails, IOfficerAppointmentWithCompany } from '../../types/IOfficerAppointments'
+import { IOfficerAppointmentFullDetails } from '../../types/IOfficerAppointments'
 
 const styles = require('./OfficerAppointmentSummary.module.sass')
 

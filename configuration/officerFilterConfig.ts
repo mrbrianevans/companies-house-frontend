@@ -1,7 +1,4 @@
 import { IFilterConfig } from '../types/IFilterConfig'
-import { FilterComparison } from './filterComparisons'
-import { FilterDatatype } from './filterDatatypes'
-import { IFilterOption } from '../types/IFilters'
 import { personOfficersFilters } from './filters/personOfficersFilters'
 
 export const officerFilterConfig: IFilterConfig = Object.freeze({

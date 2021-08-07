@@ -3,6 +3,7 @@ import { FilterComparison } from '../../../configuration/filterComparisons'
 import { validateFilter } from '../../../helpers/filters/validateFilter'
 import { FilterCategory } from '../../../types/FilterCategory'
 import { expect } from 'chai'
+
 describe('test the validate filter method to correctly determine if a filter value is valid', () => {
   it('should return true for valid officer filters', () => {
     const validFilters: IFilterValue[] = [

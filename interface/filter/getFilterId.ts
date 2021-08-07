@@ -6,7 +6,6 @@ import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { getFilterId as getFilterIdHelper } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import combineQueries from './combineQueries'
 import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 

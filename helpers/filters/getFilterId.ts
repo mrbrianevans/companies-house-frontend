@@ -1,5 +1,6 @@
 import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
+
 const hash = require('object-hash')
 
 /**

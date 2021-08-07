@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { signIn, useSession } from 'next-auth/client'
 import { Page } from '../../components/Page/Page'
-import TextBox from '../../components/Inputs/TextBox'
-import Button from '../../components/Inputs/Button'
 import { TextInputWithButton } from '../../components/Inputs/TextInputWithButton'
 
 const styles = require('../../styles/SignIn.module.scss')

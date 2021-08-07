@@ -1,13 +1,10 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Timer } from '../../helpers/Timer'
 import { ICachedFiltersDatabaseItem } from '../../types/ICachedFiltersDatabaseItem'
 import { IFilterValue } from '../../types/IFilters'
-import { UserRole } from '../../types/IUser'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getItemById } from './getItemById'
 
 interface GetCachedFilterParams {

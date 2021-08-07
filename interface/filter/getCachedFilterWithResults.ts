@@ -1,10 +1,8 @@
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Timer } from '../../helpers/Timer'
-import applyFilters from './applyFilters'
 import { cacheResults } from './cacheResults'
 
 interface getCachedFilterWithResultsParams {

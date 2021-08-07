@@ -1,6 +1,6 @@
 // this file is located in: /pages/api/user/saveUserFilter.ts
 
-import { SaveUserFilterParams, SaveUserFilterOutput, saveUserFilter } from '../../../interface/user/saveUserFilter'
+import { saveUserFilter, SaveUserFilterOutput, SaveUserFilterParams } from '../../../interface/user/saveUserFilter'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import { getUser } from '../../../interface/user/getUser'

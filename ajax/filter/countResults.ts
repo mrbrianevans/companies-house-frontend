@@ -1,6 +1,6 @@
 // this file is located in: /ajax/filter/countResults.ts
 
-import { CountResultsParams, CountResultsOutput } from '../../interface/filter/countResults'
+import { CountResultsOutput, CountResultsParams } from '../../interface/filter/countResults'
 
 /** Frontend AJAX call to countResults method on the backend
  *

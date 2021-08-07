@@ -1,5 +1,4 @@
 // generated typescript definitions from database using groovy script
-import { FilterCategory } from './FilterCategory'
 
 export interface ICompanyViewDatabaseItem {
   company_number?: string

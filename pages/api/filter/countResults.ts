@@ -1,6 +1,6 @@
 // this file is located in: /pages/api/filter/countResults.ts
 
-import { CountResultsParams, CountResultsOutput, countResults } from '../../../interface/filter/countResults'
+import { countResults, CountResultsOutput, CountResultsParams } from '../../../interface/filter/countResults'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 // api endpoint on /api/filter/countResults

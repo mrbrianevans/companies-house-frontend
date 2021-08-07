@@ -1,4 +1,3 @@
-import { ICompanyProfile } from '../../types/ICompany'
 import { ICompaniesHouseSearchApiResponse } from '../../types/ICompaniesHouseApiResponse'
 import axios from 'axios'
 import { Timer } from '../../helpers/Timer'

@@ -8,7 +8,6 @@ import { ICachedFilter } from '../../../types/ICachedFilter'
 import { accountantFilterConfig } from '../../../configuration/accountantFilterConfig'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
-import getCachedFilter from '../../../interface/filter/getCachedFilter'
 import getCachedFilterWithResults from '../../../interface/filter/getCachedFilterWithResults'
 
 interface Props {

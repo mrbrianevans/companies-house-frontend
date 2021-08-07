@@ -1,5 +1,4 @@
 import { IFilterValue } from './IFilters'
-import { IAccountant } from './IAccountant'
 
 export interface ICachedFilter<ResultType> {
   appliedFilters: IFilterValue[]

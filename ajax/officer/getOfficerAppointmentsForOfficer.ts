@@ -1,8 +1,8 @@
 // this file is located in: /ajax/officer/getOfficerAppointmentsForOfficer.ts
 
 import {
-  GetOfficerAppointmentsForOfficerParams,
-  GetOfficerAppointmentsForOfficerOutput
+  GetOfficerAppointmentsForOfficerOutput,
+  GetOfficerAppointmentsForOfficerParams
 } from '../../interface/officer/getOfficerAppointmentsForOfficer'
 
 /** Frontend AJAX call to getOfficerAppointmentsForOfficer method on the backend

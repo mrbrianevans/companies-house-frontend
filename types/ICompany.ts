@@ -1,6 +1,5 @@
-import { ICompaniesDatabaseItem, ICompaniesItem } from './ICompanies'
-import { IWideAccountsCombinedDatabaseItem, IWideAccountsCombinedItem } from './IWideAccountsCombined'
-import { IDetailedPostcodesDatabaseItem, IDetailedPostcodesItem } from './IDetailedPostcodes'
+import { ICompaniesItem } from './ICompanies'
+import { IWideAccountsCombinedItem } from './IWideAccountsCombined'
 import { ISicCodeItem } from './ISicCode'
 import { IAddress } from './IAddress'
 

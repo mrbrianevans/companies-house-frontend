@@ -1,6 +1,6 @@
 // this file is located in: /pages/api/filter/cacheFilter.ts
 
-import { CacheFilterParams, CacheFilterOutput, cacheFilter } from '../../../interface/filter/cacheFilter'
+import { cacheFilter, CacheFilterOutput, CacheFilterParams } from '../../../interface/filter/cacheFilter'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

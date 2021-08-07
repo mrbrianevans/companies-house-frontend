@@ -1,5 +1,5 @@
 import { getDatabasePool } from '../helpers/connectToDatabase'
-import { ICompanyFullDetails, ICompanyProfile } from '../types/ICompany'
+import { ICompanyFullDetails } from '../types/ICompany'
 import axios from 'axios'
 import { ICompaniesHouseApiCompanyProfile } from '../types/ICompaniesHouseApiCompanyProfile'
 import { Timer } from '../helpers/Timer'
@@ -9,7 +9,8 @@ import {
 } from '../types/IWideAccountsCombined'
 import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../types/ICompanies'
 import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../types/IDetailedPostcodes'
-import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem, ISicCodeItem } from '../types/ISicCode'
+import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem } from '../types/ISicCode'
+
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyFullDetails | null> = async (
   company_number
 ) => {

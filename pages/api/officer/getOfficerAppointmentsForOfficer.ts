@@ -1,9 +1,9 @@
 // this file is located in: /pages/api/officer/getOfficerAppointmentsForOfficer.ts
 
 import {
-  GetOfficerAppointmentsForOfficerParams,
+  getOfficerAppointmentsForOfficer,
   GetOfficerAppointmentsForOfficerOutput,
-  getOfficerAppointmentsForOfficer
+  GetOfficerAppointmentsForOfficerParams
 } from '../../../interface/officer/getOfficerAppointmentsForOfficer'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'

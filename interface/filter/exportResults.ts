@@ -7,8 +7,6 @@ import * as csv from 'fast-csv'
 import QueryStream from 'pg-query-stream'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { ServerResponse } from 'http'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
-import { sqlNameToEnglish } from '../../helpers/sqlNameToEnglish'
 import { readableResultDates } from '../../helpers/serialiseResultDates'
 import { countResults } from './countResults'
 

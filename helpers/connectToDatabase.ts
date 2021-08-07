@@ -1,4 +1,5 @@
 import { Pool } from 'pg'
+
 type GetDatabasePoolParams = {
   timeout_milliseconds?: number
 }

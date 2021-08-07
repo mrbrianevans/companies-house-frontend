@@ -4,7 +4,6 @@ import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import { getItemById } from './getItemById'
 import { pmap } from '../../helpers/ArrayUtils'
 

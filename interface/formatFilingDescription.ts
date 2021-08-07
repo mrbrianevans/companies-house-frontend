@@ -1,4 +1,5 @@
 import { getDatabasePool } from '../helpers/connectToDatabase'
+
 const camelCase = require('camelcase')
 export const formatFilingDescription: (
   descriptionCode: string,

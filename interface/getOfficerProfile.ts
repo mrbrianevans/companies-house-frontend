@@ -1,7 +1,7 @@
 // this is the get profile service method for a officer
 // this file is located in: /interface/getOfficerProfile.ts
 
-import { IOfficerDatabaseItem, IOfficerItem, convertOfficerDatabaseItemToItem } from '../types/IOfficer'
+import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem, IOfficerItem } from '../types/IOfficer'
 import { FilterCategory } from '../types/FilterCategory'
 import { getDatabasePool } from '../helpers/connectToDatabase'
 import getFilterConfig from '../helpers/getFilterConfig'

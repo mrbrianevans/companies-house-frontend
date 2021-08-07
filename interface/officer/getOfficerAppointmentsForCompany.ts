@@ -5,16 +5,10 @@ import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import {
   convertOfficerAppointmentsDatabaseItemToItem,
-  IOfficerAppointmentFullDetails,
   IOfficerAppointmentsDatabaseItem,
   IOfficerAppointmentWithOfficer
 } from '../../types/IOfficerAppointments'
-import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../../types/ICompanies'
 import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem } from '../../types/IOfficer'
-import {
-  convertWideAccountsCombinedDatabaseItemToItem,
-  IWideAccountsCombinedDatabaseItem
-} from '../../types/IWideAccountsCombined'
 import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
 
 // input parameters for getOfficerAppointmentsForCompany - companyNumber

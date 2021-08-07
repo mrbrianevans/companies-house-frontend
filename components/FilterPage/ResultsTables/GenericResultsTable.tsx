@@ -17,7 +17,7 @@ export function GenericResultsTable<ResultType>({
   cachedFilter
 }: GenericResultsTableParams<ResultType>): JSX.Element {
   // the zeroth row is used to determine the headers.
-  //todo: show the columns which were filtered by first. Add scrolling for the rest (in scss)
+  //todo: show the columns which were filtered by first.
   // put the unique identifier column in the first position always
   return (
     <table className={tableClassName}>

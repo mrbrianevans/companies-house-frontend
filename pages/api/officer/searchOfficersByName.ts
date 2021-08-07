@@ -1,9 +1,9 @@
 // this file is located in: /pages/api/officer/searchOfficersByName.ts
 
 import {
-  SearchOfficersByNameParams,
+  searchOfficersByName,
   SearchOfficersByNameOutput,
-  searchOfficersByName
+  SearchOfficersByNameParams
 } from '../../../interface/officer/searchOfficersByName'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'

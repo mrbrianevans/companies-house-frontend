@@ -1,6 +1,6 @@
 // this file is located in: /ajax/filter/getItemById.ts
 
-import { GetItemByIdParams, GetItemByIdOutput } from '../../interface/filter/getItemById'
+import { GetItemByIdOutput, GetItemByIdParams } from '../../interface/filter/getItemById'
 
 /** Frontend AJAX call to getItemById method on the backend
  *

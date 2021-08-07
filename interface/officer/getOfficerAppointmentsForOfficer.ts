@@ -1,31 +1,21 @@
 // this file is located in: /interface/officer/getOfficerAppointmentsForOfficer.ts
 // to import from this file, use: import { GetOfficerAppointmentsForOfficerParams, GetOfficerAppointmentsForOfficerOutput, getOfficerAppointmentsForOfficer } from '../../interface/officer/getOfficerAppointmentsForOfficer'
 
-import { IFilterValue } from '../../types/IFilters'
-import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import {
   convertOfficerAppointmentsDatabaseItemToItem,
   IOfficerAppointmentFullDetails,
-  IOfficerAppointmentsDatabaseItem,
-  IOfficerAppointmentWithCompany,
-  IOfficerAppointmentWithOfficer
+  IOfficerAppointmentsDatabaseItem
 } from '../../types/IOfficerAppointments'
 import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../../types/ICompanies'
-import {
-  convertCompanyViewDatabaseItemToItem,
-  ICompanyViewDatabaseItem,
-  ICompanyViewItem
-} from '../../types/ICompanyView'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 import {
   convertWideAccountsCombinedDatabaseItemToItem,
   IWideAccountsCombinedDatabaseItem
 } from '../../types/IWideAccountsCombined'
 import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
 import { IOfficerDatabaseItem } from '../../types/IOfficer'
+
 // input parameters for getOfficerAppointmentsForOfficer - personNumber
 export interface GetOfficerAppointmentsForOfficerParams {
   personNumber: string

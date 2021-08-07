@@ -1,5 +1,5 @@
 import { Page } from '../Page/Page'
-import { IFilterValue, IFilterOption } from '../../types/IFilters'
+import { IFilterOption, IFilterValue } from '../../types/IFilters'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { NewFilterCard } from '../NewFilterCard/NewFilterCard'
@@ -14,15 +14,14 @@ import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
 import { fetchGetUserFilterId } from '../../ajax/user/getUserFilterId'
 import { fetchCacheResults } from '../../ajax/filter/cacheResults'
-import { GenericSearchBar } from '../SearchBars/GenericSearchBar'
 import { GenericResultsTable } from './ResultsTables/GenericResultsTable'
 import { LoadingIcon } from '../LoadingIcon/LoadingIcon'
-import { FormatterRow } from 'fast-csv'
 import FormRow from '../Inputs/FormRow'
 import ButtonLink from '../Inputs/ButtonLink'
 import { fetchCountResults } from '../../ajax/filter/countResults'
-import { translateFiltersToEnglish, translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
 import { IResultsTable } from '../../types/IResultsTable'
+
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {

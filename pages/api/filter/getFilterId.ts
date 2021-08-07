@@ -1,6 +1,6 @@
 // this file is located in: /pages/api/filter/getFilterId.ts
 
-import { GetFilterIdParams, GetFilterIdOutput, getFilterId } from '../../../interface/filter/getFilterId'
+import { getFilterId, GetFilterIdOutput, GetFilterIdParams } from '../../../interface/filter/getFilterId'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 // api endpoint on /api/filter/getFilterId

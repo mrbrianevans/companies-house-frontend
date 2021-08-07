@@ -1,6 +1,6 @@
 // this file is located in: /ajax/user/getUserFilterId.ts
 
-import { GetUserFilterIdParams, GetUserFilterIdOutput } from '../../interface/user/getUserFilterId'
+import { GetUserFilterIdOutput, GetUserFilterIdParams } from '../../interface/user/getUserFilterId'
 
 /** Frontend AJAX call to getUserFilterId method on the backend
  *

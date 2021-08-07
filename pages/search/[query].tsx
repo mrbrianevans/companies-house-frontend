@@ -2,7 +2,6 @@ import { GetServerSideProps } from 'next'
 import { Page } from '../../components/Page/Page'
 import { TextInputWithButton } from '../../components/Inputs/TextInputWithButton'
 import { ICompaniesHouseSearchApiResponse } from '../../types/ICompaniesHouseApiResponse'
-import axios from 'axios'
 import Link from 'next/link'
 import { searchCompaniesByName } from '../../interface/api/SearchCompaniesByName'
 

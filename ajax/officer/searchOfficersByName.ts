@@ -1,6 +1,6 @@
 // this file is located in: /ajax/officer/searchOfficersByName.ts
 
-import { SearchOfficersByNameParams, SearchOfficersByNameOutput } from '../../interface/officer/searchOfficersByName'
+import { SearchOfficersByNameOutput, SearchOfficersByNameParams } from '../../interface/officer/searchOfficersByName'
 
 /** Frontend AJAX call to searchOfficersByName method on the backend
  *

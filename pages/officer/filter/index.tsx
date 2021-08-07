@@ -2,7 +2,6 @@
 // this file is located in: /pages/officer/filter/index.tsx
 
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
-import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getFilterConfig from '../../../helpers/getFilterConfig'

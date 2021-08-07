@@ -1,12 +1,8 @@
 // this file is located in: /interface/user/getUserFilterId.ts
 // to import from this file, use: import { GetUserFilterIdParams, GetUserFilterIdOutput, getUserFilterId } from '../../interface/user/getUserFilterId'
 
-import { IFilterValue } from '../../types/IFilters'
-import { FilterCategory } from '../../types/FilterCategory'
 import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
 
 // input parameters for getUserFilterId - cachedFilterId
 export interface GetUserFilterIdParams {

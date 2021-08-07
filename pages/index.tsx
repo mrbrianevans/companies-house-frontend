@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import { Page } from '../components/Page/Page'
 import { TextInputWithButton } from '../components/Inputs/TextInputWithButton'
-import { useRouter } from 'next/router'
-import { useState } from 'react'
 import ButtonLink from '../components/Inputs/ButtonLink'
 import { useSession } from 'next-auth/client'
 import { companyNumberRegex } from '../types/patterns/CompanyNumberRegex'

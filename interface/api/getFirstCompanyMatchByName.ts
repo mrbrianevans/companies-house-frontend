@@ -1,4 +1,4 @@
-import { ICompanyFullDetails, ICompanyProfile } from '../../types/ICompany'
+import { ICompanyFullDetails } from '../../types/ICompany'
 import { searchCompaniesByName } from './SearchCompaniesByName'
 import { getCompanyProfile } from '../getCompanyProfile'
 

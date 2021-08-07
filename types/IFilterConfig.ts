@@ -1,5 +1,4 @@
-import { IFilterValue, IFilterOption } from './IFilters'
-import { IMinorQuery } from './IQueries'
+import { IFilterOption } from './IFilters'
 
 export interface IFilterConfig {
   /** The top level path in the URL of the UI for this category.
