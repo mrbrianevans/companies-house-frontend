@@ -73,7 +73,7 @@ export async function getOfficerAppointmentsForOfficer({
       [personNumber]
     )
     .then(({ rows }) => rows)
-    .catch(timer.postgresErrorReturn([]))
+    .catch((e) => timer.postgresErrorReturn([])(e))
   if (!results || results?.length === 0) timer.customError('No results returned for officer by person number')
   timer.addDetail('number of appointments found', results.length)
   await pool.end()

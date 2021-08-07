@@ -37,7 +37,7 @@ async function getCachedFilter<FilterResultsType>({
       [cachedFilterId]
     )
     .then(({ rows }) => rows[0])
-    .catch(timer.postgresErrorReturn(null))
+    .catch((e) => timer.postgresErrorReturn(null)(e))
 
   let cachedFilter: ICachedFilter<FilterResultsType>
   if (!row) {
@@ -58,7 +58,7 @@ async function getCachedFilter<FilterResultsType>({
     const resultIds: string[] = await pool
       .query(`SELECT data_fk FROM cached_filter_results cfr WHERE cfr.filter_fk=$1`, [cachedFilterId])
       .then(({ rows }: { rows: { data_fk: string }[] }) => rows.map((row) => row.data_fk))
-      .catch(timer.postgresErrorReturn([]))
+      .catch((e) => timer.postgresErrorReturn([])(e))
     timer.next('fetch items from ids array')
     let resultItems: { item: FilterResultsType }[] = await Promise.all(
       resultIds.map((id) => getItemById<FilterResultsType>({ id, category }))

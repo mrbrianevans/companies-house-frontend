@@ -57,7 +57,7 @@ LIMIT $${value.length + 1}`
   const matches = await pool
     .query(limitedQuery, value)
     .then(({ rows }) => rows)
-    .catch(timer.postgresErrorReturn([]))
+    .catch((e) => timer.postgresErrorReturn([])(e))
   const executionTime = resultQueryTimer.stop()
   //save in cached filters the fact that it was run and the time it took to run. not sure if this is the right place
   const persistTimeToRunTimer = timer.start('Persist the time taken to run filter in cached_filters')

@@ -1,5 +1,6 @@
 import { IOfficerItem } from '../../types/IOfficer'
+import { capitalizeEveryWord } from '../StringManipulation'
 
 export const formatOfficerName = (officer: IOfficerItem) => {
-  return `${officer?.title ?? ''} ${officer?.forenames ?? ''} ${officer.surname ?? ''}`
+  return capitalizeEveryWord(`${officer?.title ?? ''} ${officer?.forenames ?? ''} ${officer.surname ?? ''}`)
 }

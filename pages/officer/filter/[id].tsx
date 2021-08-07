@@ -8,11 +8,11 @@ import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
 import getCachedFilter from '../../../interface/filter/getCachedFilter'
 // to create this, right click a database table >> scripts >> generate type defs
-import { IOfficerItem } from '../../../types/IOfficer'
+import { IOfficerDatabaseItem, IOfficerItem } from '../../../types/IOfficer'
 import getFilterConfig from '../../../helpers/getFilterConfig'
 
 interface Props {
-  savedFilter: ICachedFilter<IOfficerItem>
+  savedFilter: ICachedFilter<IOfficerDatabaseItem>
 }
 
 const category = FilterCategory.OFFICER
@@ -40,7 +40,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       notFound: true
     }
   }
-  const savedFilter = await getCachedFilter<IOfficerItem>({
+  const savedFilter = await getCachedFilter<IOfficerDatabaseItem>({
     cachedFilterId: id,
     category
   })

@@ -37,7 +37,7 @@ export async function cacheResults<FilterResultsType>({
   const resultIds: string[] = await pool
     .query(`SELECT data_fk FROM cached_filter_results cfr WHERE cfr.filter_fk=$1`, [id])
     .then(({ rows }: { rows: { data_fk: string }[] }) => rows.map((row) => row.data_fk))
-    .catch(timer.postgresErrorReturn([]))
+    .catch((e) => timer.postgresErrorReturn([])(e))
   timer.next('fetch items from ids array')
   let resultItems = await pmap(resultIds, (id) => getItemById<FilterResultsType>({ id, category }))
   const preexistingResults = resultItems.map((result) => result.item)

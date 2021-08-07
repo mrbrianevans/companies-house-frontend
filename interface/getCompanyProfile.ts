@@ -25,7 +25,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
   const exists = await pool
     .query(`SELECT * FROM companies WHERE number = $1`, [company_number])
     .then(({ rows }) => rows.length > 0)
-    .catch(timer.postgresErrorReturn(false))
+    .catch((e) => timer.postgresErrorReturn(false)(e))
   existanceCheckTimer.stop()
   if (!exists) {
     timer.start('API call')
@@ -83,7 +83,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
       [company_number]
     )
     .then(({ rows }) => rows[0])
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   await pool.end()
   if (!profileFromDb) timer.customError("Still can't find company after calling government API and inserting to db")
   const company: ICompanyFullDetails = profileFromDb
@@ -91,11 +91,9 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
         company: convertCompaniesDatabaseItemToItem(profileFromDb.company),
         accounts: convertWideAccountsCombinedDatabaseItemToItem(profileFromDb.wide_company),
         address: convertDetailPostcodesToAddress(profileFromDb.detailed_postcode, profileFromDb.company.streetaddress),
-        sicCodes: profileFromDb.sic_codes.map((sicCode) => convertSicCodeDatabaseItemToItem(sicCode))
+        sicCodes: profileFromDb.sic_codes?.map((sicCode) => convertSicCodeDatabaseItemToItem(sicCode)) ?? []
       }
     : null
   timer.flush()
-  console.log('output of get company profile:')
-  console.log(company)
   return company
 }

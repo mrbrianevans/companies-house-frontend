@@ -54,7 +54,7 @@ export async function getOfficerAppointmentsForCompany({
       [companyNumber]
     )
     .then(({ rows }) => rows)
-    .catch(timer.postgresErrorReturn([]))
+    .catch((e) => timer.postgresErrorReturn([])(e))
   if (!results || results?.length === 0) timer.customError('No results returned for officer by person number')
   timer.addDetail('number of appointments found', results.length)
   await pool.end()
@@ -65,7 +65,5 @@ export async function getOfficerAppointmentsForCompany({
     officerAddress: convertDetailPostcodesToAddress(result.officer_address, result.person.address_line_1)
   }))
   const output: GetOfficerAppointmentsForCompanyOutput = { officers }
-  console.log('Output from getOfficerAppointmentsForCompany')
-  console.log(officers)
   return output
 }

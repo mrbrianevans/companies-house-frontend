@@ -39,19 +39,18 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   timer.addDetails({ splitQuery })
   const pool = getDatabasePool()
   const queryTimer = timer.start('Query officers database for search term')
-  const result =
-    (await pool
-      .query(
-        `
+  const result = await pool
+    .query(
+      `
       SELECT *
       FROM person_officers JOIN detailed_postcodes dp on person_officers.post_code = dp.postcode
       WHERE officer_name_vector @@ to_tsquery( $1 )
       LIMIT 20
   `,
-        [splitQuery]
-      )
-      .then(({ rows }: { rows: (IOfficerDatabaseItem & IDetailedPostcodesDatabaseItem)[] }) => rows)
-      .catch((e) => timer.postgresError(e))) ?? []
+      [splitQuery]
+    )
+    .then(({ rows }: { rows: (IOfficerDatabaseItem & IDetailedPostcodesDatabaseItem)[] }) => rows)
+    .catch((e) => timer.postgresErrorReturn([])(e))
   queryTimer.stop()
   if (!result || result?.length === 0) timer.customError('No results returned')
   timer.addDetail('number of results', result.length)

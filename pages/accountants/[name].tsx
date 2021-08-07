@@ -98,7 +98,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     // get possible matches from companies house search API
     returnProps.companyProfile = await getFirstCompanyMatchByName({ name })
   }
-
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400

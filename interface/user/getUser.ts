@@ -38,7 +38,7 @@ export const getUser: (params: GetUserProfileParams) => Promise<IUserItem> = asy
       [session.user.email]
     )
     .then(({ rows }) => rows[0])
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   timer.flush()
   if (!user) return null
   else {

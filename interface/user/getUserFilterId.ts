@@ -36,7 +36,7 @@ export async function getUserFilterId({
       [cachedFilterId, userId]
     )
     .then(({ rows }) => rows[0]?.id ?? null)
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   await pool.end()
   timer.flush()
   const output: GetUserFilterIdOutput = { userFilterId }
