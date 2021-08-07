@@ -1,4 +1,6 @@
 import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { CloudStorageUrl } from '../../types/constants/CloudStorageUrl'
+import Image from 'next/image'
 
 const styles = require('./CountryFlag.module.scss')
 
@@ -18,10 +20,11 @@ export const CountryFlag: (props: Props) => JSX.Element = ({ country, loading })
       ) : (
         <div>
           <div>{capitalizeEveryWord(country)}</div>
-          <img
-            className={styles.flag}
-            src={'/static/flags/3by2/' + country.toLowerCase() + '.svg'}
-            alt={'flag of ' + country}
+          <Image
+            src={CloudStorageUrl + 'flags/3by2/' + country.toLowerCase() + '.svg'}
+            width={500}
+            height={600}
+            alt={'flag of ' + capitalizeEveryWord(country)}
           />
         </div>
       )}
