@@ -15,3 +15,8 @@ SELECT *
 FROM person_officers JOIN detailed_postcodes dp on person_officers.post_code = dp.postcode
 WHERE officer_name_vector @@ to_tsquery('bruce & evans & david');
 
+-- postgres.public> CREATE INDEX ON person_officers USING hash(nationality)
+-- [2021-08-08 07:56:15] completed in 15 h 59 m 56 s 559 ms
+
+-- postgres.public> CREATE INDEX ON person_officers (occupation)
+-- [2021-08-09 18:17:49] completed in 1 m 10 s 138 ms
