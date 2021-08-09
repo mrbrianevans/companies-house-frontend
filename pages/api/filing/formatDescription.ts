@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { formatFilingDescription } from '../../../interface/formatFilingDescription'
+import { formatFilingDescription } from '../../../interface/event/formatFilingDescription'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { description, description_values } = req.body

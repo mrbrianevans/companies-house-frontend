@@ -1,6 +1,6 @@
 import { ICompanyFullDetails } from '../../types/ICompany'
 import { searchCompaniesByName } from './SearchCompaniesByName'
-import { getCompanyProfile } from '../getCompanyProfile'
+import { getCompanyProfile } from '../company/getCompanyProfile'
 
 export const getFirstCompanyMatchByName: ({ name }: { name: string }) => Promise<ICompanyFullDetails | null> = async ({
   name

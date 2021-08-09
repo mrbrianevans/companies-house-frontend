@@ -1,6 +1,6 @@
-import { getDatabasePool } from '../helpers/connectToDatabase'
-import { CompanyEvent, FilingEvent } from '../types/IEvent'
-import { Timer } from '../helpers/Timer'
+import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { CompanyEvent, FilingEvent } from '../../types/IEvent'
+import { Timer } from '../../helpers/Timer'
 
 export interface ICompanyEvents {
   filingEvents: FilingEvent[]

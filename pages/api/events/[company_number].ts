@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import getCompanyEvents from '../../../interface/getCompanyEvents'
+import getCompanyEvents from '../../../interface/company/getCompanyEvents'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const {

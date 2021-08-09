@@ -1,6 +1,6 @@
-import { IAccountant } from '../types/IAccountant'
-import { getDatabasePool } from '../helpers/connectToDatabase'
-import { Timer } from '../helpers/Timer'
+import { IAccountant } from '../../types/IAccountant'
+import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { Timer } from '../../helpers/Timer'
 
 /**
  * Gets an accountants profile from the database by its name

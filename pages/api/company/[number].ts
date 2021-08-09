@@ -20,8 +20,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     company[0].sicCodes = sics
     res.status(200).json({ company: company[0] })
   } catch (e) {
-    console.error('Error occured during API execution')
+    console.error('Error occurred during API execution')
     console.log(e)
-    res.status(501).end('Error occured with Database fetch')
+    res.status(501).end('Error occurred with Database fetch')
   }
 }

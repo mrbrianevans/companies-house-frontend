@@ -1,15 +1,15 @@
-import { getDatabasePool } from '../helpers/connectToDatabase'
-import { ICompanyFullDetails } from '../types/ICompany'
+import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { ICompanyFullDetails } from '../../types/ICompany'
 import axios from 'axios'
-import { ICompaniesHouseApiCompanyProfile } from '../types/ICompaniesHouseApiCompanyProfile'
-import { Timer } from '../helpers/Timer'
+import { ICompaniesHouseApiCompanyProfile } from '../../types/ICompaniesHouseApiCompanyProfile'
+import { Timer } from '../../helpers/Timer'
 import {
   convertWideAccountsCombinedDatabaseItemToItem,
   IWideAccountsCombinedDatabaseItem
-} from '../types/IWideAccountsCombined'
-import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../types/ICompanies'
-import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../types/IDetailedPostcodes'
-import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem } from '../types/ISicCode'
+} from '../../types/IWideAccountsCombined'
+import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../../types/ICompanies'
+import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
+import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem } from '../../types/ISicCode'
 
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyFullDetails | null> = async (
   company_number
@@ -27,6 +27,7 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
     .then(({ rows }) => rows.length > 0)
     .catch((e) => timer.postgresErrorReturn(false)(e))
   existanceCheckTimer.stop()
+  timer.addDetail('company exists in database', exists)
   if (!exists) {
     timer.start('API call')
     const apiUrl = 'https://api.company-information.service.gov.uk/company/' + company_number
@@ -38,25 +39,27 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
       .catch(timer.genericErrorCustomMessage('Error calling government API for company profile'))
     timer.end()
     const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
-    await pool.query(
-      `
-    INSERT INTO companies (name, number, streetaddress, county, country, postcode, category, origin, status, date, can_file) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, default, $11)
+    await pool
+      .query(
+        `
+    INSERT INTO companies (name, number, streetaddress, county, country, postcode, category, origin, status, date, updated, can_file) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, default, $11)
     `,
-      [
-        gr.company_name,
-        gr.company_number,
-        gr.registered_office_address?.address_line_1,
-        gr.registered_office_address?.locality,
-        gr.registered_office_address.country,
-        gr.registered_office_address.postal_code,
-        gr.type,
-        null,
-        gr.company_status,
-        gr.date_of_creation,
-        gr.can_file
-      ]
-    )
+        [
+          gr.company_name,
+          gr.company_number,
+          gr.registered_office_address?.address_line_1,
+          gr.registered_office_address?.locality,
+          gr.registered_office_address.country,
+          gr.registered_office_address.postal_code,
+          gr.type,
+          null,
+          gr.company_status,
+          gr.date_of_creation,
+          gr.can_file
+        ]
+      )
+      .catch((e) => timer.postgresError(e))
     insertCompanyFromApiTimer.stop()
   }
   const profileFromDb: {

@@ -1,7 +1,7 @@
 import { createApiClient } from '@companieshouse/api-sdk-node'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { formatFilingDescription } from '../../../interface/formatFilingDescription'
-import { insertFilingEvent } from '../../../interface/insertFilingEvent'
+import { formatFilingDescription } from '../../../interface/event/formatFilingDescription'
+import { insertFilingEvent } from '../../../interface/event/insertFilingEvent'
 import { Timer } from '../../../helpers/Timer'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

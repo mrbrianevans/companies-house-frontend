@@ -1,6 +1,6 @@
-import { getDatabasePool } from '../helpers/connectToDatabase'
-import { ICompanyProfile } from '../types/ICompany'
-import { Timer } from '../helpers/Timer'
+import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { ICompanyProfile } from '../../types/ICompany'
+import { Timer } from '../../helpers/Timer'
 
 const getAccountantClients: (name: string) => Promise<ICompanyProfile[]> = async (name) => {
   const timer = new Timer({
