@@ -9,6 +9,7 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 import { ServerResponse } from 'http'
 import { readableResultDates } from '../../helpers/serialiseResultDates'
 import { countResults } from './countResults'
+import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
 
 interface ExportResultsParams {
   user_filter: IUserFilter
@@ -25,7 +26,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
   const config = getFilterConfig({ category: user_filter.category })
   const timer = new Timer({
     label: 'Stream records to CSV',
-    details: { class: 'download-csv', filterId: user_filter.cached_filter_fk },
+    details: { filterId: user_filter.cached_filter_fk, category: user_filter.category },
     filename: '/pages/api/filter/downloadCsv.ts'
   })
   const remainingExportsTimer = timer.start('Calculate remaining exports for this user')
@@ -60,7 +61,15 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
     count,
     'records'
   )
-  //todo: need to do something with this limit such as actually limit the number of results
+  timer.addDetail('user remaining export quota', remainingExports)
+  timer.addDetail('result size', count)
+  //todo: add an option for a user to download a custom amount of results instead of the full set.
+  // Especially useful if they can sort results.
+  if (remainingExports < count) {
+    // the user doesn't have enough remaining export quota
+    timer.customError('User attempted to download a CSV with more rows than their remaining download quota')
+    return false
+  }
   try {
     // stream the csv
     // gets a handle to the file on google cloud storage. checks if it exists, or uses handle to upload
@@ -69,7 +78,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
     console.assert(user_filter.category && user_filter.cached_filter_fk, 'referencing GCS file with undefined name')
     const fileHandle = bucket.file(user_filter.category + '/' + user_filter.cached_filter_fk)
     const [exists] = await fileHandle.exists()
-    if (false && exists) {
+    if (exists) {
       const pipeFromStorageTimer = timer.start('Piping CSV from Storage to API response')
       await new Promise((resolve, reject) =>
         fileHandle
@@ -85,12 +94,7 @@ export const exportResults: (params: ExportResultsParams) => Promise<boolean> = 
         filters: user_filter.filters,
         category: user_filter.category
       })
-      // add the limit to the end of the query and get the matching results from main_table
-      const limitedQuery = `
-  WITH results AS (${bigQuery}) 
-  SELECT * FROM results JOIN ${config.main_table} m 
-    ON results.${config.uniqueIdentifier} = m.${config.uniqueIdentifier}`
-      const query = new QueryStream(limitedQuery, bigValue)
+      const query = new QueryStream(bigQuery, bigValue)
       const storageStream = fileHandle.createWriteStream({ metadata: { contentType: 'text/csv' } })
       const pgStream = client.query(query)
       const csvStream = csv.format({

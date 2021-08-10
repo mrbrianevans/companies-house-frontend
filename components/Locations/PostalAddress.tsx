@@ -12,7 +12,7 @@ export const PostalAddress: (props: PostalAddressProps) => JSX.Element = ({ load
     <div className={styles.container}>
       {loading ? (
         'Loading postal address'
-      ) : (
+      ) : address ? (
         <address className={styles.postalAddress}>
           {address.streetAddress}
           <br />
@@ -22,6 +22,8 @@ export const PostalAddress: (props: PostalAddressProps) => JSX.Element = ({ load
           <br />
           {address.postCode}
         </address>
+      ) : (
+        "Can't find postal address"
       )}
     </div>
   )

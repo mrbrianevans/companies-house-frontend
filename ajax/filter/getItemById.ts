@@ -5,7 +5,7 @@ import { GetItemByIdOutput, GetItemByIdParams } from '../../interface/filter/get
 /** Frontend AJAX call to getItemById method on the backend
  *
  * @example
- * const { item } = await $END$fetchGetItemById({ id, category })
+ * const { item } = await fetchGetItemById({ id, category })
  */
 export async function fetchGetItemById<ItemType>({
   id,

@@ -29,7 +29,7 @@ export const OfficerProfile: (props: OfficerProfileProps) => JSX.Element = ({
         <OfficerName loading={loading} name={officer && formatOfficerName(officer)} />
       </section>
       <section className={styles.sharecode}>
-        <ShareCode text={'filfa/o/' + officer?.personNumber} />
+        <ShareCode text={'filfa.co/o/' + officer?.personNumber} />
       </section>
       <section className={styles.status}>
         <OfficerAppointmentSummary appointments={appointments} loading={appointmentsLoading} />

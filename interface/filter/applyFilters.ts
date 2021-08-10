@@ -36,7 +36,11 @@ export default async function applyFilters<FilterCategoryType>({
     filename: '/interface/filter/applyFilters.ts',
     details: { category }
   })
-  if (!filtersAreValid({ filters, category })) return null
+  if (!filtersAreValid({ filters, category })) {
+    timer.customError('Invalid filters: ' + filters.map((f) => f.field).join())
+    timer.flush()
+    return null
+  }
   // add filter id to the log
   const filterId = getFilterId(filters, category)
   // console.log('Apply filters', filterId)
@@ -45,13 +49,9 @@ export default async function applyFilters<FilterCategoryType>({
   const config = getFilterConfig({ category })
   const pool = getDatabasePool()
   // add the limit to the end of the query
-  const limitedQuery = `
-WITH results AS (${query}) 
-SELECT * FROM results JOIN ${config.main_table} m 
-    ON results.${config.uniqueIdentifier} = m.${config.uniqueIdentifier}
-LIMIT $${value.length + 1}`
-  value.push(Number(limit))
+  const limitedQuery = query + `LIMIT $${value.push(limit)}`
   const prettyPrintedQuery = prettyPrintSqlQuery(limitedQuery, value)
+  // console.log('Query in applyFilters after limiting')
   // console.log(prettyPrintedQuery)
   const resultQueryTimer = timer.start('Query database for results of filters')
   const matches = await pool

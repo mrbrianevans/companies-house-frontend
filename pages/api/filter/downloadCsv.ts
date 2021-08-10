@@ -47,7 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('content-type', 'text/csv')
   const success = await exportResults({ user_filter, res })
   if (!success) {
-    res.status(500)
+    res.status(500).send('Failed to export CSV, do you have enough quota remaining for this download type?')
     return
   }
   res.end()
@@ -61,4 +61,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       [user_filter.id, timer.getTimeUntilNow(), config.operation_code]
     )
     .catch((e) => timer.postgresError(e))
+  await pool.end()
 }

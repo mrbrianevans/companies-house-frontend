@@ -40,8 +40,11 @@ export const sqlWhereConverter = ({ filter, category, values }: SqlWhereConverte
               .toString()
               .replace(/[^a-z0-9-]+/i, ' ')
               .split(' ')
+              .map((s) => s.trim())
+              .filter((s) => s)
               .join('&')
           )
+          .filter((v) => v)
           .join('|')
       )})`
     case FilterComparison.CONTAINS:

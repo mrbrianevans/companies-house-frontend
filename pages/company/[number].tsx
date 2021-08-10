@@ -37,7 +37,7 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
   const [filingHistory, setFilingHistory] = useState<GetFilingsListResponse>()
   const [officers, setOfficers] = useState<IOfficerAppointmentWithOfficer[]>()
   useEffect(() => {
-    if (router.query.number instanceof Array) return
+    if (!router.query.number || router.query.number instanceof Array) return
     fetch('/api/chApi/getFilingsList?company_number=' + router.query.number)
       .then((res) => res.json())
       .then((j) => setFilingHistory(j))
