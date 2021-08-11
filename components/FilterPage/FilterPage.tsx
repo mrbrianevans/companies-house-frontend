@@ -175,7 +175,9 @@ export const FilterPage = <ResultType extends object>({
             )}
           </>
         )}
-        {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
+        {savedFilter && (
+          <ShareCode text={`filfa.co/f/${config.labelSingular.charAt(0).toLowerCase()}/${savedFilter.metadata.id}`} />
+        )}
       </h1>
       <div className={styles.filterContainer}>
         {filterOptions !== undefined && (
