@@ -1,7 +1,7 @@
 // this file is located in: /interface/officer/searchOfficersByName.ts
 // to import from this file, use: import { SearchOfficersByNameParams, SearchOfficersByNameOutput, searchOfficersByName } from '../../interface/officer/searchOfficersByName'
 
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem, IOfficerItem } from '../../types/IOfficer'
 import { IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
@@ -13,7 +13,7 @@ export interface SearchOfficersByNameParams {
 
 // return type of searchOfficersByName - officers
 export interface SearchOfficersByNameOutput {
-  results: IOfficerItem[]
+  results: IOfficerDatabaseItem[]
 }
 
 /**
@@ -58,7 +58,7 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   await pool.end()
   timer.flush()
   const output: SearchOfficersByNameOutput = Object.freeze({
-    results: result.map(convertOfficerDatabaseItemToItem)
+    results: result
   })
   return output
 }

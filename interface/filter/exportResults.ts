@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { IUserFilter } from '../../types/IUserFilter'
 import combineQueries from './combineQueries'
 import { Timer } from '../../helpers/Timer'
@@ -9,7 +9,7 @@ import getFilterConfig from '../../helpers/getFilterConfig'
 import { ServerResponse } from 'http'
 import { readableResultDates } from '../../helpers/serialiseResultDates'
 import { countResults } from './countResults'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
 
 interface ExportResultsParams {
   user_filter: IUserFilter

@@ -3,7 +3,7 @@
 
 import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'

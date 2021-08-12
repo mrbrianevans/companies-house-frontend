@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 
 const camelCase = require('camelcase')
 export const formatFilingDescription: (

@@ -1,7 +1,7 @@
 // this file is located in: /interface/officer/getOfficerAppointmentsForOfficer.ts
 // to import from this file, use: import { GetOfficerAppointmentsForOfficerParams, GetOfficerAppointmentsForOfficerOutput, getOfficerAppointmentsForOfficer } from '../../interface/officer/getOfficerAppointmentsForOfficer'
 
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import {
   convertOfficerAppointmentsDatabaseItemToItem,
@@ -44,12 +44,12 @@ export async function getOfficerAppointmentsForOfficer({
   const pool = getDatabasePool()
   const results: {
     appointment: IOfficerAppointmentsDatabaseItem
-    company: ICompaniesDatabaseItem
+    company?: ICompaniesDatabaseItem
     person: IOfficerDatabaseItem
     sic_codes: string[]
-    wide_company: IWideAccountsCombinedDatabaseItem
-    company_address: IDetailedPostcodesDatabaseItem
-    officer_address: IDetailedPostcodesDatabaseItem
+    wide_company?: IWideAccountsCombinedDatabaseItem
+    company_address?: IDetailedPostcodesDatabaseItem
+    officer_address?: IDetailedPostcodesDatabaseItem
   }[] = await pool
     .query(
       `
@@ -62,11 +62,11 @@ export async function getOfficerAppointmentsForOfficer({
                , row_to_json(dpc.*) AS company_address
                , row_to_json(dpo.*) AS officer_address
           FROM officer_appointments oa
-                   JOIN companies c ON oa.company_number = c.number
+                   LEFT JOIN companies c ON oa.company_number = c.number
                    LEFT JOIN wide_accounts_combined wac ON oa.company_number = wac.company_number
-                   JOIN detailed_postcodes dpc ON c.postcode = dpc.postcode
+                   LEFT JOIN detailed_postcodes dpc ON c.postcode = dpc.postcode
                    JOIN person_officers po ON oa.person_number = po.person_number
-                   JOIN detailed_postcodes dpo ON po.post_code = dpo.postcode
+                   LEFT JOIN detailed_postcodes dpo ON po.post_code = dpo.postcode
           WHERE oa.person_number = $1
           ORDER BY c.number, wac.balance_sheet_date DESC
       `,
@@ -82,7 +82,7 @@ export async function getOfficerAppointmentsForOfficer({
     appointment: convertOfficerAppointmentsDatabaseItemToItem(result.appointment),
     company: convertCompaniesDatabaseItemToItem(result.company),
     officerAddress: convertDetailPostcodesToAddress(result.officer_address, result.person.address_line_1),
-    companyAddress: convertDetailPostcodesToAddress(result.company_address, result.company.streetaddress),
+    companyAddress: convertDetailPostcodesToAddress(result.company_address, result.company?.streetaddress),
     sicCodes: result.sic_codes,
     companyAccounts: convertWideAccountsCombinedDatabaseItemToItem(result.wide_company)
   }))

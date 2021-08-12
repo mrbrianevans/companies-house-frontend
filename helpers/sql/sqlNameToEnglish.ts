@@ -1,4 +1,4 @@
-import { capitalizeEveryWord } from './StringManipulation'
+import { capitalizeEveryWord } from '../utils/StringUtils'
 
 /**
  * Convert a SQL column name or table name into a human readable english name.

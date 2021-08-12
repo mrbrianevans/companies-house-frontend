@@ -11,20 +11,20 @@ export interface ICompanyViewDatabaseItem {
   company_type?: string
   country_of_origin?: string
   status?: string
-  date_of_creation?: number
-  balance_sheet_date?: Date
+  date_of_creation?: string
+  balance_sheet_date?: string
   accountants?: string
-  employees?: unknown
-  current_assets?: unknown
-  cash_at_bank?: unknown
-  debtors?: unknown
-  creditors?: unknown
-  fixed_assets?: unknown
-  net_assets?: unknown
-  total_assets_less_current_liabilities?: unknown
-  equity?: unknown
-  revenue?: unknown
-  profit?: unknown
+  employees?: number
+  current_assets?: number
+  cash_at_bank?: number
+  debtors?: number
+  creditors?: number
+  fixed_assets?: number
+  net_assets?: number
+  total_assets_less_current_liabilities?: number
+  equity?: number
+  revenue?: number
+  profit?: number
   officers?: string[]
 }
 
@@ -39,25 +39,25 @@ export interface ICompanyViewItem {
   companyType?: string
   countryOfOrigin?: string
   status?: string
-  dateOfCreation?: number
-  balanceSheetDate?: Date
+  dateOfCreation?: string
+  balanceSheetDate?: string
   accountants?: string
-  employees?: unknown
-  currentAssets?: unknown
-  cashAtBank?: unknown
-  debtors?: unknown
-  creditors?: unknown
-  fixedAssets?: unknown
-  netAssets?: unknown
-  totalAssetsLessCurrentLiabilities?: unknown
-  equity?: unknown
-  revenue?: unknown
-  profit?: unknown
+  employees?: number
+  currentAssets?: number
+  cashAtBank?: number
+  debtors?: number
+  creditors?: number
+  fixedAssets?: number
+  netAssets?: number
+  totalAssetsLessCurrentLiabilities?: number
+  equity?: number
+  revenue?: number
+  profit?: number
   officers?: string[]
 }
 
 export function convertCompanyViewDatabaseItemToItem(databaseItem: ICompanyViewDatabaseItem): ICompanyViewItem {
-  const item = {
+  const item: ICompanyViewItem = {
     companyNumber: databaseItem.company_number,
     name: databaseItem.name,
     streetaddress: databaseItem.streetaddress,

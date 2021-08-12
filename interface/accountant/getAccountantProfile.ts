@@ -1,5 +1,5 @@
 import { IAccountant } from '../../types/IAccountant'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 
 /**

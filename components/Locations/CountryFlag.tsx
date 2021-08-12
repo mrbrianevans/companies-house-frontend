@@ -1,4 +1,4 @@
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { capitalizeEveryWord } from '../../helpers/utils/StringUtils'
 import { CloudStorageUrl } from '../../types/constants/CloudStorageUrl'
 import Image from 'next/image'
 

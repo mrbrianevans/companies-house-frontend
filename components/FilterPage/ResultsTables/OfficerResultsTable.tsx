@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem as ResultType } from '../../../types/IOfficer'
 import { IResultsTable } from '../../../types/IResultsTable'
-import { splitDate } from '../../../helpers/splitDate'
+import { splitDate } from '../../../helpers/utils/DateUtils'
 import { formatOfficerName } from '../../../helpers/officers/formatOfficerName'
-import { capitalizeEveryWord } from '../../../helpers/StringManipulation'
+import { capitalizeEveryWord } from '../../../helpers/utils/StringUtils'
 import { CloudStorageUrl } from '../../../types/constants/CloudStorageUrl'
 import Image from 'next/image'
 const styles = require('./ResultsTable.module.sass')

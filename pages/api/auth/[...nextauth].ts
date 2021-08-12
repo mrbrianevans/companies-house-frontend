@@ -1,5 +1,10 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
+import { convertUsersDatabaseItemToItem, IUsersDatabaseItem } from '../../../types/IUsers'
+import Timer from 'timer-logs/index'
+import { convertUserDatabaseItemToItem, IUserDatabaseItem } from '../../../types/IUser'
+import { getSessionUser } from '../../../interface/user/getUser'
 
 export default NextAuth({
   providers: [
@@ -34,20 +39,10 @@ export default NextAuth({
     newUser: '/auth/newUser' // If set, new users will be directed here on first sign in
   },
   callbacks: {
-    session: async (session, user) => {
-      // this is to add in the user id to getSession() and useSession()
-      return Promise.resolve(
-        Object.assign(session, {
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email
-          }
-        })
-      )
-    }
+    // this is to add in the user id and role to getSession() and useSession()
+    session: getSessionUser
   },
-  // this logs out auth events for logging monitoring
+  // this logs out auth events for audit
   events: {
     createUser: async (message) =>
       console.log(

@@ -1,7 +1,7 @@
-import { getFilterOptionForFilterValue } from './filters/getFilterOptionForFilterValue'
-import { IFilterValue } from '../types/IFilters'
-import { FilterCategory } from '../types/FilterCategory'
-import getFilterConfig from './getFilterConfig'
+import { getFilterOptionForFilterValue } from '../filters/getFilterOptionForFilterValue'
+import { IFilterValue } from '../../types/IFilters'
+import { FilterCategory } from '../../types/FilterCategory'
+import getFilterConfig from '../getFilterConfig'
 
 type SqlFromConverterParams = {
   filters: IFilterValue[]

@@ -1,7 +1,7 @@
 import { Person } from '../SVG/Person'
 import { formatOfficerName } from '../../helpers/officers/formatOfficerName'
 import { IOfficerAppointmentWithOfficer } from '../../types/IOfficerAppointments'
-import { getYMD } from '../../helpers/splitDate'
+import { getYMD } from '../../helpers/utils/DateUtils'
 import ButtonLink from '../Inputs/ButtonLink'
 
 const styles = require('./CompanyOfficers.module.scss')

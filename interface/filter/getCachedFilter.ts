@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
@@ -65,13 +65,13 @@ async function getCachedFilter<FilterResultsType>({
     )
     const results = resultItems.map((result) => result.item)
     timer.end()
-    timer.addDetail('number of results fetched from cache', results.length)
+    timer.addDetail('number of results fetched from cache', results?.length)
     cachedFilter = {
       appliedFilters: row.filters as IFilterValue[],
-      results: results.length ? serialiseResultDates(results) : null,
+      results: results?.length ? serialiseResultDates(results) : null,
       metadata: {
         id: cachedFilterId,
-        lastRunTime: row.time_to_run ? row.time_to_run[row.time_to_run.length - 1] : 0,
+        lastRunTime: row.time_to_run ? row.time_to_run[row.time_to_run.length - 1] : null,
         lastRun: new Date(row.last_run).valueOf(),
         viewCount: row.view_count,
         created: new Date(row.created).valueOf(),

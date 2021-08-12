@@ -10,19 +10,9 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { GetFilingsListResponse } from '../api/chApi/getFilingsList'
 import { Timer } from '../../helpers/Timer'
-import { CompanyName } from '../../components/CompanyProfile/CompanyName'
-import { CompanyNumber } from '../../components/CompanyProfile/CompanyNumber'
-import { CompanyStatusTrafficLight } from '../../components/CompanyProfile/CompanyStatusTrafficLight'
-import { CompanyEmployees } from '../../components/CompanyProfile/CompanyEmployees'
-import { CompanyOfficers } from '../../components/CompanyProfile/CompanyOfficers'
-import { VerticalTimeline } from '../../components/VerticalTimeline/VerticalTimeline'
-import { AddressWithMapAndFlag } from '../../components/Locations/AddressWithMapAndFlag'
-import ButtonLink from '../../components/Inputs/ButtonLink'
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
 import { fetchGetOfficerAppointmentsForCompany } from '../../ajax/officer/getOfficerAppointmentsForCompany'
 import { IOfficerAppointmentWithOfficer } from '../../types/IOfficerAppointments'
-
-const styles = require('./CompanyProfile.module.scss')
+import { CompanyProfile } from '../../components/CompanyProfile/CompanyProfile'
 
 interface props {
   companyData: ICompanyFullDetails
@@ -49,64 +39,16 @@ const CompanyDetails = ({ companyData, apiResponseTime, filingEvents, companyEve
   }, [router.query.number])
   return (
     <Page>
-      <article className={styles.layout}>
-        <section className={styles.name}>
-          <CompanyName name={companyData?.company.name} loading={router.isFallback} />
-        </section>
-        <section className={styles.number}>
-          <CompanyNumber loading={router.isFallback} companyNumber={companyData?.company.companyNumber} />
-        </section>
-        <section className={styles.sharecode}>
-          <p>
-            This page: <ButtonLink href={router.asPath.toString()} />
-          </p>
-          {/*<ShareCode text={`filfa.co/v/${companyData?.company_number}`} />*/}
-        </section>
-        <section className={styles.status}>
-          <CompanyStatusTrafficLight status={companyData?.company.status} loading={router.isFallback} />
-        </section>
-        <section className={styles.location}>
-          <AddressWithMapAndFlag address={companyData?.address} loading={router.isFallback} />
-        </section>
-        <section className={styles.employees}>
-          <CompanyEmployees employees={financials?.employees} loading={router.isFallback} />
-        </section>
-        <section className={styles.officers}>
-          <CompanyOfficers officers={officers} loading={!officers} />
-        </section>
-        <section className={styles.timeline}>
-          <VerticalTimeline
-            events={
-              filingHistory?.items.map((event) => ({
-                timestamp: new Date(event.date).valueOf(),
-                title: event.category,
-                description: event.description
-              })) ??
-              filingEvents?.map((event) => ({
-                timestamp: new Date(event.published).valueOf(),
-                title: event.category,
-                description: event.description_html
-              }))
-            }
-            loading={router.isFallback}
-          />
-        </section>
-        {apiResponseTime && (
-          <section className={styles.responseTime}>
-            <p>Page loaded in {apiResponseTime / 1000} seconds</p>
-          </section>
-        )}
-        {financials && (
-          <section className={styles.accounts}>
-            <h4>Accounts</h4>
-            {Object.entries(financials).map(([financial, value], index) => (
-              <p key={index}>
-                {capitalizeEveryWord(financial.replaceAll('_', ' '))}: {value}
-              </p>
-            ))}
-          </section>
-        )}
-      </article>
+      <CompanyProfile
+        companyData={companyData}
+        companyEvents={companyEvents}
+        filingEvents={filingEvents}
+        apiResponseTime={apiResponseTime}
+        financials={financials}
+        officers={officers}
+        filingHistory={filingHistory}
+        loading={router.isFallback}
+      />
     </Page>
   )
 }
@@ -140,6 +82,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     filingEvents,
     financials
   }
+  if (!companyData) return { notFound: true }
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400 // revalidate every 24 hours

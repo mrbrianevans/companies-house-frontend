@@ -8,7 +8,7 @@ import { FilterCategory } from '../../types/FilterCategory'
 import ButtonLink from '../../components/Inputs/ButtonLink'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { FeatureList } from '../../components/lists/FeatureList'
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { capitalizeEveryWord } from '../../helpers/utils/StringUtils'
 import { OfficerSearchBar } from '../../components/SearchBars/OfficerSearchBar'
 
 const category = FilterCategory.OFFICER

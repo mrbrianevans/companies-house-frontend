@@ -1,6 +1,6 @@
-import { DefaultSession } from 'next-auth'
+import { DefaultSession, DefaultUser } from 'next-auth'
 import { Timer } from '../../helpers/Timer'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { convertUserDatabaseItemToItem, IUserDatabaseItem, IUserItem } from '../../types/IUser'
 
 type GetUserProfileParams = {
@@ -44,4 +44,32 @@ export const getUser: (params: GetUserProfileParams) => Promise<IUserItem> = asy
   else {
     return convertUserDatabaseItemToItem(user)
   }
+}
+
+/**
+ * This is only intended to be used by next-auth as a callback.
+ * DO NOT call this function directly, rather useSession() or getSession()
+ * @param session
+ * @param user
+ */
+export const getSessionUser = async (session: DefaultSession, user: DefaultUser) => {
+  const timer = new Timer({ filename: 'pages/api/[...nextauth].ts', label: 'Get user session callback' })
+  const userEmail = user.email
+  const pool = getDatabasePool()
+  const userDbItem: IUserDatabaseItem = await pool
+    .query('SELECT * FROM users WHERE email=$1', [userEmail])
+    .then(({ rows }) => rows[0])
+    .catch((e) => timer.postgresError(e))
+  if (!userDbItem) return null
+  const userItem = convertUserDatabaseItemToItem(userDbItem)
+  timer.flush()
+  return Object.freeze({
+    user: {
+      id: userItem.id,
+      uid: userItem.uid,
+      name: user.name,
+      email: user.email,
+      role: userItem.roleCode
+    }
+  })
 }

@@ -1,10 +1,10 @@
-import { getFilterOptionForFilterValue } from './filters/getFilterOptionForFilterValue'
-import { getFilterComparisonProperties } from './filters/getFilterComparisonProperties'
-import { FilterComparison } from '../configuration/filterComparisons'
-import { IFilterValue } from '../types/IFilters'
-import { FilterCategory } from '../types/FilterCategory'
-import { FilterDatatype } from '../configuration/filterDatatypes'
-import getFilterConfig from './getFilterConfig'
+import { getFilterOptionForFilterValue } from '../filters/getFilterOptionForFilterValue'
+import { getFilterComparisonProperties } from '../filters/getFilterComparisonProperties'
+import { FilterComparison } from '../../configuration/filterComparisons'
+import { IFilterValue } from '../../types/IFilters'
+import { FilterCategory } from '../../types/FilterCategory'
+import { FilterDatatype } from '../../configuration/filterDatatypes'
+import getFilterConfig from '../getFilterConfig'
 
 type SqlWhereConverterParams = {
   filter: IFilterValue

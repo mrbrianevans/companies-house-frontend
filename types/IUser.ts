@@ -9,7 +9,7 @@ export interface IUserDatabaseItem {
   created_at: number
   updated_at: number
   name_updated?: number
-  uid?: unknown
+  uid?: string
   role_code: UserRole
 }
 
@@ -22,7 +22,7 @@ export interface IUserItem {
   createdAt: number
   updatedAt: number
   nameUpdated?: number
-  uid?: unknown
+  uid?: string
   roleCode: UserRole
 }
 
@@ -41,6 +41,9 @@ export function convertUserDatabaseItemToItem(databaseItem: IUserDatabaseItem): 
   }
   return item
 }
+/**
+ * This maps to the postgres table of user roles: user_role(code)
+ */
 export enum UserRole {
   DEV = 'dev',
   UNPAID = 'unpaid_user',

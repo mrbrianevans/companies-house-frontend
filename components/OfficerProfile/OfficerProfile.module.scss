@@ -2,13 +2,13 @@ article.layout {
   display: grid;
   grid-template-areas:
     'name name'
-    '. sharecode'
+    'birthDate sharecode'
     'status location'
     'timeline location'
     'timeline companies'
     'timeline co-officers'
     'timeline accounts'
-    'timeline .'
+    'timeline developer'
     'responseTime responseTime';
   gap: 1rem;
   grid-auto-columns: 1fr 1fr;
@@ -21,6 +21,9 @@ article.layout {
   }
   .name {
     grid-area: name;
+  }
+  .birthDate {
+    grid-area: birthDate;
   }
   .sharecode {
     grid-area: sharecode;
@@ -41,12 +44,15 @@ article.layout {
   }
   .timeline {
     grid-area: timeline;
-    align-items: start;
+    align-content: start;
   }
   .responseTime {
     grid-area: responseTime;
   }
   .accounts {
     grid-area: accounts;
+  }
+  .developer{
+    grid-area: developer;
   }
 }

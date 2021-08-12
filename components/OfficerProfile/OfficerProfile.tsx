@@ -7,6 +7,10 @@ import { getOfficerAddressFromItem } from '../../helpers/officers/getOfficerAddr
 import { IOfficerAppointmentFullDetails } from '../../types/IOfficerAppointments'
 import { OfficerAppointments } from './OfficerAppointments'
 import { OfficerAppointmentSummary } from './OfficerAppointmentSummary'
+import { UserRole } from '../../types/IUser'
+import { DeveloperJson } from '../Developer/DeveloperJson'
+import { useSession } from 'next-auth/client'
+import { BirthDate } from './BirthDate'
 
 const styles = require('./OfficerProfile.module.scss')
 
@@ -28,6 +32,9 @@ export const OfficerProfile: (props: OfficerProfileProps) => JSX.Element = ({
       <section className={styles.name}>
         <OfficerName loading={loading} name={officer && formatOfficerName(officer)} />
       </section>
+      <section className={styles.birthDate}>
+        <BirthDate loading={loading} birthDate={officer?.birthDate} />
+      </section>
       <section className={styles.sharecode}>
         <ShareCode text={'filfa.co/o/' + officer?.personNumber} />
       </section>
@@ -37,7 +44,8 @@ export const OfficerProfile: (props: OfficerProfileProps) => JSX.Element = ({
       <section className={styles.location}>
         <AddressWithMapAndFlag
           address={
-            appointments?.length ? appointments[0].officerAddress : officer && getOfficerAddressFromItem(officer)
+            appointments?.find((appt) => appt.officerAddress)?.officerAddress ??
+            (officer && getOfficerAddressFromItem(officer))
           }
           loading={loading && appointmentsLoading}
         />
@@ -45,9 +53,10 @@ export const OfficerProfile: (props: OfficerProfileProps) => JSX.Element = ({
       <section className={styles.companies}>
         <OfficerAppointments appointments={appointments} loading={appointmentsLoading} />
       </section>
-      <section className={styles.timeline}></section>
-      {loading ? 'loading data for OfficerProfile' : 'OfficerProfile data has loaded'}
-      <pre>{JSON.stringify(officer, null, 2)}</pre>
+      <section className={styles.timeline}>
+        <h2>Timeline</h2>
+        <p>View when this officer has been appointed and terminated to different companies. Coming soon</p>
+      </section>
     </article>
   )
 }

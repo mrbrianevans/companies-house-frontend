@@ -7,9 +7,10 @@ import getFilterConfig from '../../../helpers/getFilterConfig'
 import { Page } from '../../../components/Page/Page'
 import { searchOfficersByName } from '../../../interface/officer/searchOfficersByName'
 import { OfficerSearchBar } from '../../../components/SearchBars/OfficerSearchBar'
-import { IOfficerItem as ResultType } from '../../../types/IOfficer'
+import { IOfficerDatabaseItem as ResultType } from '../../../types/IOfficer'
 import { FilterCategory } from '../../../types/FilterCategory'
 import { serialiseResultDates } from '../../../helpers/serialiseResultDates'
+import { OfficerResultsTable } from '../../../components/FilterPage/ResultsTables/OfficerResultsTable'
 
 const styles = require('../../../styles/Search.module.sass')
 
@@ -34,14 +35,7 @@ const OfficerSearchPage = ({ query, results, responseTime }: OfficerSearchResult
         <OfficerSearchBar initialValue={query} />
       </div>
       <div className={styles.searchResultsContainer}>
-        {results?.map((result) => (
-          <Link href={'/' + filterConfig.urlPath + '/' + Object.values(result)[0]} key={Object.values(result)[0]}>
-            <a draggable={'false'} className={styles.searchResult}>
-              <h3>{Object.values(result)[0]}</h3>
-              <pre>{JSON.stringify(result, null, 2)}</pre>
-            </a>
-          </Link>
-        ))}
+        <OfficerResultsTable matchingResults={results} tableClassName={null} filterConfig={filterConfig} />
       </div>
     </Page>
   )

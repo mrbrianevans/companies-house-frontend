@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { getDatabasePool } from '../../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
 import { IUserFilter } from '../../../types/IUserFilter'
 import { Timer } from '../../../helpers/Timer'
 import { getUser } from '../../../interface/user/getUser'

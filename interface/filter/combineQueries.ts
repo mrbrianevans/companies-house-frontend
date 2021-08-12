@@ -3,8 +3,8 @@ import { IMinorQuery } from '../../types/IQueries'
 import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { validateFilter } from '../../helpers/filters/validateFilter'
-import { sqlWhereConverter } from '../../helpers/sqlWhereConverter'
-import { getFromClause } from '../../helpers/sqlFromGenerator'
+import { sqlWhereConverter } from '../../helpers/sql/sqlWhereConverter'
+import { getFromClause } from '../../helpers/sql/sqlFromGenerator'
 
 type Params = {
   filters: IFilterValue[]

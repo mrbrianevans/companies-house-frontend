@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICombinedSavedFilter } from '../../types/ICombinedSavedFilter'
 import { translateFiltersToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
 import { IUserFilterDisplay } from '../../types/IUserFilter'

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { splitDate } from '../../../helpers/splitDate'
+import { splitDate } from '../../../helpers/utils/DateUtils'
 
 describe('split timestamp into day, month and year', function () {
   it('should return the expected date for a given timestamp', () => {

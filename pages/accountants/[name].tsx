@@ -10,7 +10,7 @@ import { getCompanyProfile } from '../../interface/company/getCompanyProfile'
 import ClientCard from '../../components/Client/ClientCard'
 import { useRouter } from 'next/router'
 import { getFirstCompanyMatchByName } from '../../interface/api/getFirstCompanyMatchByName'
-import { splitDate } from '../../helpers/splitDate'
+import { splitDate } from '../../helpers/utils/DateUtils'
 
 const styles = require('../../styles/AccountantIndividual.module.sass')
 

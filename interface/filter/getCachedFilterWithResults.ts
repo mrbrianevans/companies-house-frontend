@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'

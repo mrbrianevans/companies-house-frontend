@@ -38,11 +38,11 @@ export type IOfficerAppointmentWithCompany = IOfficerAppointmentsItem & ICompany
 
 export interface IOfficerAppointmentFullDetails {
   appointment: IOfficerAppointmentsItem
-  company: ICompaniesItem
+  company?: ICompaniesItem
   sicCodes: string[]
-  companyAccounts: IWideAccountsCombinedItem
-  officerAddress: IAddress
-  companyAddress: IAddress
+  companyAccounts?: IWideAccountsCombinedItem
+  officerAddress?: IAddress
+  companyAddress?: IAddress
 }
 
 export interface IOfficerAppointmentWithOfficer {

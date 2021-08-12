@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICompanyFullDetails } from '../../types/ICompany'
 import axios from 'axios'
 import { ICompaniesHouseApiCompanyProfile } from '../../types/ICompaniesHouseApiCompanyProfile'
@@ -38,29 +38,33 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
       .then((res) => res.data)
       .catch(timer.genericErrorCustomMessage('Error calling government API for company profile'))
     timer.end()
-    const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
-    await pool
-      .query(
-        `
+    if (gr) {
+      const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
+      await pool
+        .query(
+          `
     INSERT INTO companies (name, number, streetaddress, county, country, postcode, category, origin, status, date, updated, can_file) 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, default, $11)
     `,
-        [
-          gr.company_name,
-          gr.company_number,
-          gr.registered_office_address?.address_line_1,
-          gr.registered_office_address?.locality,
-          gr.registered_office_address.country,
-          gr.registered_office_address.postal_code,
-          gr.type,
-          null,
-          gr.company_status,
-          gr.date_of_creation,
-          gr.can_file
-        ]
-      )
-      .catch((e) => timer.postgresError(e))
-    insertCompanyFromApiTimer.stop()
+          [
+            gr.company_name,
+            gr.company_number,
+            gr.registered_office_address?.address_line_1,
+            gr.registered_office_address?.locality,
+            gr.registered_office_address.country,
+            gr.registered_office_address.postal_code,
+            gr.type,
+            null,
+            gr.company_status,
+            gr.date_of_creation,
+            gr.can_file
+          ]
+        )
+        .catch((e) => timer.postgresError(e))
+      insertCompanyFromApiTimer.stop()
+    }
+  } else {
+    timer.customError('Could not find company on government API. Company number=' + company_number)
   }
   const profileFromDb: {
     company: ICompaniesDatabaseItem

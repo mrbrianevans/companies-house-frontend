@@ -3,7 +3,7 @@
 export interface IOfficerDatabaseItem {
   person_number: string
   post_code?: string
-  birth_date?: string
+  birth_date?: Date
   title?: string
   forenames?: string
   surname: string
@@ -24,6 +24,7 @@ export interface IOfficerDatabaseItem {
 export interface IOfficerItem {
   personNumber: string
   postCode?: string
+  // timestamp in milliseconds
   birthDate?: number
   title?: string
   forenames?: string
@@ -41,12 +42,14 @@ export interface IOfficerItem {
   usualResidentialCountry?: string
   officerNameVector?: unknown
 }
-
+export type BirthDateObject = { month: number; year: number }
 export function convertOfficerDatabaseItemToItem(databaseItem: IOfficerDatabaseItem): IOfficerItem {
+  console.log(databaseItem.birth_date, typeof databaseItem.birth_date)
   const item: IOfficerItem = {
     personNumber: databaseItem.person_number,
     postCode: databaseItem.post_code,
-    birthDate: new Date(databaseItem.birth_date).valueOf(),
+    // set date so that timezone doesn't affect the month. Day is always inaccurate
+    birthDate: new Date(databaseItem.birth_date)?.setDate(15) ?? null,
     title: databaseItem.title,
     forenames: databaseItem.forenames,
     surname: databaseItem.surname,

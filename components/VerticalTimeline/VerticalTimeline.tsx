@@ -1,14 +1,25 @@
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
-import { splitDate } from '../../helpers/splitDate'
+import { capitalizeEveryWord } from '../../helpers/utils/StringUtils'
+import { getYMD, splitDate } from '../../helpers/utils/DateUtils'
+import { useEffect, useState } from 'react'
 
 const styles = require('./VerticalTimeline.module.scss')
 
 type VerticalTimelineProps = {
   loading?: boolean
   events?: ITimelineEvent[]
+  // the date the company was incorporated on
+  incorporationDate?: string | number
 }
 
-export const VerticalTimeline: (props: VerticalTimelineProps) => JSX.Element = ({ loading, events }) => {
+export const VerticalTimeline: (props: VerticalTimelineProps) => JSX.Element = ({
+  loading,
+  events,
+  incorporationDate
+}) => {
+  const [dob, setDob] = useState<{ month: string; year: number; day: number }>()
+  useEffect(() => {
+    if (incorporationDate) setDob(splitDate(incorporationDate))
+  }, [incorporationDate])
   return (
     <div className={styles.container}>
       {loading ? (
@@ -16,6 +27,11 @@ export const VerticalTimeline: (props: VerticalTimelineProps) => JSX.Element = (
       ) : (
         <>
           <h4>Timeline of company history</h4>
+          {dob && (
+            <p>
+              Founded on {dob.day} {dob.month} {dob.year}
+            </p>
+          )}
           {events?.map((event, i) => (
             <TimelineEvent key={i} timestamp={event.timestamp} title={event.title} description={event.description} />
           ))}

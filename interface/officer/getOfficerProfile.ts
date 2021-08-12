@@ -3,7 +3,7 @@
 
 import { convertOfficerDatabaseItemToItem, IOfficerDatabaseItem, IOfficerItem } from '../../types/IOfficer'
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { Timer } from '../../helpers/Timer'
 

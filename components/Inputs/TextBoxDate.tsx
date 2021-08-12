@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { getYMD } from '../../helpers/splitDate'
+import { getYMD } from '../../helpers/utils/DateUtils'
 
 const styles = require('./Inputs.module.scss')
 

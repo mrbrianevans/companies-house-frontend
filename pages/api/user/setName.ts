@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { getDatabasePool } from '../../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
 import { Timer } from '../../../helpers/Timer'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

@@ -1,7 +1,7 @@
 // this file is located in: /interface/user/saveUserFilter.ts
 // to import from this file, use: import { SaveUserFilterParams, SaveUserFilterOutput, saveUserFilter } from '../../interface/user/saveUserFilter'
 
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 
 // input parameters for saveUserFilter - savedFilterId

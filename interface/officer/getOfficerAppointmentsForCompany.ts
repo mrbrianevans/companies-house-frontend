@@ -1,7 +1,7 @@
 // this file is located in: /interface/officer/getOfficerAppointmentsForCompany.ts
 // to import from this file, use: import { GetOfficerAppointmentsForCompanyParams, GetOfficerAppointmentsForCompanyOutput, getOfficerAppointmentsForCompany } from '../../interface/officer/getOfficerAppointmentsForCompany'
 
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import {
   convertOfficerAppointmentsDatabaseItemToItem,

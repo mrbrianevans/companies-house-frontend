@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICompanyAccounts } from '../../types/ICompanyAccounts'
 
 const getCompanyAccounts: (company_number: string) => Promise<ICompanyAccounts | null> = async (companyNumber) => {

@@ -1,4 +1,4 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { CompanyEvent, FilingEvent } from '../../types/IEvent'
 import { Timer } from '../../helpers/Timer'
 

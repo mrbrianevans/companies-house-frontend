@@ -9,7 +9,7 @@ import getFilterOptions from '../../interface/filter/getFilterOptions'
 import { FilterCategory } from '../../types/FilterCategory'
 import ButtonLink from '../../components/Inputs/ButtonLink'
 import getFilterConfig from '../../helpers/getFilterConfig'
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { capitalizeEveryWord } from '../../helpers/utils/StringUtils'
 
 const filterCategory = FilterCategory.OFFICER
 const FilterCompaniesPage = () => {

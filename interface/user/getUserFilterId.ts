@@ -1,7 +1,7 @@
 // this file is located in: /interface/user/getUserFilterId.ts
 // to import from this file, use: import { GetUserFilterIdParams, GetUserFilterIdOutput, getUserFilterId } from '../../interface/user/getUserFilterId'
 
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 
 // input parameters for getUserFilterId - cachedFilterId

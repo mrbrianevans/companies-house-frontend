@@ -2,7 +2,7 @@
 // to import from this file, use: import { GetItemByIdParams, GetItemByIdOutput, getItemById } from '../../interface/filter/getItemById'
 
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
 import getFilterConfig from '../../helpers/getFilterConfig'
 

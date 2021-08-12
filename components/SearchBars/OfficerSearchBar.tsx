@@ -4,7 +4,7 @@
 import { GenericSearchBar } from './GenericSearchBar'
 import getFilterConfig from '../../helpers/getFilterConfig'
 import { FilterCategory } from '../../types/FilterCategory'
-import { capitalizeEveryWord } from '../../helpers/StringManipulation'
+import { capitalizeEveryWord } from '../../helpers/utils/StringUtils'
 
 type OfficerSearchBarParams = { initialValue?: string }
 const config = getFilterConfig({ category: FilterCategory.OFFICER })

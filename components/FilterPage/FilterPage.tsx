@@ -7,7 +7,7 @@ import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
-import { formatApproximation } from '../../helpers/numberFormatter'
+import { formatApproximation } from '../../helpers/utils/NumberUtils'
 import { IFilterConfig } from '../../types/IFilterConfig'
 import { FilterCategory } from '../../types/FilterCategory'
 import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
@@ -176,7 +176,7 @@ export const FilterPage = <ResultType extends object>({
           </>
         )}
         {savedFilter && (
-          <ShareCode text={`filfa.co/f/${config.labelSingular.charAt(0).toLowerCase()}/${savedFilter.metadata.id}`} />
+          <ShareCode text={`filfa.co/${config.labelSingular.charAt(0).toLowerCase()}/f/${savedFilter.metadata.id}`} />
         )}
       </h1>
       <div className={styles.filterContainer}>
