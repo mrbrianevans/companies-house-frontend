@@ -44,7 +44,6 @@ export interface IOfficerItem {
 }
 export type BirthDateObject = { month: number; year: number }
 export function convertOfficerDatabaseItemToItem(databaseItem: IOfficerDatabaseItem): IOfficerItem {
-  console.log(databaseItem.birth_date, typeof databaseItem.birth_date)
   const item: IOfficerItem = {
     personNumber: databaseItem.person_number,
     postCode: databaseItem.post_code,

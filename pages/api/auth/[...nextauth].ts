@@ -1,9 +1,5 @@
 import NextAuth from 'next-auth'
 import Providers from 'next-auth/providers'
-import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
-import { convertUsersDatabaseItemToItem, IUsersDatabaseItem } from '../../../types/IUsers'
-import Timer from 'timer-logs/index'
-import { convertUserDatabaseItemToItem, IUserDatabaseItem } from '../../../types/IUser'
 import { getSessionUser } from '../../../interface/user/getUser'
 
 export default NextAuth({

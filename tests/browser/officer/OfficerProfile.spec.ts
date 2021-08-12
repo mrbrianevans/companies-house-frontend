@@ -1,7 +1,7 @@
 import test from '../nextFixture'
 import { TestUrl } from '../../helpers/TestUrl'
 import { expect } from '@playwright/test'
-
+//todo: for all tests: take a screenshot BEFORE expecting something, otherwise if it fails, you don't get it
 test('test OfficerProfile page loading screen', async ({ page, port }) => {
   const testUrl = new TestUrl({ port })
   // random number needed to avoid hitting the cache
