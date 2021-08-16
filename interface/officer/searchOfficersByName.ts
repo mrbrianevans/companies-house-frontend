@@ -42,9 +42,10 @@ export async function searchOfficersByName({ query }: SearchOfficersByNameParams
   const result = await pool
     .query(
       `
-      SELECT *
+      SELECT *, ts_rank_cd(officer_name_vector, to_tsquery('brian & evans')) AS rank
       FROM person_officers JOIN detailed_postcodes dp on person_officers.post_code = dp.postcode
-      WHERE officer_name_vector @@ to_tsquery( $1 )
+      WHERE officer_name_vector @@ to_tsquery('simple', $1 )
+      ORDER BY rank DESC
       LIMIT 20
   `,
       [splitQuery]

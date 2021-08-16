@@ -33,7 +33,7 @@ export const sqlWhereConverter = ({ filter, category, values }: SqlWhereConverte
     case FilterComparison.IS_BETWEEN:
       return `${qualifiedName} ${comparator} $${values.push(min)} AND $${values.push(max)}`
     case FilterComparison.MATCHES:
-      return `${qualifiedName} ${comparator} to_tsquery($${values.push(
+      return `${qualifiedName} ${comparator} to_tsquery('simple',$${values.push(
         filter.values
           .map((v) =>
             v
