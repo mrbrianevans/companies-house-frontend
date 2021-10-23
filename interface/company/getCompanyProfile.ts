@@ -10,6 +10,8 @@ import {
 import { convertCompaniesDatabaseItemToItem, ICompaniesDatabaseItem } from '../../types/ICompanies'
 import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from '../../types/IDetailedPostcodes'
 import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem } from '../../types/ISicCode'
+import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
+import { getCompaniesHouseRateLimit } from '../../helpers/companiesHouseRateLimit'
 
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyFullDetails | null> = async (
   company_number
@@ -29,42 +31,9 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
   existanceCheckTimer.stop()
   timer.addDetail('company exists in database', exists)
   if (!exists) {
-    timer.start('API call')
-    const apiUrl = 'https://api.company-information.service.gov.uk/company/' + company_number
-    const gr: ICompaniesHouseApiCompanyProfile = await axios
-      .get(apiUrl, {
-        auth: { username: process.env.APIUSER, password: '' }
-      })
-      .then((res) => res.data)
-      .catch(timer.genericErrorCustomMessage('Error calling government API for company profile'))
-    timer.end()
-    if (gr) {
-      const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
-      await pool
-        .query(
-          `
-    INSERT INTO companies (name, number, streetaddress, county, country, postcode, category, origin, status, date, updated, can_file) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, default, $11)
-    `,
-          [
-            gr.company_name,
-            gr.company_number,
-            gr.registered_office_address?.address_line_1,
-            gr.registered_office_address?.locality,
-            gr.registered_office_address.country,
-            gr.registered_office_address.postal_code,
-            gr.type,
-            null,
-            gr.company_status,
-            gr.date_of_creation,
-            gr.can_file
-          ]
-        )
-        .catch((e) => timer.postgresError(e))
-      insertCompanyFromApiTimer.stop()
-    }
-  } else {
-    timer.customError('Could not find company on government API. Company number=' + company_number)
+    timer.start('setCompanyDetailsFromApi')
+    await setCompanyDetailsFromApi(company_number)
+    timer.stop('setCompanyDetailsFromApi')
   }
   const profileFromDb: {
     company: ICompaniesDatabaseItem
@@ -103,4 +72,69 @@ export const getCompanyProfile: (company_number: string) => Promise<ICompanyFull
     : null
   timer.flush()
   return company
+}
+/**
+ * Gets a companies details from the government API and updates them in the companies and sic tables, returning rate limit
+ * @param companyNumber the company number to update
+ */
+export const setCompanyDetailsFromApi = async (companyNumber: string) => {
+  const timer = new Timer({
+    details: { companyNumber },
+    label: 'Set company profile details from government API',
+    filename: '/interface/getCompanyProfile.ts'
+  })
+  const pool = getDatabasePool()
+  timer.start('API call')
+  const apiUrl = 'https://api.company-information.service.gov.uk/company/' + companyNumber
+  let rateLimit
+  const gr: ICompaniesHouseApiCompanyProfile = await axios
+    .get(apiUrl, {
+      auth: { username: process.env.APIUSER, password: '' }
+    })
+    .then((res) => {
+      rateLimit = getCompaniesHouseRateLimit(res.headers)
+      return res.data
+    })
+    .catch(timer.genericErrorCustomMessage('Error calling government API for company profile'))
+  timer.end()
+  if (gr) {
+    const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
+    const insertCompany = pool.query(
+      `
+    INSERT INTO companies (name, number, streetaddress, county, country, postcode, category, origin, status, date, updated, can_file) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, default, $11) 
+    ON CONFLICT ON CONSTRAINT companies_pkey 
+        DO UPDATE SET name=COALESCE(excluded.name, companies.name), streetaddress=COALESCE(excluded.streetaddress,companies.streetaddress),
+                      country=COALESCE(excluded.country, companies.country),
+                      county=COALESCE(excluded.county,companies.county), postcode=COALESCE(excluded.postcode,companies.postcode), category=COALESCE(excluded.category, companies.category),
+                      origin=COALESCE(excluded.origin, companies.origin), status=COALESCE(excluded.status,companies.status),date=COALESCE(excluded.date, companies.date),
+                      updated=default, can_file=COALESCE(excluded.can_file,companies.can_file)
+
+        `,
+      [
+        gr.company_name,
+        gr.company_number,
+        gr.registered_office_address?.address_line_1,
+        gr.registered_office_address?.locality,
+        gr.registered_office_address.country,
+        gr.registered_office_address.postal_code,
+        gr.type,
+        null,
+        gr.company_status,
+        gr.date_of_creation,
+        gr.can_file
+      ]
+    )
+    const insertSicCodes =
+      gr.sic_codes?.map((code) =>
+        pool.query(`INSERT INTO sic (company_number, sic_code) VALUES ($1, $2)`, [companyNumber, code])
+      ) ?? []
+    await Promise.all([insertCompany, ...insertSicCodes]).catch((e) => timer.postgresError(e))
+    insertCompanyFromApiTimer.stop()
+  } else {
+    timer.customError('Could not find company on government API. Company number=' + companyNumber)
+  }
+  await pool.end()
+  timer.flush()
+  return rateLimit
 }
