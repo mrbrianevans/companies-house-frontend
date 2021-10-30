@@ -12,6 +12,7 @@ import { convertDetailPostcodesToAddress, IDetailedPostcodesDatabaseItem } from 
 import { convertSicCodeDatabaseItemToItem, ISicCodeDatabaseItem } from '../../types/ISicCode'
 import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
 import { getCompaniesHouseRateLimit } from '../../helpers/companiesHouseRateLimit'
+import { RateLimitHeaders } from '../../types/ApiRateLimitHeaders'
 
 export const getCompanyProfile: (company_number: string) => Promise<ICompanyFullDetails | null> = async (
   company_number
@@ -86,17 +87,37 @@ export const setCompanyDetailsFromApi = async (companyNumber: string) => {
   const pool = getDatabasePool()
   timer.start('API call')
   const apiUrl = 'https://api.company-information.service.gov.uk/company/' + companyNumber
-  let rateLimit
-  const gr: ICompaniesHouseApiCompanyProfile = await axios
+  let rateLimit: RateLimitHeaders
+  const res = await axios
     .get(apiUrl, {
       auth: { username: process.env.APIUSER, password: '' }
     })
-    .then((res) => {
-      rateLimit = getCompaniesHouseRateLimit(res.headers)
-      return res.data
-    })
+
+    .catch((e) => e.response)
+    .catch((e) => console.error('Response code', e.response?.status, e.response?.statusText))
     .catch(timer.genericErrorCustomMessage('Error calling government API for company profile'))
+
   timer.end()
+  rateLimit = getCompaniesHouseRateLimit(res.headers)
+  // if (rateLimit.remain < 1) throw new Error('Exceeded gov API rate limit')
+
+  let gr: ICompaniesHouseApiCompanyProfile
+  switch (res.status) {
+    case 200:
+      gr = res.data
+      break
+    case 404:
+      timer.info('Not found: ', companyNumber)
+      await pool.query(`UPDATE companies SET not_found=true WHERE number=$1`, [companyNumber])
+      break
+    case 429:
+      timer.info('Rate limited')
+      break
+    default:
+      timer.info('Unknown status code for gov API', res.status)
+      break
+  }
+
   if (gr) {
     const insertCompanyFromApiTimer = timer.start('Insert company into database with details from government API')
     const insertCompany = pool.query(
@@ -116,8 +137,8 @@ export const setCompanyDetailsFromApi = async (companyNumber: string) => {
         gr.company_number,
         gr.registered_office_address?.address_line_1,
         gr.registered_office_address?.locality,
-        gr.registered_office_address.country,
-        gr.registered_office_address.postal_code,
+        gr.registered_office_address?.country,
+        gr.registered_office_address?.postal_code,
         gr.type,
         null,
         gr.company_status,
@@ -127,7 +148,10 @@ export const setCompanyDetailsFromApi = async (companyNumber: string) => {
     )
     const insertSicCodes =
       gr.sic_codes?.map((code) =>
-        pool.query(`INSERT INTO sic (company_number, sic_code) VALUES ($1, $2)`, [companyNumber, code])
+        pool.query(
+          `INSERT INTO sic (company_number, sic_code) VALUES ($1, $2) ON CONFLICT ON CONSTRAINT sic_pkey DO NOTHING `,
+          [companyNumber, code]
+        )
       ) ?? []
     await Promise.all([insertCompany, ...insertSicCodes]).catch((e) => timer.postgresError(e))
     insertCompanyFromApiTimer.stop()

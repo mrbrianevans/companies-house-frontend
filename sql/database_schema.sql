@@ -35,6 +35,7 @@ create table companies
     date          timestamp,
     updated       date default CURRENT_DATE,
     can_file      boolean,
+    not_found     boolean,
     constraint companies_pkey
         primary key (number)
 );
@@ -526,9 +527,9 @@ comment on column saved_filters.id is 'a hash of the filter object';
 
 grant delete, insert, references, select, trigger, truncate, update on saved_filters to frontend;
 
-create table company_accounts
+create table accounts
 (
-    id                   serial                                             not null,
+    id                   serial,
     compound_id          varchar(255)                                       not null,
     user_id              integer                                            not null,
     provider_type        varchar(255)                                       not null,
@@ -557,7 +558,7 @@ create index provider_id
     on accounts (provider_id);
 
 create index user_id
-    on company_accounts (user_id);
+    on accounts (user_id);
 
 grant select on accounts to frontend;
 
@@ -565,7 +566,7 @@ grant delete, insert, references, select, trigger, truncate, update on accounts 
 
 create table sessions
 (
-    id            serial                                             not null,
+    id            serial,
     user_id       integer                                            not null,
     expires       timestamp with time zone                           not null,
     session_token varchar(255)                                       not null,
@@ -592,7 +593,7 @@ grant delete, insert, references, select, trigger, truncate, update on sessions 
 
 create table verification_requests
 (
-    id         serial                                             not null,
+    id         serial,
     identifier varchar(255)                                       not null,
     token      varchar(255)                                       not null,
     expires    timestamp with time zone                           not null,
@@ -635,7 +636,7 @@ grant insert, select, update on cached_filters to black;
 
 create table cached_filter_results
 (
-    id        serial not null,
+    id        serial,
     filter_fk text,
     data_fk   text,
     constraint unique_cached_result
@@ -666,7 +667,7 @@ create table user_roles
 
 create table users
 (
-    id             serial                                               not null,
+    id             serial,
     name           varchar(255),
     email          varchar(255),
     email_verified timestamp with time zone,
@@ -699,7 +700,7 @@ grant delete, insert, references, select, trigger, truncate, update on users to 
 
 create table user_filters
 (
-    id               serial not null,
+    id               serial,
     title            text,
     created          timestamp default CURRENT_TIMESTAMP,
     user_id_fk       integer,
@@ -740,7 +741,7 @@ create table user_operations
 
 create table user_exports
 (
-    id             serial not null,
+    id             serial,
     user_filter_fk integer,
     timestamp      timestamp default CURRENT_TIMESTAMP,
     time_to_export integer,
@@ -766,7 +767,7 @@ grant insert, select, update on user_exports to black;
 
 create table user_role_quotas
 (
-    id            serial  not null,
+    id            serial,
     role_code     text,
     operation     text    not null,
     monthly_limit integer not null,
@@ -807,9 +808,9 @@ create table person_officers
     occupation                varchar(40),
     nationality               varchar(40),
     usual_residential_country varchar(160),
-    officer_name_vector       tsvector default to_tsvector('simple'::regconfig,
-                                                           (((COALESCE(forenames, ''::character varying))::text || ' '::text) ||
-                                                            COALESCE(surname, ''::text))),
+    officer_name_vector       tsvector generated always as (to_tsvector('simple'::regconfig,
+                                                                        (((COALESCE(forenames, ''::character varying))::text || ' '::text) ||
+                                                                         surname))) stored,
     constraint person_officers_pkey
         primary key (person_number)
 );
@@ -832,9 +833,6 @@ create index officer_appointments_company_number_idx
 
 grant select on officer_appointments to frontend;
 
-create index officer_name_index
-    on person_officers using gin (officer_name_vector);
-
 create index person_officers_birth_date_idx
     on person_officers (birth_date);
 
@@ -844,12 +842,15 @@ create index person_officers_nationality_idx
 create index person_officers_occupation_idx
     on person_officers (occupation);
 
+create index officer_name_index
+    on person_officers using gin (officer_name_vector);
+
 grant select on person_officers to frontend;
 
 create materialized view short_list_accounts as
 SELECT a.company_number,
        a.end_date
-FROM company_accounts a
+FROM accounts a
 WHERE a.label = 'UK Companies House registered number'::text
 GROUP BY a.company_number, a.end_date
 ORDER BY a.end_date, a.company_number;
@@ -876,35 +877,35 @@ SELECT now()                 AS last_updated_count,
        (SELECT count(*) AS count
         FROM company_events) AS company_events_rows,
        (SELECT count(*) AS count
-        FROM company_accounts)       AS accounts_rows,
-       (SELECT count(DISTINCT company_accounts.company_number) AS count
-        FROM company_accounts)       AS accounts_companies;
+        FROM accounts)       AS accounts_rows,
+       (SELECT count(DISTINCT accounts.company_number) AS count
+        FROM accounts)       AS accounts_companies;
 
 grant select on companies_count to black;
 
 create materialized view wide_accounts as
 SELECT r.company_number,
        (SELECT b.value::date AS value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Balance sheet date'::text
         LIMIT 1)                                                               AS balance_sheet_date,
        (SELECT b.value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND (b.label = 'Name of entity accountants'::text OR
                b.label = 'Name of entity auditors'::text)
         LIMIT 1)                                                               AS accountants,
        (SELECT b.value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Name of production software'::text
         LIMIT 1)                                                               AS accouting_software,
        (SELECT max(to_number(b.value, '999,999,999,999'::text)) AS max
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Average number of employees during the period'::text) AS employees,
@@ -913,7 +914,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Current assets'::text)                                AS current_assets,
@@ -922,7 +923,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Cash at bank and on hand'::text)                      AS cash_at_bank,
@@ -931,7 +932,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Debtors'::text)                                       AS debtors,
@@ -940,7 +941,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Creditors'::text)                                     AS creditors,
@@ -949,7 +950,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Fixed assets'::text)                                  AS fixed_assets,
@@ -958,7 +959,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Net assets (liabilities)'::text)                      AS net_assets,
@@ -967,7 +968,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Total assets less current liabilities'::text)         AS total_assets_less_current_liabilities,
@@ -976,7 +977,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Equity'::text)                                        AS equity,
@@ -985,7 +986,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Turnover / revenue'::text)                            AS revenue,
@@ -994,12 +995,12 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Profit (loss)'::text)                                 AS profit,
        (SELECT array_agg(DISTINCT b.value) AS array_agg
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Name of entity officer'::text)                        AS officers
@@ -1009,26 +1010,26 @@ LIMIT 1362251;
 create materialized view wide_accounts_part_two as
 SELECT r.company_number,
        (SELECT b.value::date AS value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Balance sheet date'::text
         LIMIT 1)                                                               AS balance_sheet_date,
        (SELECT b.value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND (b.label = 'Name of entity accountants'::text OR
                b.label = 'Name of entity auditors'::text)
         LIMIT 1)                                                               AS accountants,
        (SELECT b.value
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Name of production software'::text
         LIMIT 1)                                                               AS accouting_software,
        (SELECT max(to_number(b.value, '999,999,999,999'::text)) AS max
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Average number of employees during the period'::text) AS employees,
@@ -1037,7 +1038,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Current assets'::text)                                AS current_assets,
@@ -1046,7 +1047,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Cash at bank and on hand'::text)                      AS cash_at_bank,
@@ -1055,7 +1056,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Debtors'::text)                                       AS debtors,
@@ -1064,7 +1065,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Creditors'::text)                                     AS creditors,
@@ -1073,7 +1074,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Fixed assets'::text)                                  AS fixed_assets,
@@ -1082,7 +1083,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Net assets (liabilities)'::text)                      AS net_assets,
@@ -1091,7 +1092,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Total assets less current liabilities'::text)         AS total_assets_less_current_liabilities,
@@ -1100,7 +1101,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Equity'::text)                                        AS equity,
@@ -1109,7 +1110,7 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Turnover / revenue'::text)                            AS revenue,
@@ -1118,12 +1119,12 @@ SELECT r.company_number,
                        THEN max(to_number(b.value, '999,999,999,999'::text))
                    ELSE min(to_number(b.value, '999,999,999,999'::text))
                    END AS min
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Profit (loss)'::text)                                 AS profit,
        (SELECT array_agg(DISTINCT b.value) AS array_agg
-        FROM company_accounts b
+        FROM accounts b
         WHERE b.company_number = r.company_number
           AND b.end_date = r.end_date
           AND b.label = 'Name of entity officer'::text)                        AS officers
@@ -1178,6 +1179,9 @@ create index wide_accounts_combined_company_number_idx
 
 create index wide_accounts_combined_balance_sheet_date_idx
     on wide_accounts_combined (balance_sheet_date);
+
+create index wide_accounts_combined_employees_idx
+    on wide_accounts_combined (employees);
 
 grant select on wide_accounts_combined to frontend;
 
@@ -1347,6 +1351,43 @@ create view officer_ages(person_number, age) as
 SELECT person_officers.person_number,
        date_part('year'::text, now()) - date_part('year'::text, person_officers.birth_date) AS age
 FROM person_officers;
+
+create view insolvency_prediction_input
+            (company_number, average_income_of_area, altitude, latitude, longtitude, company_type, date_of_creation,
+             status, updated, age_years, balance_sheet_date, employees, current_assets, cash_at_bank, debtors,
+             creditors, fixed_assets, net_assets, total_assets_less_current_liabilities, equity, revenue, profit,
+             number_of_officers)
+as
+SELECT c.number                                                 AS company_number,
+       dp.average_income                                        AS average_income_of_area,
+       dp."Altitude"                                            AS altitude,
+       dp.lat                                                   AS latitude,
+       dp.long                                                  AS longtitude,
+       c.category                                               AS company_type,
+       c.date                                                   AS date_of_creation,
+       c.status,
+       c.updated,
+       2021::double precision - date_part('year'::text, c.date) AS age_years,
+       wac.balance_sheet_date,
+       wac.employees,
+       wac.current_assets,
+       wac.cash_at_bank,
+       wac.debtors,
+       wac.creditors,
+       wac.fixed_assets,
+       wac.net_assets,
+       wac.total_assets_less_current_liabilities,
+       wac.equity,
+       wac.revenue,
+       wac.profit,
+       array_length(wac.officers, 1)                            AS number_of_officers
+FROM wide_accounts_combined wac
+         JOIN companies c ON c.number = wac.company_number
+         JOIN detailed_postcodes dp ON c.postcode::text = dp.postcode
+WHERE wac.employees IS NOT NULL
+  AND wac.employees < 100000::numeric
+ORDER BY wac.employees DESC
+LIMIT 100000;
 
 create function set_limit(real) returns real
     strict
@@ -1718,25 +1759,9 @@ begin
 end;
 $$;
 
-create operator % (procedure = similarity_op, leftarg = text, rightarg = text);
+create operator % (procedure = similarity_op, leftarg = text, rightarg = text, commutator = %, join = matchingjoinsel, restrict = matchingsel);
 
-create operator %> (procedure = word_similarity_commutator_op, leftarg = text, rightarg = text);
-
-create operator <% (procedure = word_similarity_op, leftarg = text, rightarg = text);
-
-create operator <-> (procedure = similarity_dist, leftarg = text, rightarg = text);
-
-create operator <->> (procedure = word_similarity_dist_commutator_op, leftarg = text, rightarg = text);
-
-create operator <<-> (procedure = word_similarity_dist_op, leftarg = text, rightarg = text);
-
-create operator %>> (procedure = strict_word_similarity_commutator_op, leftarg = text, rightarg = text);
-
-create operator <<% (procedure = strict_word_similarity_op, leftarg = text, rightarg = text);
-
-create operator <->>> (procedure = strict_word_similarity_dist_commutator_op, leftarg = text, rightarg = text);
-
-create operator <<<-> (procedure = strict_word_similarity_dist_op, leftarg = text, rightarg = text);
+create operator <-> (procedure = similarity_dist, leftarg = text, rightarg = text, commutator = <->);
 
 create operator family gist_trgm_ops using gist;
 
@@ -1791,4 +1816,27 @@ create operator class gin_trgm_ops for type text using gin as storage integer op
 	function 3(text, text) gin_extract_query_trgm(text, internal, smallint, internal, internal, internal, internal),
 	function 4(text, text) gin_trgm_consistent(internal, smallint, text, integer, internal, internal, internal, internal);
 
+-- Cyclic dependencies found
+
+create operator %> (procedure = word_similarity_commutator_op, leftarg = text, rightarg = text, commutator = <%, join = matchingjoinsel, restrict = matchingsel);
+
+create operator <% (procedure = word_similarity_op, leftarg = text, rightarg = text, commutator = %>, join = matchingjoinsel, restrict = matchingsel);
+
+-- Cyclic dependencies found
+
+create operator %>> (procedure = strict_word_similarity_commutator_op, leftarg = text, rightarg = text, commutator = <<%, join = matchingjoinsel, restrict = matchingsel);
+
+create operator <<% (procedure = strict_word_similarity_op, leftarg = text, rightarg = text, commutator = %>>, join = matchingjoinsel, restrict = matchingsel);
+
+-- Cyclic dependencies found
+
+create operator <->> (procedure = word_similarity_dist_commutator_op, leftarg = text, rightarg = text, commutator = <<->);
+
+create operator <<-> (procedure = word_similarity_dist_op, leftarg = text, rightarg = text, commutator = <->>);
+
+-- Cyclic dependencies found
+
+create operator <->>> (procedure = strict_word_similarity_dist_commutator_op, leftarg = text, rightarg = text, commutator = <<<->);
+
+create operator <<<-> (procedure = strict_word_similarity_dist_op, leftarg = text, rightarg = text, commutator = <->>>);
 

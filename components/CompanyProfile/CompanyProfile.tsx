@@ -29,7 +29,7 @@ type CompanyProfileProps = {
   financials: ICompanyAccounts
 }
 
-export const CompanyProfile: (props: CompanyProfileProps) => JSX.Element = ({
+export const CompanyProfile = ({
   loading,
   companyData,
   apiResponseTime,
@@ -38,7 +38,7 @@ export const CompanyProfile: (props: CompanyProfileProps) => JSX.Element = ({
   financials,
   officers,
   filingHistory
-}) => {
+}: CompanyProfileProps): JSX.Element => {
   const [session, loadingSession] = useSession()
   return (
     <article className={styles.layout}>
@@ -96,7 +96,7 @@ export const CompanyProfile: (props: CompanyProfileProps) => JSX.Element = ({
         </section>
       )}
 
-      {!loadingSession && session.user.role === UserRole.DEV && (
+      {!loadingSession && session?.user?.role === UserRole.DEV && (
         <section className={styles.developer}>
           <DeveloperJson data={companyData} />
         </section>
