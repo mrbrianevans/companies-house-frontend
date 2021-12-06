@@ -1,2 +1,2 @@
-GET https://api.companieshouse.gov.uk/company/02804411/appointments
+GET https://api.company-information.service.gov.uk/company/SO306136/filing-history?items_per_page=100
 Authorization: Basic YnE5Wm9PSmp6MFVndVJQbWJLcjNxbm95RUFoLTltcEVEaTN0bW04Uzo=

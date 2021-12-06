@@ -5,7 +5,8 @@ export const prettyPrintSqlQuery = (query: string, values: any[]) => {
     else if (typeof value === 'undefined' || value === null) return 'null'
     else if (typeof value === 'string') return `'${value}'`
     else if (value instanceof Date) return `'${value.toUTCString()}'`
-    else if (typeof value === 'object') return "'{" + value.join(',') + "}'"
+    else if (value instanceof Array) return "'{" + value.join(',') + "}'"
+    else if (typeof value === 'object') return `'${JSON.stringify(value)}'`
     else return value?.toString()
   })
 }
