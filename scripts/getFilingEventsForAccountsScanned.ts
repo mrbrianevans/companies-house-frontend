@@ -7,6 +7,8 @@ import { formatFilingDescription } from '../interface/event/formatFilingDescript
 import { getDatabasePool } from '../helpers/sql/connectToDatabase'
 import { FilingHistory } from '../types/api/IFilingHistory'
 import camelcaseKeys from 'camelcase-keys'
+const chunkArr = <T>(arr: T[], size: number): T[][] =>
+  arr.reduceRight((res, _, __, self) => [...res, self.splice(0, size)], [])
 async function getFilingEventsForAccountsScanned() {
   console.time('Load events')
   require('dotenv').config({ path: '../.env' })
@@ -16,24 +18,30 @@ FROM (SELECT "as".company_number, "as".accounts_date, fe.id, fe.category FROM ac
                       LEFT JOIN filing_events fe on fe.company_number = "as".company_number
                                              AND fe.category='accounts'
                                              AND fe.description_values->>'made_up_date' = "as".accounts_date::text
-      ORDER BY company_number DESC
-      LIMIT 1000 OFFSET 1000
+      ORDER BY accounts_date DESC, company_number
+      LIMIT 100000 OFFSET 3000
 ) a WHERE id IS NULL;`
   const list = await pool.query(query).then((res) => res.rows.map((row) => row.company_number))
+  console.log('Listing filing history for', list.length, 'companies')
   let counter = 0
   for (const companyNumber of list) {
     try {
       const filingItem = await getFilingHistoryFromApi(companyNumber)
       if (filingItem.filing_history_status !== 'filing-history-available') {
-        console.log('Status', filingItem.filing_history_status)
+        console.log('Status', filingItem.filing_history_status, 'Done', counter, 'at', Date.now())
         continue
       }
-      await Promise.all(filingItem.items.map((item) => insertRawFilingEvent(item, companyNumber, pool)))
-      counter += filingItem.items.length
-      if (filingItem.items.length !== filingItem.total_count)
-        console.log(`Inserted ${filingItem.items.length}/${filingItem.total_count} filing events for ${companyNumber}`)
+      const itemsReturned = filingItem.items.length
+      if (itemsReturned !== filingItem.total_count)
+        console.log(`Only returned ${itemsReturned}/${filingItem.total_count} filing events for ${companyNumber}`)
+
+      for (const chunk of chunkArr(filingItem.items, 20)) {
+        await Promise.all(chunk.map((item) => insertRawFilingEvent(item, companyNumber, pool)))
+      }
+
+      counter += itemsReturned
     } catch (e) {
-      console.log('Failed on companyNumber=', companyNumber)
+      console.log('Failed on companyNumber=', companyNumber, 'Done', counter, 'at', Date.now())
       console.error(e)
     }
   }
@@ -43,7 +51,7 @@ FROM (SELECT "as".company_number, "as".accounts_date, fe.id, fe.category FROM ac
 }
 
 async function getFilingHistoryFromApi(companyNumber: string): Promise<FilingHistory.IFilingHistory> {
-  const apiUrl = `https://api.company-information.service.gov.uk/company/${companyNumber}/filing-history?items_per_page=100`
+  const apiUrl = `https://api.company-information.service.gov.uk/company/${companyNumber}/filing-history?items_per_page=100&category=accounts`
   // console.log('GET', apiUrl)
   const res = await axios.get(apiUrl, {
     auth: { username: process.env.APIUSER ?? '', password: '' }

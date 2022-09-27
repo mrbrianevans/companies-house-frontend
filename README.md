@@ -1,6 +1,13 @@
  # Filter Facility #
-
-Homepage: [filterfacility.co.uk](https://filterfacility.co.uk)
+> **This project was made public and archived on 27 September 2022.**
+> 
+> Filter Facility was a website which allowed users to filter and view 
+> public data from Companies House. It maintained a SQL database, and served
+> API endpoints. Was originally deployed on Google Cloud Platform. I have
+> started working on a completely new Companies House project, taking the lessons
+> learnt from this attempt and hopefully building something better. 
+> 
+> Development time on this repository: 200+ hours
 
 ### Technology
 - Typescript
