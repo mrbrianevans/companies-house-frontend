@@ -1,5 +1,6 @@
 // playwright.config.js
-import { PlaywrightTestConfig, devices } from '@playwright/test'
+import { PlaywrightTestConfig } from '@playwright/test'
+
 const config: PlaywrightTestConfig = {
   globalSetup: './tests/browser/globalSetup.ts',
   globalTeardown: './tests/browser/afterTests.ts',

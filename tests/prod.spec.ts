@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('test prod system is live', async ({ page }) => {
   await page.goto('https://filterfacility.co.uk')

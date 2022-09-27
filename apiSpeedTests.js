@@ -107,4 +107,4 @@ const runComparisonSpeedTests = async (qty) => {
   // console.log(results);
 };
 
-runComparisonSpeedTests50);
+runComparisonSpeedTests(50);

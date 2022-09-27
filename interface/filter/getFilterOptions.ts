@@ -1,6 +1,7 @@
 import { IFilterOption } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import getFilterConfig from '../../helpers/getFilterConfig'
+
 type GetFilterOptionsParams = {
   category: FilterCategory
 }
@@ -9,8 +10,6 @@ type GetFilterOptionsParams = {
  */
 const getFilterOptions: (params: GetFilterOptionsParams) => IFilterOption[] = ({ category }) => {
   const config = getFilterConfig({ category })
-  const filters = config.filters
-  const filterOptions = filters.map((filter) => filter.filterOption)
-  return filterOptions
+  return config.filters
 }
 export default getFilterOptions

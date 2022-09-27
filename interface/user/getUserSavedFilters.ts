@@ -1,10 +1,10 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICombinedSavedFilter } from '../../types/ICombinedSavedFilter'
-import { translateFiltersToEnglish } from '../../helpers/translateFiltersToEnglish'
+import { translateFiltersToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
 import { IUserFilterDisplay } from '../../types/IUserFilter'
-import { dbEnumToUrlMapping } from '../../configuration/dbEnumToUrlMapping'
 import { Timer } from '../../helpers/Timer'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
+import getFilterConfig from '../../helpers/getFilterConfig'
 
 // fetches a list of the filters saved by a user. authenticate user before calling this!
 export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDisplay[]> = async (id) => {
@@ -30,7 +30,7 @@ export const getUserSavedFilters: (id: string | number) => Promise<IUserFilterDi
     dateSaved: new Date(filter.saved_date).valueOf(),
     cachedFilterId: filter.cached_filter_fk,
     category: filter.category,
-    urlToFilter: `/${dbEnumToUrlMapping[filter.category]}/filter/${filter.cached_filter_fk}`,
+    urlToFilter: `/${getFilterConfig({ category: filter.category }).urlPath}/filter/${filter.cached_filter_fk}`,
     userFilterId: filter.user_saved_id.toString(),
     resultCount: Number(filter.result_count)
   }))

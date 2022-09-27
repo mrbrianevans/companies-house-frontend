@@ -1,7 +1,7 @@
 import { createApiClient } from '@companieshouse/api-sdk-node'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { formatFilingDescription } from '../../../interface/formatFilingDescription'
-import { insertFilingEvent } from '../../../interface/insertFilingEvent'
+import { formatFilingDescription } from '../../../interface/event/formatFilingDescription'
+import { insertFilingEvent } from '../../../interface/event/insertFilingEvent'
 import { Timer } from '../../../helpers/Timer'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -17,6 +17,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const timer = new Timer({ label: 'get filing history', filename: '/pages/api/chApi/getFilingsList.ts' })
   const api = createApiClient(process.env.APIUSER)
   const apiTimer = timer.start('call gov api to fetch filing history')
+  //todo: this should be moved to /interface, checked for the rate limit, increase the count of events, manual API call
+  // - use promise.all
   const apiResponse = await api.companyFilingHistory.getCompanyFilingHistory(company_number)
   apiTimer.stop()
   const response: GetFilingsListResponse = { items: [], totalCount: apiResponse?.resource?.totalCount }

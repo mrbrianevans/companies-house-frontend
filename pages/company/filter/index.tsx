@@ -1,34 +1,16 @@
-import * as React from 'react'
-import { IFilterOption } from '../../../types/IFilters'
-import { GetStaticProps } from 'next'
 import { FilterPage } from '../../../components/FilterPage/FilterPage'
 import { CompanyResultsTable } from '../../../components/FilterPage/ResultsTables/CompanyResultsTable'
-import { companyFilterConfig as filterConfig } from '../../../configuration/companyFilterConfig'
 import { FilterCategory } from '../../../types/FilterCategory'
 import getFilterOptions from '../../../interface/filter/getFilterOptions'
+import getFilterConfig from '../../../helpers/getFilterConfig'
 
-interface Props {
-  filterOptions: IFilterOption[]
-}
-//todo: give the estimated result count in the same box as the preview button
-const CompanyFilterPage = ({ filterOptions }: Props) => {
+const category = FilterCategory.COMPANY
+const config = getFilterConfig({ category })
+const filterOptions = getFilterOptions({ category })
+const CompanyFilterPage = () => {
   return (
-    <FilterPage
-      ResultsTable={CompanyResultsTable}
-      config={filterConfig}
-      filterOptions={filterOptions}
-      category={FilterCategory.COMPANY}
-    />
+    <FilterPage ResultsTable={CompanyResultsTable} config={config} filterOptions={filterOptions} category={category} />
   )
 }
 
 export default CompanyFilterPage
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const returnProps: Props = {
-    filterOptions: getFilterOptions({ category: FilterCategory.COMPANY })
-  }
-  return {
-    props: returnProps
-  }
-}

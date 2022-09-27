@@ -2,8 +2,8 @@ import { GetServerSideProps } from 'next'
 import { Page } from '../../components/Page/Page'
 import { TextInputWithButton } from '../../components/Inputs/TextInputWithButton'
 import { ICompaniesHouseSearchApiResponse } from '../../types/ICompaniesHouseApiResponse'
-import axios from 'axios'
 import Link from 'next/link'
+import { searchCompaniesByName } from '../../interface/api/SearchCompaniesByName'
 
 const styles = require('../../styles/Search.module.sass')
 type SearchResultsProps = {
@@ -14,7 +14,7 @@ type SearchResultsProps = {
 const SearchResults = ({ query, results, responseTime }: SearchResultsProps) => {
   return (
     <Page>
-      <h1>Search results</h1>
+      <h1>Company search results</h1>
       <div className={styles.searchRow}>
         <p className={styles.inputLabel}>
           <label htmlFor={'companyNumberSearchBox'}>Search by company number or name</label>
@@ -56,44 +56,12 @@ export default SearchResults
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const query = context.params.query.toString()
   const startTime = Date.now()
-  //this approach makes use of companies house search facility because mine is too slow
-  const apiUrl = 'https://api.company-information.service.gov.uk/search/companies'
-  const govResponse: ICompaniesHouseSearchApiResponse = await axios
-    .get(apiUrl, {
-      params: { q: query, items_per_page: 10 },
-      auth: { username: process.env.APIUSER, password: '' }
-    })
-    .then((res) => res.data)
-    .catch((e) =>
-      console.error(
-        JSON.stringify({
-          message: 'Gov API search query failed',
-          class: 'gov-search-api',
-          severity: 'ERROR',
-          errorMessage: e.message
-        })
-      )
-    )
+  const results = await searchCompaniesByName({ name: query })
   const props: SearchResultsProps = Object.freeze({
     query,
-    results: govResponse ?? {
-      total_results: 0,
-      items_per_page: 0,
-      items: [],
-      page_number: 1,
-      start_index: 0,
-      kind: 'search#companies'
-    },
+    results,
     responseTime: Date.now() - startTime
   })
-  console.log(
-    JSON.stringify({
-      message: `Query gov API for search query "${query}" in ${Date.now() - startTime}ms`,
-      responseTime: Date.now() - startTime,
-      class: 'gov-search-api',
-      severity: 'info'
-    })
-  )
   return {
     props: props
   }

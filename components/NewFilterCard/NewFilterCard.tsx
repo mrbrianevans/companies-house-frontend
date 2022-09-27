@@ -1,52 +1,68 @@
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { IFilter, IFilterOption } from '../../types/IFilters'
+import { IFilterOption, IFilterValue } from '../../types/IFilters'
 import DropDown from '../Inputs/DropDown'
 import FormRow from '../Inputs/FormRow'
 import Button from '../Inputs/Button'
 import IconButton from '../Inputs/IconButton'
 import TextBox from '../Inputs/TextBox'
 import TextBoxNumber from '../Inputs/TextBoxNumber'
+import { FilterComparison } from '../../configuration/filterComparisons'
+import { getFilterComparisonProperties } from '../../helpers/filters/getFilterComparisonProperties'
+import TextBoxDate from '../Inputs/TextBoxDate'
+import { translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { FilterDatatype } from '../../configuration/filterDatatypes'
 
 const styles = require('./NewFilterCard.module.scss')
-// const formStyles = require('../styles/form.module.css')
 type Props = {
-  addFilter: (filter: IFilter) => void
+  addFilter: (filter: IFilterValue) => void
   filteringLabel: string
   filterOptions: IFilterOption[]
-  onChange?: (filter: IFilter) => void
+  onChange?: (filter: IFilterValue) => void
   // only calls once per filter change
-  onHoverAdd?: ((filter: IFilter) => void) | ((filter: IFilter) => Promise<void>)
+  onHoverAdd?: ((filter: IFilterValue) => void) | ((filter: IFilterValue) => Promise<void>)
 }
 
 export function NewFilterCard(props: Props) {
   const filterOptions: IFilterOption[] = props.filterOptions
-  const [selectedFilterOption, setSelectedFilterOption] = useState<IFilterOption>(filterOptions[0])
-  const [comparison, setComparison] = useState<IFilter['comparison']>(selectedFilterOption.possibleComparisons[0])
-  const [min, setMin] = useState(0)
-  const [max, setMax] = useState(1000)
-  const [exclude, setExclude] = useState(false)
+  const [selectedFilterOption, setSelectedFilterOption] = useState<IFilterOption>(
+    filterOptions.length && filterOptions[0]
+  )
+  const [comparison, setComparison] = useState<FilterComparison>(
+    filterOptions.length && selectedFilterOption.possibleComparisons[0]
+  )
+  // min and typingNumber COULD technically be the same variable (reuse), but might be less readable
+  // Rather than having separate state for the Date, number and Date share state variables
+  const [min, setMin] = useState(NaN)
+  const [max, setMax] = useState(NaN)
+  const [typingNumber, setTypingNumber] = useState<number>(NaN)
   const [values, setValues] = useState([])
   const [typingValue, setTypingValue] = useState('')
+  const [exclude, setExclude] = useState(false)
   const [hasCalledOnHover, setHasCalledOnHover] = useState(false)
-  // @ts-ignore this is very bad type design
-  const getCurrentFilter: () => IFilter = () => {
-    if (selectedFilterOption.valueType === 'number')
+  const getCurrentFilter: () => IFilterValue = () => {
+    if (comparison === FilterComparison.IS_BETWEEN)
       return {
-        category: selectedFilterOption.category,
-        comparison: 'is between',
-        type: 'number',
-        min,
-        max,
+        field: selectedFilterOption.field,
+        comparison: FilterComparison.IS_BETWEEN,
+        values: [min, max],
         exclude
       }
-    else if (selectedFilterOption.valueType === 'string') {
-      // @ts-ignore i'm sorry, i'm checking this manually
+    else {
+      let _values: string[] | [number, number] | [number]
+      switch (selectedFilterOption.dataType) {
+        case FilterDatatype.date:
+        case FilterDatatype.number:
+          _values = [typingNumber]
+          break
+        case FilterDatatype.string:
+          _values = [...values, typingValue].filter((v) => v.toString().length)
+          break
+      }
       return {
-        category: selectedFilterOption.category,
+        field: selectedFilterOption.field,
         comparison: comparison,
-        type: 'string',
-        values: [...values, typingValue].filter((v) => v),
+        values: _values,
         exclude
       }
     }
@@ -58,13 +74,9 @@ export function NewFilterCard(props: Props) {
   }, [min, max, exclude, values, typingValue, selectedFilterOption, comparison])
   const validateSelectedFilterCriteria = (
     selectedFilterOption: IFilterOption,
-    selectedFilterCriteria: IFilter['comparison']
+    selectedFilterCriteria: IFilterValue['comparison']
   ) => {
-    if (
-      // @ts-ignore i'm not so great with this kind of typescript
-      selectedFilterOption.possibleComparisons.includes(selectedFilterCriteria)
-    )
-      return selectedFilterCriteria
+    if (selectedFilterOption.possibleComparisons.includes(selectedFilterCriteria)) return Number(selectedFilterCriteria)
     else return selectedFilterOption.possibleComparisons[0]
   }
   const addValue = (value: string) => {
@@ -75,88 +87,125 @@ export function NewFilterCard(props: Props) {
     // sets the inputs to their default values.
     setSelectedFilterOption(filterOptions[0])
     setComparison(selectedFilterOption.possibleComparisons[0])
-    setMin(0)
-    setMax(1000)
+    setMin(NaN)
+    setMax(NaN)
     setExclude(false)
     setValues([])
     setTypingValue('')
+    setTypingNumber(NaN)
   }
-  //todo: when the filter category changes, reset the values to []
+  //when the filter category changes, reset the values to []
+  useEffect(() => {
+    setComparison(selectedFilterOption.possibleComparisons[0])
+    setMin(NaN)
+    setMax(NaN)
+    setExclude(false)
+    setValues([])
+    setTypingValue('')
+    setTypingNumber(NaN)
+  }, [selectedFilterOption])
   return (
     <div className={styles.newFilterCard} style={{ width: '100%' }} data-test-id={'newFilterDiv'}>
       <h3>Add new filter</h3>
-      <FormRow>
-        {/*<label>*/}
-        {/*  Exclude?{" "}*/}
-        {/*  <input*/}
-        {/*    type={"checkbox"}*/}
-        {/*    checked={exclude}*/}
-        {/*    onChange={(v) => setExclude(v.target.checked)}*/}
-        {/*  />*/}
-        {/*</label>*/}
-        <DropDown
-          options={filterOptions.map((filterOption) => ({ value: filterOption.category }))}
-          value={selectedFilterOption.category}
-          valueSetter={(newValue) => {
-            const selectedOption = filterOptions.find((option) => option.category === newValue)
-            setSelectedFilterOption(selectedOption)
-            setComparison(validateSelectedFilterCriteria(selectedOption, comparison))
-          }}
-        />
-        <DropDown
-          // @ts-ignore
-          options={selectedFilterOption.possibleComparisons.map((value: any) => ({ value }))}
-          value={comparison}
-          valueSetter={(v) => {
-            if (v === 'begins with' || v === 'includes' || v === 'is exactly' || v === 'ends with') setComparison(v)
-          }}
-        />
-        {selectedFilterOption.valueType === 'number' ? (
-          <>
-            <TextBoxNumber value={min} onChange={(v) => setMin(v)} />
-            <span className={styles.joiningWordInFormRow}> and </span>
-            <TextBoxNumber value={max} onChange={(v) => setMax(v)} />
-          </>
-        ) : (
-          <>
-            <TextBox
-              value={typingValue}
-              onChange={setTypingValue}
-              suggestions={selectedFilterOption.suggestions}
-              onEnter={() => {
-                addValue(typingValue.trim())
-                setTypingValue('')
+      {filterOptions.length && (
+        <>
+          <FormRow>
+            {/*<label>*/}
+            {/*  Exclude?{" "}*/}
+            {/*  <input*/}
+            {/*    type={"checkbox"}*/}
+            {/*    checked={exclude}*/}
+            {/*    onChange={(v) => setExclude(v.target.checked)}*/}
+            {/*  />*/}
+            {/*</label>*/}
+            <DropDown
+              options={filterOptions.map((filterOption) => ({ value: filterOption.field }))}
+              value={selectedFilterOption.field}
+              valueSetter={(newValue) => {
+                const selectedOption = filterOptions.find((option) => option.field === newValue)
+                setSelectedFilterOption(selectedOption)
+                setComparison(validateSelectedFilterCriteria(selectedOption, comparison))
               }}
             />
-            <IconButton
-              label={'+'}
-              onClick={() => {
-                addValue(typingValue.trim())
-                setTypingValue('')
+            <DropDown
+              options={selectedFilterOption.possibleComparisons.map((value: any) => ({
+                value,
+                label: getFilterComparisonProperties(value).english
+              }))}
+              value={comparison}
+              valueSetter={(v) => {
+                setComparison(Number(v))
               }}
             />
-          </>
-        )}
-      </FormRow>
-      <p>
-        {exclude ? 'Exclude' : 'Only show'} {props.filteringLabel} where {selectedFilterOption.category} {comparison}{' '}
-        {selectedFilterOption.valueType === 'number'
-          ? min + ' and ' + max
-          : values.length
-          ? values.join(' or ')
-          : typingValue}
-      </p>
+            {comparison === FilterComparison.IS_BETWEEN ? (
+              <>
+                {selectedFilterOption.dataType == FilterDatatype.number && (
+                  <TextBoxNumber value={min} onChange={setMin} />
+                )}
+                {selectedFilterOption.dataType == FilterDatatype.date && <TextBoxDate value={min} onChange={setMin} />}
+                <span className={styles.joiningWordInFormRow}> and </span>
+                {selectedFilterOption.dataType == FilterDatatype.number && (
+                  <TextBoxNumber value={max} onChange={setMax} />
+                )}
+                {selectedFilterOption.dataType == FilterDatatype.date && <TextBoxDate value={max} onChange={setMax} />}
+              </>
+            ) : (
+              <>
+                {selectedFilterOption.dataType == FilterDatatype.string &&
+                  (selectedFilterOption.forceSuggestions ? (
+                    <DropDown<string>
+                      options={selectedFilterOption.suggestions}
+                      value={typingValue}
+                      valueSetter={setTypingValue}
+                    />
+                  ) : (
+                    <TextBox
+                      value={typingValue}
+                      onChange={setTypingValue}
+                      suggestions={selectedFilterOption.suggestions}
+                      onEnter={() => {
+                        addValue(typingValue.trim())
+                        setTypingValue('')
+                      }}
+                    />
+                  ))}
+                {selectedFilterOption.dataType == FilterDatatype.number && (
+                  <TextBoxNumber
+                    value={typingNumber}
+                    onChange={setTypingNumber}
+                    onEnter={() => {
+                      addValue(typingValue.trim())
+                      setTypingValue('')
+                    }}
+                  />
+                )}
+                {selectedFilterOption.dataType == FilterDatatype.date && (
+                  <TextBoxDate value={typingNumber} onChange={setTypingNumber} />
+                )}
+                <IconButton
+                  label={'+'}
+                  onClick={() => {
+                    addValue(typingValue.trim())
+                    setTypingValue('')
+                  }}
+                />
+              </>
+            )}
+          </FormRow>
+          <p>{translateFilterToEnglish(getCurrentFilter(), selectedFilterOption, props.filteringLabel)}</p>
 
-      <Button
-        onClick={addFilter}
-        label={'Add filter'}
-        onHover={() => {
-          if (!hasCalledOnHover) {
-            if (props.onHoverAdd !== undefined) props.onHoverAdd(getCurrentFilter())
-            setHasCalledOnHover(true)
-          }
-        }}
-      />
+          <Button
+            onClick={addFilter}
+            label={'Add filter'}
+            onHover={() => {
+              if (!hasCalledOnHover) {
+                if (props.onHoverAdd !== undefined) props.onHoverAdd(getCurrentFilter())
+                setHasCalledOnHover(true)
+              }
+            }}
+          />
+        </>
+      )}
     </div>
   )
 }

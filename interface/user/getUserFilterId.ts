@@ -1,12 +1,8 @@
 // this file is located in: /interface/user/getUserFilterId.ts
 // to import from this file, use: import { GetUserFilterIdParams, GetUserFilterIdOutput, getUserFilterId } from '../../interface/user/getUserFilterId'
 
-import { IFilter } from '../../types/IFilters'
-import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
 
 // input parameters for getUserFilterId - cachedFilterId
 export interface GetUserFilterIdParams {
@@ -40,7 +36,7 @@ export async function getUserFilterId({
       [cachedFilterId, userId]
     )
     .then(({ rows }) => rows[0]?.id ?? null)
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   await pool.end()
   timer.flush()
   const output: GetUserFilterIdOutput = { userFilterId }

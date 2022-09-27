@@ -1,17 +1,17 @@
 // this file is located in: /interface/filter/countResults.ts
 // to import from this file, use: import { CountResultsParams, CountResultsOutput, countResults } from '../../interface/filter/countResults'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 // input parameters for countResults - filters, category
 export interface CountResultsParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 
@@ -28,8 +28,7 @@ export interface CountResultsOutput {
  * @returns  CountResultsOutput count
  */
 export async function countResults({ filters, category }: CountResultsParams): Promise<CountResultsOutput> {
-  //todo: when combineQueries is improved/fixed, this count method can also be greatly improved:
-  // - rather than doing a WITH results AS (combineQueries), it can be a SELECT COUNT(*) FROM combineQueries
+  if (!filtersAreValid({ filters, category })) return null
   const timer = new Timer({ label: 'countResults() method call', filename: 'interface/filter/countResults.ts' })
   const pool = getDatabasePool()
   const id = getFilterId(filters, category)
@@ -47,22 +46,24 @@ export async function countResults({ filters, category }: CountResultsParams): P
     return { count: savedFilterRows[0].result_count }
   }
   timer.addDetail('Count already cached', false)
-  const { value: bigValue, query: bigQuery } = combineQueries({ filters, category })
+  const { value: bigValue, query: bigQuery } = combineQueries({
+    filters,
+    category,
+    customSelect: `SELECT COUNT(*) AS count`
+  })
+  // console.log(prettyPrintSqlQuery(bigQuery, bigValue))
   const count: number = await pool
-    .query(
-      `
-  WITH results AS (${bigQuery}) SELECT COUNT(*) AS count FROM results;
-  `,
-      bigValue
-    )
-    .then(({ rows }) => rows[0].count)
+    .query(bigQuery, bigValue)
+    .then(({ rows }) => Number(rows[0].count))
     .catch((e) => timer.postgresError(e))
   timer.addDetail('Count returned from database', count)
-  if (typeof count === 'number') {
-    timer.next(`Persist result size ${count} in DB`)
-    await pool.query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+  if (count === null || count === undefined) {
+    timer.customError('Count results returned null or undefined')
   } else {
-    timer.customError('Count results returned null')
+    timer.next(`Persist result size in DB`)
+    await pool
+      .query(`UPDATE cached_filters SET result_count=$1 WHERE id=$2 AND category=$3`, [count, id, category])
+      .catch((e) => timer.postgresError(e))
   }
   timer.flush()
 

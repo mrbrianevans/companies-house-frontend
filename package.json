@@ -8,13 +8,23 @@
     "build": "next build",
     "start": "next start -p 8080",
     "format": "prettier --write **/**.{ts,tsx,css,scss}",
-    "test": "ts-node tests",
-    "test:browser:skipbuild": "set SKIP_BUILD=1 && playwright test --reporter=json,line",
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "mocha -r ts-node/register tests/unit/**/*.spec.ts",
+    "test:browser:skipbuild:upload": "set SKIP_BUILD=1 && set UPLOAD_TESTS=1 && npm run test:browser",
+    "test:browser:skipbuild": "set SKIP_BUILD=1 && npm run test:browser",
+    "test:browser:upload": "set UPLOAD_TESTS=1 && playwright test --reporter=json,line",
     "test:browser": "playwright test --reporter=json,line"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run test",
+      "post-commit": "set SKIP_BUILD=1 && set UPLOAD_TESTS=1 && npm run test:browser"
+    }
   },
   "keywords": [
     "companies-house",
-    "accounts"
+    "accounts",
+    "filter-facility"
   ],
   "homepage": "https://filterfacility.co.uk",
   "author": "Brian Evans",
@@ -26,6 +36,7 @@
     "@google-cloud/storage": "^5.8.5",
     "camelcase": "^6.2.0",
     "camelcase-keys": "^6.2.2",
+    "dotenv": "^8.6.0",
     "fast-csv": "^4.3.6",
     "next": "^10.2.3",
     "next-auth": "^3.23.0",
@@ -39,17 +50,23 @@
     "sass": "^1.32.8",
     "snakecase-keys": "^4.0.2",
     "swr": "^0.5.6",
+    "timer-logs": "^1.7.4",
     "to-snake-case": "^1.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.12.2",
-    "playwright": "^1.12.2",
+    "@types/chai": "^4.2.18",
+    "@types/mocha": "^8.2.2",
     "@types/node": "^15.6.1",
     "@types/object-hash": "^2.1.0",
     "@types/pg": "^8.6.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "axios": "^0.21.1",
+    "chai": "^4.3.4",
+    "husky": "^6.0.0",
+    "mocha": "^9.0.1",
+    "playwright": "^1.12.2",
     "prettier": "^2.2.1",
     "request": "^2.88.2",
     "ts-node": "^10.0.0",

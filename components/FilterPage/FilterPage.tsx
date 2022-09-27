@@ -1,5 +1,5 @@
 import { Page } from '../Page/Page'
-import { IFilter, IFilterOption } from '../../types/IFilters'
+import { IFilterOption, IFilterValue } from '../../types/IFilters'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { NewFilterCard } from '../NewFilterCard/NewFilterCard'
@@ -7,25 +7,26 @@ import IconButton from '../Inputs/IconButton'
 import Button from '../Inputs/Button'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { ShareCode } from '../ShareCode/ShareCode'
-import { formatApproximation } from '../../helpers/numberFormatter'
+import { formatApproximation } from '../../helpers/utils/NumberUtils'
 import { IFilterConfig } from '../../types/IFilterConfig'
 import { FilterCategory } from '../../types/FilterCategory'
 import { fetchGetFilterId } from '../../ajax/filter/getFilterId'
 import { fetchSaveUserFilter } from '../../ajax/user/saveUserFilter'
 import { fetchGetUserFilterId } from '../../ajax/user/getUserFilterId'
 import { fetchCacheResults } from '../../ajax/filter/cacheResults'
-import { GenericSearchBar } from '../SearchBars/GenericSearchBar'
 import { GenericResultsTable } from './ResultsTables/GenericResultsTable'
 import { LoadingIcon } from '../LoadingIcon/LoadingIcon'
-import { FormatterRow } from 'fast-csv'
 import FormRow from '../Inputs/FormRow'
 import ButtonLink from '../Inputs/ButtonLink'
 import { fetchCountResults } from '../../ajax/filter/countResults'
+import { translateFilterToEnglish } from '../../helpers/filters/translateFiltersToEnglish'
+import { IResultsTable } from '../../types/IResultsTable'
+
 const styles = require('./FilterPage.module.scss')
 
 interface Props<ResultType> {
   filterOptions?: IFilterOption[]
-  ResultsTable?: React.FC<{ matchingResults: ResultType[]; tableClassName: any }>
+  ResultsTable?: IResultsTable<ResultType>
   config: IFilterConfig
   category: FilterCategory
   savedFilter?: ICachedFilter<ResultType>
@@ -39,7 +40,7 @@ export const FilterPage = <ResultType extends object>({
   ResultsTable
 }: Props<ResultType>) => {
   const router = useRouter()
-  const [filters, setFilters] = useState<IFilter[]>([])
+  const [filters, setFilters] = useState<IFilterValue[]>([])
   const [filterMatchesLoading, setFilterMatchesLoading] = useState<boolean>()
   const [filterMatches, setFilterMatches] = useState<ResultType[]>()
   const [newCountUpToDate, setCountUpToDate] = useState<boolean>()
@@ -50,6 +51,7 @@ export const FilterPage = <ResultType extends object>({
   // this is probably not the best way, but I have wasted enough time trying to get this to work
   const [needsRedirect, setNeedsRedirect] = useState(false)
   useEffect(() => {
+    // called when the saved filter (page prop) changes
     if (savedFilter?.appliedFilters !== undefined) {
       setFilters(savedFilter?.appliedFilters)
 
@@ -67,6 +69,7 @@ export const FilterPage = <ResultType extends object>({
       }
     }
     setExecutionTime(savedFilter?.metadata?.lastRunTime)
+    setUserFilterId(undefined)
     if (savedFilter?.metadata?.id) {
       //async get if the user has already saved this filter on page load
       fetchGetUserFilterId({ cachedFilterId: savedFilter?.metadata?.id }).then((r) => {
@@ -108,11 +111,13 @@ export const FilterPage = <ResultType extends object>({
         })
         fetchGetFilterId({ filters, category }).then((res) => {
           // this means the client isn't on the right page
-          if (res.id !== savedFilter?.metadata?.id)
-            return router.push(config.redirectUrl + res.id, config.redirectUrl + res.id, { scroll: false })
+          if (res && res.id !== savedFilter?.metadata?.id)
+            return router.push(`/${config.urlPath}/filter/` + res.id, `/${config.urlPath}/filter/` + res.id, {
+              scroll: false
+            })
         })
       } else if (savedFilter?.metadata?.id) {
-        router.push(config.redirectUrl, config.redirectUrl, { scroll: false })
+        router.push(`/${config.urlPath}/filter/`, `/${config.urlPath}/filter/`, { scroll: false })
       }
     }
   }, [filters])
@@ -124,7 +129,7 @@ export const FilterPage = <ResultType extends object>({
       </Page>
     )
   }
-  const addFilter = (filter: IFilter) => {
+  const addFilter = (filter: IFilterValue) => {
     setNeedsRedirect(true)
     setFilterMatches(undefined)
     setFilters([filter, ...(filters ?? [])])
@@ -170,7 +175,9 @@ export const FilterPage = <ResultType extends object>({
             )}
           </>
         )}
-        {savedFilter && <ShareCode text={`filfa.co/${config.labelSingular.charAt(0)}/${savedFilter.metadata.id}`} />}
+        {savedFilter && (
+          <ShareCode text={`filfa.co/${config.labelSingular.charAt(0).toLowerCase()}/f/${savedFilter.metadata.id}`} />
+        )}
       </h1>
       <div className={styles.filterContainer}>
         {filterOptions !== undefined && (
@@ -178,11 +185,13 @@ export const FilterPage = <ResultType extends object>({
         )}
         {filters !== undefined &&
           filters instanceof Array &&
-          filters?.map((filter: IFilter, i) => (
+          filters?.map((filter: IFilterValue, i) => (
             <div style={{ width: '100%' }} key={i}>
               <p className={styles.appliedFilter}>
-                {filter.category} {filter.comparison}{' '}
-                {filter.type === 'number' ? filter.min + ' and ' + filter.max : filter.values.join(' or ')}
+                {translateFilterToEnglish(
+                  filter,
+                  filterOptions.find((f) => f.field === filter.field) || filterOptions[0]
+                )}
                 <IconButton label={'x'} onClick={() => removeFilter(i)} />
               </p>
             </div>
@@ -237,7 +246,12 @@ export const FilterPage = <ResultType extends object>({
             {filterMatches?.length > 0 ? (
               <div className={styles.resultsScrollableContainer}>
                 {ResultsTable ? (
-                  <ResultsTable matchingResults={filterMatches} tableClassName={styles.resultsTable} />
+                  <ResultsTable
+                    matchingResults={filterMatches}
+                    tableClassName={styles.resultsTable}
+                    filterConfig={config}
+                    cachedFilter={savedFilter}
+                  />
                 ) : (
                   <GenericResultsTable<ResultType>
                     matchingResults={filterMatches}

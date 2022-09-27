@@ -1,5 +1,5 @@
 // filing-history companies house api response
-declare module FilingHistory {
+export declare module FilingHistory {
   export interface IFilingHistory {
     total_count: number
     filing_history_status: 'filing-history-available' | string
@@ -39,6 +39,7 @@ declare module FilingHistory {
       type: string
       subcategory: string
       description: string
+      receiveDate?: string
     }[]
     subcategory?: string
     links?: {

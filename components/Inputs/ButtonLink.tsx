@@ -1,5 +1,6 @@
 import Link, { LinkProps } from 'next/link'
 import * as React from 'react'
+
 const styles = require('./Inputs.module.scss')
 
 interface ButtonProps extends LinkProps {

@@ -15,51 +15,54 @@
 // - A distribution of their clients size (based on financials, and accounts type)
 // - maybe an estimation of their fees based on their clients
 
-import { IMinorQuery } from './IQueries'
+import { FilterComparison } from '../configuration/filterComparisons'
+import { FilterDatatype } from '../configuration/filterDatatypes'
 
-export interface IGeneralFilter {
-  category: string
-  comparison: string
+export interface IFilterValue {
+  /**
+   * The name of the field being filtered by, such as name. A human readable version of the column name in most cases.
+   */
+  field: string
+  comparison: FilterComparison
+  /**
+   * An array of values to filter by. If string, then logical OR between values. If numeric then [min,max] or [value]
+   */
+  values: string[] | [number, number] | [number]
+  /**
+   * Whether to include or exclude results matching this filter
+   */
   exclude: boolean
-  type: 'string' | 'number'
 }
 
-export interface INumberFilter extends IGeneralFilter {
-  comparison: 'is between'
-  min: number
-  max: number
-  type: 'number'
+export interface IFilterOption {
+  field: string
+  possibleComparisons: FilterComparison[]
+  dataType: FilterDatatype
+  /**
+   * A function which takes an instance of the filter and returns a human readable version.
+   *
+   * Optional as a default will be used if none is supplied.
+   * @param filterValue a filter such as one created by a user to filter some data.
+   */
+  formatter?: (filterValue: IFilterValue) => string
+  columnName: string
+  /**
+   * If this column can be filtered by the id of anther table, such as filter companies by officer id
+   */
+  references?: { tableName: string; column: string }
+  /**
+   * Optional suggestions to show in a dropdown box
+   */
+  suggestions?: string[] | { label: string; value: string }[]
+  /**
+   * If true, then the user will only be allowed to submit the suggestions as values in an IFilterValue
+   */
+  forceSuggestions?: boolean
 }
 
-export interface IStringFilter extends IGeneralFilter {
-  comparison: 'begins with' | 'is exactly' | 'includes' | 'ends with'
-  values: string[]
-  type: 'string'
-}
-
-export type IFilter = INumberFilter | IStringFilter
-
-export interface INumberFilterOption {
-  possibleComparisons: INumberFilter['comparison'][]
-  category: string
-  valueType: 'number'
-}
-
-export interface IStringFilterOption {
-  possibleComparisons: IStringFilter['comparison'][]
-  category: string
-  valueType: 'string'
-  suggestions?: string[]
-}
-
-export type IFilterOption = INumberFilterOption | IStringFilterOption
+// export type IFilterOption = INumberFilterOption | IStringFilterOption
 //todo: the filter system needs to be improved as follows:
 // [x] add the option for excluding
-// - add 'date' as a value type
-// - add 'is greater than' and 'is less than' for number comparisons
+// - add 'date' as a value type -
+// - add 'is greater than' and 'is less than' for number comparisons -
 // - add suggestions as value:label pairs (optionally)
-
-export interface IFilterMapValue {
-  filterOption: IFilterOption
-  filter: (filter: IFilter) => IMinorQuery
-}

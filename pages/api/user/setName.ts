@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { getDatabasePool } from '../../../helpers/connectToDatabase'
-import { logPostgresError } from '../../../helpers/loggers/PostgresErrorLogger'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
+import { Timer } from '../../../helpers/Timer'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const timer = new Timer({ filename: '/pages/api/user/setName.ts', label: 'Set name of user' })
   const session = await getSession({ req })
   if (!session) {
     res.status(401).send('Not logged in')
@@ -22,7 +23,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(400).send('Name too long')
     return
   }
-
+  timer.addDetail('requested name to update to', name)
   const pool = await getDatabasePool()
   await pool
     .query(
@@ -39,7 +40,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).send('Successfully updated name')
     })
     .catch((e) => {
-      logPostgresError(e)
+      timer.postgresError(e)
       res.status(500).send('Failed to update name')
     })
 }

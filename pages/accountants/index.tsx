@@ -1,11 +1,11 @@
 import { Page } from '../../components/Page/Page'
 import * as React from 'react'
 import { useState } from 'react'
-import Link from 'next/link'
 import { AccountantSearchBar } from '../../components/SearchBars/AccountantSearchBar'
 import { FeatureList } from '../../components/lists/FeatureList'
 import getFilterOptions from '../../interface/filter/getFilterOptions'
 import { FilterCategory } from '../../types/FilterCategory'
+import ButtonLink from '../../components/Inputs/ButtonLink'
 
 const AccountantFilterPage = () => {
   const [accountantFilters] = useState(getFilterOptions({ category: FilterCategory.ACCOUNTANT }))
@@ -13,15 +13,12 @@ const AccountantFilterPage = () => {
     <Page>
       <h1>Accountants</h1>
       <p>
-        To filter accountants, visit{' '}
-        <Link href={'/accountants/filter'}>
-          <a>/accountants/filter</a>
-        </Link>
+        To filter accountants, visit <ButtonLink href={'/accountants/filter'} />
       </p>
-      <p>Start off a filter by name:</p>
+      <p>Start off a filter searching by name:</p>
       <AccountantSearchBar />
       <h3>Available filters</h3>
-      <FeatureList list={accountantFilters.map((filter) => filter.category)} />
+      <FeatureList list={accountantFilters.map((filter) => filter.field)} />
       <h3>About this service</h3>
       <p>
         When companies file their annual accounts with Companies House, many include their accountants name and

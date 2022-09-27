@@ -1,11 +1,10 @@
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren } from 'react'
 import Link from 'next/link'
 import Logo from '../Logo/Logo'
 import Footer from '../Footer/Footer'
 import { signOut, useSession } from 'next-auth/client'
 import ButtonLink from '../Inputs/ButtonLink'
-import Button from '../Inputs/Button'
-import { useRouter } from 'next/router'
+
 const styles = require('./Page.module.scss')
 
 interface Props extends PropsWithChildren<any> {

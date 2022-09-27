@@ -1,3 +1,8 @@
+import { ICompaniesItem } from './ICompanies'
+import { IWideAccountsCombinedItem } from './IWideAccountsCombined'
+import { ISicCodeItem } from './ISicCode'
+import { IAddress } from './IAddress'
+
 export interface ICompany {
   name: string
   number: string
@@ -31,4 +36,15 @@ export interface ICompanyProfile {
   category: string
   date_of_creation: string
   data_updated: number
+}
+
+/**
+ * This is a newer type of company profile, with keys for different "parts" of the details such as address and accounts.
+ * todo: add officers to this type as well as an array of OfficersWithAddress[]
+ */
+export interface ICompanyFullDetails {
+  company: ICompaniesItem
+  accounts?: IWideAccountsCombinedItem
+  address: IAddress
+  sicCodes: ISicCodeItem[]
 }

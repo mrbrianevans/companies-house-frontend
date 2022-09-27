@@ -1,6 +1,6 @@
 // this file is located in: /ajax/user/saveUserFilter.ts
 
-import { SaveUserFilterParams, SaveUserFilterOutput } from '../../interface/user/saveUserFilter'
+import { SaveUserFilterOutput, SaveUserFilterParams } from '../../interface/user/saveUserFilter'
 
 /** Frontend AJAX call to saveUserFilter method on the backend
  *

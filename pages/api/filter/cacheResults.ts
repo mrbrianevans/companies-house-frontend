@@ -1,7 +1,8 @@
 // this file is located in: /pages/api/filter/cacheResults.ts
 
-import { CacheResultsParams, CacheResultsOutput, cacheResults } from '../../../interface/filter/cacheResults'
+import { cacheResults, CacheResultsOutput, CacheResultsParams } from '../../../interface/filter/cacheResults'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { filtersAreValid } from '../../../helpers/filters/validateFilter'
 
 // api endpoint on /api/filter/cacheResults
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -10,6 +11,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   }: { body: CacheResultsParams } = req
   if ([filters, category, id].some((param) => param === undefined)) {
     res.status(400).send('Some params are undefined. Required: filters, category, id')
+    return
+  }
+  if (!filtersAreValid({ filters, category })) {
+    res.status(400).send('Invalid filters')
     return
   }
   const output = await cacheResults({

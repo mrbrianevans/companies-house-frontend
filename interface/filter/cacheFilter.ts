@@ -1,21 +1,19 @@
 // this file is located in: /interface/filter/cacheFilter.ts
 // to import from this file, use: import { CacheFilterParams, CacheFilterOutput, cacheFilter } from '../../interface/filter/cacheFilter'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
-import applyFilters from './applyFilters'
-import { logPostgresError } from '../../helpers/loggers/PostgresErrorLogger'
 import combineQueries from './combineQueries'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
 import { cacheResults } from './cacheResults'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 // input parameters for cacheFilter
 export interface CacheFilterParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 
@@ -36,6 +34,7 @@ export async function cacheFilter<FilterCategoryType>({
   category
 }: CacheFilterParams): Promise<CacheFilterOutput | null> {
   const timer = new Timer({ label: 'Call cacheFilter method', filename: 'interface/filter/cacheFilter.ts' })
+  if (!filtersAreValid({ filters, category })) return null
   const pool = getDatabasePool()
   const id = getFilterId(filters, category)
   const client = await pool.connect()

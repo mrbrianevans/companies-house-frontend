@@ -1,0 +1,16 @@
+div.container {
+  display: grid;
+  grid-template-areas: 'address flag' 'map map';
+  gap: 0.5rem 2rem;
+}
+
+div.address {
+  grid-area: address;
+}
+div.flag {
+  grid-area: flag;
+  justify-self: end;
+}
+div.map {
+  grid-area: map;
+}

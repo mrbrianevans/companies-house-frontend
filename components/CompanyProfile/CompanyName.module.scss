@@ -1,0 +1,10 @@
+div.container {
+  display: grid;
+  padding: 0.5rem;
+  place-items: center;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+}

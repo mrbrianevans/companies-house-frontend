@@ -1,18 +1,17 @@
 // this file is located in: /interface/filter/getFilterId.ts
 // to import from this file, use: import { GetFilterIdParams, GetFilterIdOutput, getFilterId } from '../../interface/filter/getFilterId'
 
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId as getFilterIdHelper } from '../../helpers/getFilterId'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
+import { getFilterId as getFilterIdHelper } from '../../helpers/filters/getFilterId'
 import { Timer } from '../../helpers/Timer'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import combineQueries from './combineQueries'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
+import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
 
 // input parameters for getFilterId - filters, category
 export interface GetFilterIdParams {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
 }
 
@@ -31,6 +30,7 @@ export interface GetFilterIdOutput {
  * @returns  GetFilterIdOutput id of the filter
  */
 export async function getFilterId({ filters, category }: GetFilterIdParams): Promise<GetFilterIdOutput> {
+  if (!(filters?.length > 0)) return null
   const timer = new Timer({
     label: `getFilterId(${filters?.length} ${category} filters) method call`,
     details: { category },
@@ -61,7 +61,7 @@ export async function getFilterId({ filters, category }: GetFilterIdParams): Pro
       }
       return rows[0]
     })
-    .catch(timer.postgresError)
+    .catch((e) => timer.postgresError(e))
   executeQueryTimer.stop()
   await pool.end()
   if (!row) {

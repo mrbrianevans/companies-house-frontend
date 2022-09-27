@@ -1,0 +1,12 @@
+div.container {
+  display: grid;
+  padding: 0.5rem;
+  gap: 0.3rem;
+  place-items: center;
+}
+
+.map {
+  font-size: 2.5rem;
+  height: 10em;
+  width: 7em;
+}

@@ -1,12 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
-import { getDatabasePool } from '../../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
 import { IUserFilter } from '../../../types/IUserFilter'
-import * as csv from 'fast-csv'
 import { Timer } from '../../../helpers/Timer'
-import { Storage } from '@google-cloud/storage'
-import combineQueries from '../../../interface/filter/combineQueries'
-import { FilterCategory } from '../../../types/FilterCategory'
 import { getUser } from '../../../interface/user/getUser'
 import { exportResults } from '../../../interface/filter/exportResults'
 import getFilterConfig from '../../../helpers/getFilterConfig'
@@ -51,7 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   res.setHeader('content-type', 'text/csv')
   const success = await exportResults({ user_filter, res })
   if (!success) {
-    res.status(500)
+    res.status(500).send('Failed to export CSV, do you have enough quota remaining for this download type?')
     return
   }
   res.end()
@@ -65,4 +61,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       [user_filter.id, timer.getTimeUntilNow(), config.operation_code]
     )
     .catch((e) => timer.postgresError(e))
+  await pool.end()
 }

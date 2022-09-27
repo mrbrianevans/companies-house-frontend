@@ -1,14 +1,15 @@
-import { IFilter } from '../../types/IFilters'
+import { IFilterValue } from '../../types/IFilters'
 import { FilterCategory } from '../../types/FilterCategory'
 import { Timer } from '../../helpers/Timer'
 import combineQueries from './combineQueries'
-import { prettyPrintSqlQuery } from '../../helpers/prettyPrintSqlQuery'
-import { getDatabasePool } from '../../helpers/connectToDatabase'
-import { getFilterId } from '../../helpers/getFilterId'
+import { prettyPrintSqlQuery } from '../../helpers/sql/prettyPrintSqlQuery'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
+import { getFilterId } from '../../helpers/filters/getFilterId'
 import getFilterConfig from '../../helpers/getFilterConfig'
+import { filtersAreValid } from '../../helpers/filters/validateFilter'
 
 type Params = {
-  filters: IFilter[]
+  filters: IFilterValue[]
   category: FilterCategory
   limit: number
   sort?: string[]
@@ -35,23 +36,28 @@ export default async function applyFilters<FilterCategoryType>({
     filename: '/interface/filter/applyFilters.ts',
     details: { category }
   })
+  if (!filtersAreValid({ filters, category })) {
+    timer.customError('Invalid filters: ' + filters.map((f) => f.field).join())
+    timer.flush()
+    return null
+  }
   // add filter id to the log
   const filterId = getFilterId(filters, category)
+  // console.log('Apply filters', filterId)
   timer.addDetail('filterId', filterId)
   const { query, value } = combineQueries({ filters, category })
   const config = getFilterConfig({ category })
   const pool = getDatabasePool()
   // add the limit to the end of the query
-  const limitedQuery = `
-WITH results AS (${query}) 
-SELECT * FROM results JOIN ${config.main_table} m 
-    ON results.${config.uniqueIdentifier} = m.${config.uniqueIdentifier}
-LIMIT $${value.length + 1}`
-  value.push(Number(limit))
+  const limitedQuery = query + `LIMIT $${value.push(limit)}`
   const prettyPrintedQuery = prettyPrintSqlQuery(limitedQuery, value)
+  // console.log('Query in applyFilters after limiting')
   // console.log(prettyPrintedQuery)
   const resultQueryTimer = timer.start('Query database for results of filters')
-  const { rows: matches } = await pool.query(limitedQuery, value)
+  const matches = await pool
+    .query(limitedQuery, value)
+    .then(({ rows }) => rows)
+    .catch((e) => timer.postgresErrorReturn([])(e))
   const executionTime = resultQueryTimer.stop()
   //save in cached filters the fact that it was run and the time it took to run. not sure if this is the right place
   const persistTimeToRunTimer = timer.start('Persist the time taken to run filter in cached_filters')

@@ -1,4 +1,4 @@
-import { IFilter } from './IFilters'
+import { IFilterValue } from './IFilters'
 import { FilterCategory } from './FilterCategory'
 
 export interface IUserFilter {
@@ -13,7 +13,7 @@ export interface IUserFilter {
   user_id_fk: number
   category: FilterCategory
   // (optional) the filter object of the applied filters
-  filters: IFilter[]
+  filters: IFilterValue[]
 }
 
 // the filter info to display to the user

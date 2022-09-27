@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import getAccountantClients from '../../../interface/getAccountantClients'
+import getAccountantClients from '../../../interface/accountant/getAccountantClients'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const name = req.query.name

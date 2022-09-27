@@ -1,6 +1,6 @@
 // this file is located in: /ajax/filter/cacheResults.ts
 
-import { CacheResultsParams, CacheResultsOutput } from '../../interface/filter/cacheResults'
+import { CacheResultsOutput, CacheResultsParams } from '../../interface/filter/cacheResults'
 
 /** Frontend AJAX call to cacheResults method on the backend
  *

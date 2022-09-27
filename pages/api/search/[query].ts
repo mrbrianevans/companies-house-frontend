@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { getDatabasePool } from '../../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../../helpers/sql/connectToDatabase'
 import { ICompany } from '../../../types/ICompany'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {

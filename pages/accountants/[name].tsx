@@ -1,23 +1,25 @@
 import { GetStaticPaths, GetStaticProps } from 'next'
-import { ICompanyProfile } from '../../types/ICompany'
+import { ICompanyFullDetails, ICompanyProfile } from '../../types/ICompany'
 import { Page } from '../../components/Page/Page'
-import getAccountantProfile from '../../interface/getAccountantProfile'
+import getAccountantProfile from '../../interface/accountant/getAccountantProfile'
 import { IAccountant } from '../../types/IAccountant'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import { getCompanyProfile } from '../../interface/getCompanyProfile'
+import { getCompanyProfile } from '../../interface/company/getCompanyProfile'
 import ClientCard from '../../components/Client/ClientCard'
 import { useRouter } from 'next/router'
+import { getFirstCompanyMatchByName } from '../../interface/api/getFirstCompanyMatchByName'
+import { splitDate } from '../../helpers/utils/DateUtils'
 
 const styles = require('../../styles/AccountantIndividual.module.sass')
 
 interface props {
   accountantProfile: IAccountant
-  companyProfile?: ICompanyProfile | null
+  companyProfile?: ICompanyFullDetails | null
 }
 
-const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
+const AccountantProfilePage = ({ accountantProfile, companyProfile }: props) => {
   const [clients, setClients] = useState<undefined | ICompanyProfile[]>()
   useEffect(() => {
     if (accountantProfile) {
@@ -43,14 +45,18 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
           <div className={styles.mainContainer}>
             <div>
               View regular company page:{' '}
-              <Link href={`/company/${accountantProfile.company_number}`}>
-                <a>{accountantProfile.company_number}</a>
+              <Link href={`/company/${companyProfile?.company.companyNumber}`}>
+                <a>{companyProfile?.company.companyNumber}</a>
               </Link>
             </div>
             <div>Software: {accountantProfile.software}</div>
-            <div>Founded in {companyProfile?.date_of_creation?.slice(0, 4)}</div>
             <div>
-              Registered address: {companyProfile?.built_up_area}, {companyProfile?.region}
+              Founded in{' '}
+              {companyProfile?.company.dateOfCreation &&
+                splitDate(companyProfile?.company.dateOfCreation.valueOf()).year}
+            </div>
+            <div>
+              Registered address: {companyProfile?.address.streetAddress}, {companyProfile?.address.city}
             </div>
             <div className={styles.clientContainer}>
               <p>
@@ -74,7 +80,7 @@ const CompanyDetails = ({ accountantProfile, companyProfile }: props) => {
   )
 }
 
-export default CompanyDetails
+export default AccountantProfilePage
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const {
@@ -84,14 +90,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const name = decodeURIComponent(nameParam)
   // console.log('Requested accountant with name:', name)
   const accountantProfile = await getAccountantProfile(name)
+  if (!accountantProfile) return { notFound: true }
   const returnProps: props = { accountantProfile }
   if (accountantProfile?.company_number) {
     returnProps.companyProfile = await getCompanyProfile(accountantProfile.company_number)
   } else {
-    return { notFound: true }
-    //todo: get possible matches from companies house search API
+    // get possible matches from companies house search API
+    returnProps.companyProfile = await getFirstCompanyMatchByName({ name })
   }
-
   return {
     props: returnProps, // will be passed to the page component as props
     revalidate: 86400

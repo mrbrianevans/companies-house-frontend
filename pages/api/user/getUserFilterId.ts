@@ -1,6 +1,6 @@
 // this file is located in: /api/user/getUserFilterId.ts
 
-import { GetUserFilterIdParams, GetUserFilterIdOutput, getUserFilterId } from '../../../interface/user/getUserFilterId'
+import { getUserFilterId, GetUserFilterIdOutput, GetUserFilterIdParams } from '../../../interface/user/getUserFilterId'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/client'
 import { getUser } from '../../../interface/user/getUser'

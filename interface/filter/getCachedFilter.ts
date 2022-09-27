@@ -1,9 +1,11 @@
-import { getDatabasePool } from '../../helpers/connectToDatabase'
+import { getDatabasePool } from '../../helpers/sql/connectToDatabase'
 import { ICachedFilter } from '../../types/ICachedFilter'
 import { FilterCategory } from '../../types/FilterCategory'
-import getFilterConfig from '../../helpers/getFilterConfig'
 import { serialiseResultDates } from '../../helpers/serialiseResultDates'
 import { Timer } from '../../helpers/Timer'
+import { ICachedFiltersDatabaseItem } from '../../types/ICachedFiltersDatabaseItem'
+import { IFilterValue } from '../../types/IFilters'
+import { getItemById } from './getItemById'
 
 interface GetCachedFilterParams {
   cachedFilterId: string
@@ -23,19 +25,19 @@ async function getCachedFilter<FilterResultsType>({
   })
   const pool = await getDatabasePool()
   // get the filter metadata
-  const row = await pool
+  const row: ICachedFiltersDatabaseItem = await pool
     .query(
       `
         UPDATE cached_filters
         SET last_viewed=CURRENT_TIMESTAMP,
             view_count=view_count + 1
         WHERE id = $1
-        RETURNING view_count, created, filters, last_run, time_to_run, category, result_count
+        RETURNING *
     `,
       [cachedFilterId]
     )
     .then(({ rows }) => rows[0])
-    .catch((e) => timer.postgresError(e))
+    .catch((e) => timer.postgresErrorReturn(null)(e))
 
   let cachedFilter: ICachedFilter<FilterResultsType>
   if (!row) {
@@ -43,26 +45,33 @@ async function getCachedFilter<FilterResultsType>({
     timer.customError('Cached filter is null')
     cachedFilter = null
   } else {
-    // this section basically adds in previously cached results to the returned cacheFilter. Currently disabled
-    // this is slowing down page loads too much. re-enable when the combineQueries function has been improved
-    // //join the cached filter on cached_filter_records returning the cached results
-    // const filterConfig = getFilterConfig({ category: rows[0].category })
-    // const { rows: results }: { rows: FilterResultsType[] } = await pool.query(
-    //   `
-    //     SELECT m.*
-    //     FROM cached_filter_results cfr
-    //          LEFT JOIN ${filterConfig.main_table} m ON cfr.data_fk = m.${filterConfig.uniqueIdentifier}
-    //     WHERE cfr.filter_fk=$1;
-    // `,
-    //   [cachedFilterId]
-    // )
+    /*
+    To fetch the cached results from the database:
+    1. get the list of item unique identifiers cached
+    2. get the items associated with that ID indiviually
+
+    While this can be done in a single SQL query, it is SIGNIFICANTLY slower due to a poor query plan.
+    Using Promise.all() to get the items means it only takes as long as the longest individual item (very quick).
+     */
+    const category = row.category
+    timer.start('fetch cached result ids from database')
+    const resultIds: string[] = await pool
+      .query(`SELECT data_fk FROM cached_filter_results cfr WHERE cfr.filter_fk=$1`, [cachedFilterId])
+      .then(({ rows }: { rows: { data_fk: string }[] }) => rows.map((row) => row.data_fk))
+      .catch((e) => timer.postgresErrorReturn([])(e))
+    timer.next('fetch items from ids array')
+    let resultItems: { item: FilterResultsType }[] = await Promise.all(
+      resultIds.map((id) => getItemById<FilterResultsType>({ id, category }))
+    )
+    const results = resultItems.map((result) => result.item)
+    timer.end()
+    timer.addDetail('number of results fetched from cache', results?.length)
     cachedFilter = {
-      appliedFilters: row.filters,
-      // results: results.length ? serialiseResultDates(results) : null,
-      results: null,
+      appliedFilters: row.filters as IFilterValue[],
+      results: results?.length ? serialiseResultDates(results) : null,
       metadata: {
         id: cachedFilterId,
-        lastRunTime: row.time_to_run ? row.time_to_run[row.time_to_run.length - 1] : 0,
+        lastRunTime: row.time_to_run ? row.time_to_run[row.time_to_run.length - 1] : null,
         lastRun: new Date(row.last_run).valueOf(),
         viewCount: row.view_count,
         created: new Date(row.created).valueOf(),
@@ -70,6 +79,7 @@ async function getCachedFilter<FilterResultsType>({
       }
     }
   }
+  await pool.end()
   timer.flush()
   return cachedFilter
 }

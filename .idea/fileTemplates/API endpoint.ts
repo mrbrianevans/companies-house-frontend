@@ -19,7 +19,7 @@ import { ${Params}, ${Output} } from '../../interface/${sub_directory}/${camelNa
 /** Frontend AJAX call to $camelName method on the backend 
  *
  * @example
- * const { $comma_seperated_output } = await #[[$END$]]#fetch${PascalName}({ $params })
+ * const { $comma_seperated_output } = await fetch${PascalName}({ $params })
  */
 export const fetch${PascalName}: (params: ${Params}) => Promise<${Output}> = async({ $params }) => {
   return await fetch('/api/${sub_directory}/${camelName}', {
